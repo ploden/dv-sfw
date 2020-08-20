@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LR8-G6-QN7">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="StempelGaramondLTStd-Roman.otf">
+            <string>StempelGaramondLTStd-Roman</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="XQg-a5-6hs">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="LR8-G6-QN7" sceneMemberID="viewController">
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+                    <navigationBar key="navigationBar" alpha="0.10000000000000001" contentMode="scaleToFill" translucent="NO" id="Pub-Et-WVb">
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="2Un-3n-Ifx" kind="relationship" relationship="rootViewController" id="jCU-gL-mSS"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3jg-96-E5L" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="670.40000000000009" y="-189.80509745127438"/>
+        </scene>
+        <!--TextViewVC-->
+        <scene sceneID="zer-lQ-Us1">
+            <objects>
+                <viewController storyboardIdentifier="TextViewVC" title="About" id="2J9-bJ-JZW" userLabel="TextViewVC" customClass="TextViewVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XMh-Cx-r3c">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Text view text." textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3eR-m4-OE8">
+                                <rect key="frame" x="15" y="0.0" width="570" height="600"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="3eR-m4-OE8" firstAttribute="leading" secondItem="RWP-vz-rNF" secondAttribute="leading" constant="15" id="2H9-ag-4V6"/>
+                            <constraint firstItem="3eR-m4-OE8" firstAttribute="top" secondItem="XMh-Cx-r3c" secondAttribute="top" id="9Vl-1d-xcv"/>
+                            <constraint firstItem="RWP-vz-rNF" firstAttribute="bottom" secondItem="3eR-m4-OE8" secondAttribute="bottom" id="QnB-a0-Jqw"/>
+                            <constraint firstItem="RWP-vz-rNF" firstAttribute="trailing" secondItem="3eR-m4-OE8" secondAttribute="trailing" constant="15" id="lMa-PD-sDF"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="RWP-vz-rNF"/>
+                    </view>
+                    <connections>
+                        <outlet property="textView" destination="3eR-m4-OE8" id="gdK-Bi-R1R"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9Hj-t2-TDW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="642.40000000000009" y="-925.18740629685169"/>
+        </scene>
+        <!--FAQ-->
+        <scene sceneID="chL-sF-cOm">
+            <objects>
+                <tableViewController storyboardIdentifier="FAQTableVC" title="FAQ" id="dhC-qc-g3M" customClass="FAQTableVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="662-X2-Wyn">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FAQTVCell" rowHeight="56" id="Qsx-vt-iP1" customClass="FAQTVCell" customModule="SongsForWorship" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.5" width="600" height="56"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qsx-vt-iP1" id="cWO-gK-MMk">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="56"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="1. How do I use the Force?" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZKF-e5-heS">
+                                            <rect key="frame" x="8" y="8" width="157" height="14.5"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="With your midichlorians." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dIh-92-t6o">
+                                            <rect key="frame" x="8" y="30.5" width="137" height="14.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="ZKF-e5-heS" firstAttribute="top" secondItem="cWO-gK-MMk" secondAttribute="top" constant="8" id="Pik-ty-KIG"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ZKF-e5-heS" secondAttribute="trailing" constant="8" id="TMX-h8-Lk0"/>
+                                        <constraint firstItem="ZKF-e5-heS" firstAttribute="leading" secondItem="cWO-gK-MMk" secondAttribute="leading" constant="8" id="UKQ-er-NFf"/>
+                                        <constraint firstItem="dIh-92-t6o" firstAttribute="top" secondItem="ZKF-e5-heS" secondAttribute="bottom" constant="8" id="W0m-R1-QIk"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="dIh-92-t6o" secondAttribute="trailing" constant="8" id="uAw-yJ-PrZ"/>
+                                        <constraint firstItem="dIh-92-t6o" firstAttribute="leading" secondItem="ZKF-e5-heS" secondAttribute="leading" id="viW-Cy-dhf"/>
+                                        <constraint firstAttribute="bottom" secondItem="dIh-92-t6o" secondAttribute="bottom" constant="10.5" id="vot-9E-iBX"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="answerLabel" destination="dIh-92-t6o" id="aTV-0L-6qR"/>
+                                    <outlet property="questionLabel" destination="ZKF-e5-heS" id="xbU-gm-UYf"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="dhC-qc-g3M" id="FnH-1c-Rfc"/>
+                            <outlet property="delegate" destination="dhC-qc-g3M" id="ViY-ke-ikR"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9CS-2X-Jtp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1446.4000000000001" y="-924.73763118440786"/>
+        </scene>
+        <!--Topics-->
+        <scene sceneID="8vB-I9-Dhr">
+            <objects>
+                <tableViewController storyboardIdentifier="TopicsTableVC" title="Topics" id="n1T-iJ-aGk" customClass="TopicsTableVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="rC0-RK-bc4">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TopicTVCell" id="Xn1-Ee-whI" customClass="TopicTVCell" customModule="SongsForWorship" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xn1-Ee-whI" id="ezZ-9N-HW4">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="n1T-iJ-aGk" id="XhV-bV-24F"/>
+                            <outlet property="delegate" destination="n1T-iJ-aGk" id="UvR-QX-GGr"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2X2-om-nhP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2291.2000000000003" y="-925.63718140929541"/>
+        </scene>
+        <!--Index-->
+        <scene sceneID="1kY-2i-N9I">
+            <objects>
+                <viewController storyboardIdentifier="IndexVC" title="Index" id="2Un-3n-Ifx" customClass="IndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" misplaced="YES" id="ttz-qK-V7f">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="5zh-wL-IyT">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                                <color key="backgroundColor" systemColor="systemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="2Un-3n-Ifx" id="d4V-n9-6qO"/>
+                                    <outlet property="delegate" destination="2Un-3n-Ifx" id="LgY-uc-gri"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="5zh-wL-IyT" secondAttribute="bottom" id="FpK-DK-FOT"/>
+                            <constraint firstItem="5zh-wL-IyT" firstAttribute="top" secondItem="ttz-qK-V7f" secondAttribute="top" id="TCZ-jj-NRB"/>
+                            <constraint firstItem="5zh-wL-IyT" firstAttribute="leading" secondItem="ttz-qK-V7f" secondAttribute="leading" id="nQ3-nL-1Fn"/>
+                            <constraint firstAttribute="trailing" secondItem="5zh-wL-IyT" secondAttribute="trailing" id="nqT-Qm-4Mt"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="GEl-4c-4bn"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Z9q-HB-wXK"/>
+                    <connections>
+                        <outlet property="indexTableView" destination="5zh-wL-IyT" id="MMt-fG-w7m"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ONv-Wz-TC6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1446.4000000000001" y="-189.80509745127438"/>
+        </scene>
+        <!--Topic Detail TableVC-->
+        <scene sceneID="coG-u2-gk3">
+            <objects>
+                <tableViewController storyboardIdentifier="TopicDetailTableVC" id="IUC-6y-RIh" customClass="TopicDetailTableVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="MjC-L1-rg0">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="xQb-u3-hxq">
+                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xQb-u3-hxq" id="SIJ-XZ-pCr">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="IUC-6y-RIh" id="fcM-FI-51C"/>
+                            <outlet property="delegate" destination="IUC-6y-RIh" id="iwj-V7-DBB"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MeH-mk-uF1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2942.4000000000001" y="-926.53673163418296"/>
+        </scene>
+        <!--Psalms-->
+        <scene sceneID="8sc-pL-jsj">
+            <objects>
+                <viewController storyboardIdentifier="PsalmIndexVC" title="Psalms" automaticallyAdjustsScrollViewInsets="NO" id="5LM-c6-nlE" customClass="SongIndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="sKr-TP-GG9">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="7mZ-U7-gQD">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="tintColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="sectionIndexColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="5LM-c6-nlE" id="H9j-6n-uZ2"/>
+                                    <outlet property="delegate" destination="5LM-c6-nlE" id="1JX-zY-9yW"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="7mZ-U7-gQD" secondAttribute="bottom" id="37p-qQ-PEX"/>
+                            <constraint firstItem="7mZ-U7-gQD" firstAttribute="leading" secondItem="sKr-TP-GG9" secondAttribute="leading" id="XE3-On-vik"/>
+                            <constraint firstItem="7mZ-U7-gQD" firstAttribute="top" secondItem="qCW-F8-NjE" secondAttribute="top" id="gJm-4I-zmI"/>
+                            <constraint firstAttribute="trailing" secondItem="7mZ-U7-gQD" secondAttribute="trailing" id="jMC-Do-Oxq"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="qCW-F8-NjE"/>
+                    </view>
+                    <connections>
+                        <outlet property="songIndexTableView" destination="7mZ-U7-gQD" id="emW-AP-dew"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0jV-hx-Qi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2064" y="-189.80509745127438"/>
+        </scene>
+    </scenes>
+</document>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="8vK-aN-gDQ">
+    <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--DetailVC-->
+        <scene sceneID="eUP-uY-SEf">
+            <objects>
+                <viewController id="OW7-fj-Z6I" customClass="DetailVC" customModule="PsalmsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="PxF-np-Ivz"/>
+                        <viewControllerLayoutGuide type="bottom" id="D7n-I4-GkR"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="u4k-wE-fUd">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="974"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="2Jh-d5-xon">
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="974"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <collectionViewLayout key="collectionViewLayout" id="UQb-mf-lvq" customClass="FlowLayout" customModule="PsalmsForWorship" customModuleProvider="target"/>
+                                <cells/>
+                                <connections>
+                                    <outlet property="dataSource" destination="OW7-fj-Z6I" id="gtr-5g-XJA"/>
+                                    <outlet property="delegate" destination="OW7-fj-Z6I" id="NO8-q8-2yT"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="2Jh-d5-xon" firstAttribute="top" secondItem="PxF-np-Ivz" secondAttribute="bottom" id="J0L-1v-7Cj"/>
+                            <constraint firstItem="2Jh-d5-xon" firstAttribute="leading" secondItem="u4k-wE-fUd" secondAttribute="leading" id="Led-TL-OTg"/>
+                            <constraint firstAttribute="bottom" secondItem="2Jh-d5-xon" secondAttribute="bottom" id="dEe-Ca-c45"/>
+                            <constraint firstAttribute="trailing" secondItem="2Jh-d5-xon" secondAttribute="trailing" id="z9g-ZK-CDE"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="XVh-yw-3LD">
+                        <rightBarButtonItems>
+                            <barButtonItem title="Item" image="heart_outline" id="rUI-aL-ExW">
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <action selector="favoriteButtonTapped:" destination="OW7-fj-Z6I" id="bbX-3D-7kq"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="tunes_icon" id="VaL-je-iwi">
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <action selector="tunesButtonTouched:" destination="OW7-fj-Z6I" id="bq4-kt-fxu"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="collectionView" destination="2Jh-d5-xon" id="LQ0-Up-JMG"/>
+                        <outlet property="favoriteBarButtonItem" destination="rUI-aL-ExW" id="KP9-2A-lBF"/>
+                        <outlet property="tunesBarButtonItem" destination="VaL-je-iwi" id="8as-l8-vhi"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9wo-aC-dqr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1233.59375" y="379.6875"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="jWQ-lo-r3X">
+            <objects>
+                <navigationController id="4Ka-Fo-HbN" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="vRB-SI-E8F">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.031372549020000001" green="0.1450980392" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </navigationBar>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Bl0-cf-AUD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="468" y="-284"/>
+        </scene>
+        <!--Split View Controller-->
+        <scene sceneID="A3c-eg-ACd">
+            <objects>
+                <splitViewController id="8vK-aN-gDQ" sceneMemberID="viewController">
+                    <connections>
+                        <segue destination="4Ka-Fo-HbN" kind="relationship" relationship="masterViewController" id="uJR-tQ-row"/>
+                        <segue destination="9nJ-hv-MMN" kind="relationship" relationship="detailViewController" id="yGK-WG-Rg6"/>
+                    </connections>
+                </splitViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JpU-Xu-MSx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-304" y="-41"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Nsd-1X-jSS">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="9nJ-hv-MMN" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="a7B-8a-omV">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.031372549020000001" green="0.1450980392" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="OW7-fj-Z6I" kind="relationship" relationship="rootViewController" id="hUx-bq-3qs"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bD6-Uy-PvN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="467.96875" y="379.6875"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="heart_outline" width="20" height="18"/>
+        <image name="tunes_icon" width="10" height="14"/>
+    </resources>
+    <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+</document>
