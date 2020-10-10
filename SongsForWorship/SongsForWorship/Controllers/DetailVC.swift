@@ -31,7 +31,7 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
         songsManager?.addObserver(forcurrentSong: self)
         isObservingcurrentSong = true
         
-        let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: Helper.songsForWorshipBundle(), with: .none))
+        let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon"))
         var frameRect = navbarLogo.frame
         frameRect.origin.x = 30
         navbarLogo.frame = frameRect

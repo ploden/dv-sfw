@@ -18,13 +18,15 @@ extension AVMIDIPlayer {
     static func songSoundBankUrl() -> URL? {
         let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
         let dirName = targetName.lowercased() + "-resources"
-                
+        
         if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-            let soundFontName = app.getAppConfig()["Sound font"] as? String,
-            let path = Bundle.main.path(forResource: soundFontName, ofType: "sf2", inDirectory: dirName)
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate
         {
-            return URL(fileURLWithPath: path)
+            let font = app.settings.selectedSoundFontOrDefault()
+            
+            if let path = Bundle.main.path(forResource: font.filename, ofType: font.fileExtension, inDirectory: dirName) {
+                return URL(fileURLWithPath: path)
+            }
         }
         
         return nil        

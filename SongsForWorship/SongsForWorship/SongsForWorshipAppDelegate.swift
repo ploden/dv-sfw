@@ -20,8 +20,25 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
     private var songsManager: SongsManager?
     public var window: UIWindow?
+    public var settings: Settings = Settings() {
+        didSet {
+            if let soundFontDicts = getAppConfig()["Sound fonts"] as? [[String:Any]] {
+                let soundFonts: [SoundFont] = soundFontDicts.compactMap {
+                    if
+                        let filename = $0["filename"] as? String,
+                        let fileExtension = $0["filetype"] as? String,
+                        let title = $0["Title"] as? String,
+                        let isDefault = $0["default"] as? Bool
+                    {
+                        return SoundFont(filename: filename, fileExtension: fileExtension, isDefault: isDefault, title: title)
+                    }
+                    return nil
+                }
+                settings.soundFonts = soundFonts
+            }
+        }
+    }
     weak var navigationController: UINavigationController?
-    var av: AVMIDIPlayer?
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let syncInstance = FavoritesSyncronizer.shared
@@ -32,6 +49,19 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
         songsManager?.loadSongs()
         updateFavoritesShortcuts()
 
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithOpaqueBackground()
+        navBarAppearance.backgroundColor = UIColor(named: "NavBarBackground")
+        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).standardAppearance = navBarAppearance
+        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).scrollEdgeAppearance = navBarAppearance
+        
+        let buttonAppearance = UIBarButtonItemAppearance(style: .plain)
+        buttonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navBarAppearance.buttonAppearance = buttonAppearance        
+        UINavigationBar.appearance().tintColor = .white
+        
         window = UIWindow()
         
         var mainController: UIViewController?
@@ -77,14 +107,7 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
         
         window?.rootViewController = mainController
         window?.makeKeyAndVisible()
-        
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.backgroundColor = UIColor(named: "NavBarBackground")
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).standardAppearance = navBarAppearance
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).scrollEdgeAppearance = navBarAppearance        
+        settings = Settings()
         
         return true
     }

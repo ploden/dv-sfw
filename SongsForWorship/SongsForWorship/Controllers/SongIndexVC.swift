@@ -34,6 +34,8 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
         title = ""
         navigationItem.backBarButtonItem?.tintColor = .white
 
+        songIndexTableView?.rowHeight = UITableView.automaticDimension
+        songIndexTableView?.estimatedRowHeight = 50.0
         songIndexTableView?.register(UINib(nibName: kSearchCellID, bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: kSearchCellID)
         songIndexTableView?.register(UINib(nibName: "GenericTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "GenericTVCell")
         songIndexTableView?.register(UINib(nibName: "FavoritesHeaderView", bundle: Helper.songsForWorshipBundle()), forHeaderFooterViewReuseIdentifier: "FavoritesHeaderView")
@@ -63,7 +65,7 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
         navigationItem.searchController = searchController
         
         if UIDevice.current.userInterfaceIdiom != .pad {
-            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: Helper.songsForWorshipBundle(), with: .none))
+            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
             var frameRect = navbarLogo.frame
             frameRect.origin.x = 30
             navbarLogo.frame = frameRect
@@ -76,6 +78,9 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
         {
             let segmentedControl = UISegmentedControl(items: songsManager.songCollections.map { $0.displayName } )
             segmentedControl.selectedSegmentIndex = 0
+            segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
+            segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
+            segmentedControl.tintColor = .white
             segmentedControl.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: .valueChanged)
             navigationItem.titleView = segmentedControl
         }
@@ -237,6 +242,7 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
         }
     }
     
+    /*
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if isSearching {
             return 60.0
@@ -244,6 +250,7 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
             return 54.0
         }
     }
+     */
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if isSearching == false && isFavoritesSection(section) {
@@ -266,7 +273,7 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if firstTime {
-            tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
+            //tableView.scrollToRow(at: IndexPath(row: 0, section: 1), at: .top, animated: false)
             firstTime = false
         }
         
@@ -284,7 +291,7 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
                 let tvc = songIndexTableView?.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
                 tvc?.textLabel?.text = Helper.copyrightString(nil)
                 tvc?.textLabel?.textAlignment = .center
-                tvc?.textLabel?.font = Helper.defaultFont(withSize: 9.0)
+                tvc?.textLabel?.font = Helper.defaultFont(withSize: 9.0, forTextStyle: .body)
                 tvc?.textLabel?.numberOfLines = 2
                 tvc?.textLabel?.textColor = UIColor(red: 80.0 / 256.0, green: 80.0 / 256.0, blue: 80.0 / 256.0, alpha: 1.0)
                 tvc?.selectionStyle = .none

@@ -8,9 +8,16 @@
 
 import Foundation
 
-public struct SongCollectionTuneInfo {
+public class SongCollectionTuneInfo: NSObject {
     let title: String
     let directory: String
     let fileType: String
     let filenameFormat: String
+    
+    public init(title: String, directory: String, fileType: String, filenameFormat: String) {
+        self.title = title
+        self.directory = directory
+        self.fileType = fileType
+        self.filenameFormat = filenameFormat
+    }
 }

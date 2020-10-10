@@ -8,18 +8,29 @@
 
 import Foundation
 import UIKit
+import Down
 
-class TextViewVC: UIViewController, HasFileURL {
-    private var text: String?
+typealias FileInfo = (String, String, String)
+
+class TextViewVC: UIViewController, HasFileInfo {
+    var fileInfo: FileInfo?
     @IBOutlet weak private var textView: UITextView?
     var fileURL: URL?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let fileURL = fileURL {
-            text = TextViewVC.readText(fromFileURL: fileURL)
-            textView?.text = text
+        if
+            let fileInfo = fileInfo,
+            let path = Bundle.main.path(forResource: fileInfo.0, ofType: fileInfo.1, inDirectory: fileInfo.2)
+        {
+            let url = URL(fileURLWithPath: path)
+            
+            if fileInfo.1 == "json" {
+                textView?.text = Self.readText(fromFileURL: url)
+            } else if fileInfo.1 == "md" {
+                textView?.attributedText = Self.readMarkdown(fromFileURL: url)
+            }
         }
     }
     
@@ -39,6 +50,17 @@ class TextViewVC: UIViewController, HasFileURL {
                 }
             } catch {}
         } catch {}
+        return nil
+    }
+    
+    class func readMarkdown(fromFileURL url: URL) -> NSAttributedString? {
+        if let markdownString = try? String(contentsOf: url, encoding: String.Encoding.utf8) {
+            let down = Down(markdownString: markdownString)
+            
+            let attributedString = try? down.toAttributedString()
+            
+            return attributedString
+        }
         return nil
     }
 }

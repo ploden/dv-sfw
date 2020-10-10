@@ -8,16 +8,20 @@
 
 import UIKit
 
-class TopicsTableVC: UITableViewController, HasFileURL, HasSongsManager {
+class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
     private var lettersTopics: [LetterTopics]?
     var songsManager: SongsManager?
-    var fileURL: URL?
+    var fileInfo: FileInfo?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let fileURL = fileURL {
-            lettersTopics = TopicsTableVC.readTopics(fromFileURL: fileURL)
+        if
+            let fileInfo = fileInfo,
+            let path = Bundle.main.path(forResource: fileInfo.0, ofType: fileInfo.1, inDirectory: fileInfo.2)
+        {
+            let url = URL(fileURLWithPath: path)
+            lettersTopics = TopicsTableVC.readTopics(fromFileURL: url)
         }
     }
     
@@ -47,17 +51,7 @@ class TopicsTableVC: UITableViewController, HasFileURL, HasSongsManager {
     }
     
     override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        var tmpArray = [AnyHashable](repeating: 0, count: lettersTopics?.count ?? 0)
-        
-        for idx in 0..<(lettersTopics?.count ?? 0) {
-            var letter: String? = nil
-            if let tmpLetter = lettersTopics?[idx].letter {
-                letter = "\(tmpLetter)"
-            }
-            tmpArray.append(letter?.uppercased(with: NSLocale.current) ?? "")
-        }
-        
-        return tmpArray as? [String]
+        return lettersTopics?.compactMap { "\($0.letter)".uppercased(with: NSLocale.current) }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,14 +73,31 @@ class TopicsTableVC: UITableViewController, HasFileURL, HasSongsManager {
         let letterTopics = lettersTopics?[indexPath.section]
         let topic = letterTopics?.topics[indexPath.row]
         
-        let isNotEmpty = topic?.subtopics.count ?? 0 > 0 || topic?.songNumbers.count ?? 0 > 0
-        
-        if isNotEmpty {
-            let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
-            vc?.topic = topic
-            vc?.songsManager = songsManager
-            if let vc = vc {
-                navigationController?.pushViewController(vc, animated: true)
+        if let topic = topic {
+            if topic.subtopics.count == 0 && topic.songNumbers.count == 1 {
+                if UIDevice.current.userInterfaceIdiom != .pad {
+                    if let song = songsManager?.songForNumber(topic.songNumbers.first) {
+                        songsManager?.setcurrentSong(song, songsToDisplay: [song])
+                        
+                        let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
+                        vc?.songsManager = songsManager
+                        
+                        if let vc = vc {
+                            navigationController?.pushViewController(vc, animated: true)
+                        }
+                    }
+                }
+            } else {
+                let isNotEmpty = topic.subtopics.count > 0 || topic.songNumbers.count > 0
+                
+                if isNotEmpty {
+                    let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
+                    vc?.topic = topic
+                    vc?.songsManager = songsManager
+                    if let vc = vc {
+                        navigationController?.pushViewController(vc, animated: true)
+                    }
+                }
             }
         }
     }

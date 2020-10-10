@@ -105,11 +105,8 @@ extension FavoritesSyncronizer {
         var shortcuts = [UIApplicationShortcutItem]()
         
         for fav in Array(FavoritesSyncronizer.favorites().prefix(3)) {
-            if
-                let favPsalm = SongsManager.songAtIndex(fav, allSongs: allSongs),
-                let songNumber = favPsalm.number
-            {
-                let shortcut = UIApplicationShortcutItem(type: kFavoritePsalmShortcutIdentifier, localizedTitle: favPsalm.title, localizedSubtitle: songNumber, icon: nil, userInfo: [PFWFavoritesShortcutPsalmIdentifierKey: songNumber as NSString])
+            if let favPsalm = SongsManager.songAtIndex(fav, allSongs: allSongs) {
+                let shortcut = UIApplicationShortcutItem(type: kFavoritePsalmShortcutIdentifier, localizedTitle: favPsalm.title, localizedSubtitle: favPsalm.number, icon: nil, userInfo: [PFWFavoritesShortcutPsalmIdentifierKey: favPsalm.number as NSString])
                 shortcuts.append(shortcut)
             }
         }

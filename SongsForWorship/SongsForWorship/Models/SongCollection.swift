@@ -27,6 +27,7 @@ open class SongCollection: Equatable {
         return lhs.displayName == rhs.displayName
     }
     
+    let collectionDict: [String : Any]
     let jsonFilename: String
     let pdfFilename: String
     let directory: String
@@ -35,16 +36,47 @@ open class SongCollection: Equatable {
     let sections: [SongCollectionSection]
     let tuneInfos: [SongCollectionTuneInfo]
     private(set) lazy var songs: [Song]? = {
-        return readSongsFromFile(jsonFilename: jsonFilename, directory: directory)
+        let songs = readSongsFromFile(jsonFilename: jsonFilename, directory: directory)
+        for song in songs! {
+            TunesLoader.loadTunes(forSong: song, collection: self) { [weak self] someError, someTuneDescriptions in }
+        }
+        return songs
     }()
 
-    required public init(jsonFilename: String, pdfFilename: String, directory: String, displayName: String, sections: [SongCollectionSection], tuneInfos: [SongCollectionTuneInfo]) {
-        self.jsonFilename = jsonFilename
-        self.pdfFilename = pdfFilename
+    required public init(directory: String, collectionDict: [String : Any]) {
+        self.collectionDict = collectionDict
+        
+        self.jsonFilename = collectionDict["json_name"] as! String
+        self.displayName = collectionDict["Display name"] as! String
+        self.pdfFilename = collectionDict["PDF"] as! String
+        
         self.directory = directory
-        self.displayName = displayName
-        self.sections = sections
-        self.tuneInfos = tuneInfos
+        
+        let sections = collectionDict["Sections"] as! [[String : Any]]
+        
+        var collectionSections = [SongCollectionSection]()
+
+        for section in sections {
+            let title = section["Title"] as! String
+            let count = section["Count"] as! NSNumber
+            let newSection = SongCollectionSection(title: title, count: count.intValue)
+            collectionSections.append(newSection)
+        }
+        
+        self.sections = collectionSections
+        
+        let tuneInfoDicts = collectionDict["Tunes"] as? [[String : Any]]
+
+        let tuneInfos: [SongCollectionTuneInfo]? = tuneInfoDicts?.compactMap {
+            let title = $0["Title"] as! String
+            let format = $0["Format"] as! String
+            let type = $0["Type"] as! String
+            let directory = $0["Directory"] as! String
+            return SongCollectionTuneInfo(title: title, directory: directory, fileType: type, filenameFormat: format)
+        }
+        
+        self.tuneInfos = tuneInfos ?? [SongCollectionTuneInfo]()
+        
         self.pdf = CGPDFDocument(URL(fileURLWithPath: Bundle.main.path(forResource: pdfFilename, ofType: "pdf", inDirectory: directory)!) as CFURL)!
     }    
 
@@ -78,7 +110,27 @@ open class SongCollection: Equatable {
                 guard let dict = dict as? [AnyHashable : Any] else {
                     continue
                 }
-                if let p = Song(fromDict: dict, index: index) {
+                
+                let isTuneCopyrighted: Bool = {
+                    if let object = dict["is_tune_copyrighted"] as? Bool {
+                        return object
+                    } else {
+                        return false
+                    }
+                }()                                
+                
+                let composer = Composer(fullName: dict["info_composer"] as? String ?? "",
+                                        lastName: nil,
+                                        firstName: nil,
+                                        collection: nil)
+                
+                let tune = Tune(name: dict["info_tune"] as? String ?? "",
+                                nameWithoutMeter: dict["info_tune_wo_meter"] as? String ?? "",
+                                composer: composer,
+                                isCopyrighted: isTuneCopyrighted,
+                                meter: dict["info_meter"] as? String ?? "")
+                
+                if let p = Song(fromDict: dict, index: index, tune: tune) {
                     songsArray.append(p)
                     index += 1
                 }
@@ -90,6 +142,8 @@ open class SongCollection: Equatable {
     }
 
     func songForNumber(_ number: String?) -> Song? {
+        return songs?.first(where: { $0.number == number })
+        /*
         if let songs = songs {
             let index = (songs as NSArray?)?.indexOfObject(passingTest: { obj, idx, stop in
                 let song = obj as? Song
@@ -113,5 +167,6 @@ open class SongCollection: Equatable {
             return song
         }
         return nil
+ */
     }
 }

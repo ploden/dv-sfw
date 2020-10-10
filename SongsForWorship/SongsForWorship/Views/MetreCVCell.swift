@@ -23,45 +23,57 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
                 return nil
             }()
             metreLabel?.attributedText = song?.attributedMetreText()
-            composerButton?.setTitle(song?.info_composer, for: .normal)
+            composerButton?.setTitle(song?.tune?.composer?.displayName, for: .normal)
             
             if
-                let meter = song?.meter,
-                let tuneWithoutMeter = song?.tuneWithoutMeter
+                let meter = song?.tune?.meter,
+                let tuneWithoutMeter = song?.tune?.nameWithoutMeter
             {
                 tuneButton?.setTitle(tuneWithoutMeter.capitalized, for: .normal)
                 meterButton?.setTitle(meter.uppercased(), for: .normal)
             } else {
-                tuneButton?.setTitle(song?.info_tune.capitalized, for: .normal)
+                tuneButton?.setTitle(song?.tune?.name.capitalized, for: .normal)
                 meterButton?.setTitle(nil, for: .normal)
             }
             
             scrollView?.contentOffset = .zero
         }
     }
+    @IBOutlet weak var meterButton: UIButton? {
+        didSet {
+            meterButton?.titleLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
+        }
+    }
+    @IBOutlet weak var tuneButton: UIButton? {
+        didSet {
+            tuneButton?.titleLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
+        }
+    }
+    @IBOutlet weak var composerButton: UIButton? {
+        didSet {
+            composerButton?.titleLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
+        }
+    }
     @IBOutlet weak var metreLabel: UILabel? {
         didSet {
-            metreLabel?.font = Helper.defaultFont(withSize: 18.0)
+            metreLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
         }
     }
     @IBOutlet weak var titleLabel: UILabel? {
         didSet {
-            titleLabel?.font = Helper.defaultFont(withSize: 22.0)
+            titleLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .body)
         }
     }
     @IBOutlet weak var versesLabel: UILabel? {
         didSet {
-            versesLabel?.font = Helper.defaultFont(withSize: 14.0)
+            versesLabel?.font = Helper.defaultFont(withSize: 14.0, forTextStyle: .body)
         }
     }
     @IBOutlet weak var copyrightLabel: UILabel? {
         didSet {
-            copyrightLabel?.font = Helper.defaultFont(withSize: 9.0)
+            copyrightLabel?.font = UIFont.systemFont(ofSize: 9.0)
         }
     }
-    @IBOutlet weak var composerButton: UIButton?
-    @IBOutlet weak var tuneButton: UIButton?
-    @IBOutlet weak var meterButton: UIButton?
     @IBOutlet weak var scrollView: UIScrollView?
     
     override func awakeFromNib() {

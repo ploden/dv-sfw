@@ -85,7 +85,7 @@ class PlayerController {
                     let song = self.song,
                     let collection = self.collection
                 {
-                    TunesLoader.loadTunes(forPsalm: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
+                    TunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
                         if let _ = someError {
                             OperationQueue.main.addOperation({
                                 self?.loadTunesDidFail = true

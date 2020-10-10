@@ -11,3 +11,7 @@ import Foundation
 protocol HasFileURL {
     var fileURL: URL? { get set }
 }
+
+protocol HasFileInfo {
+    var fileInfo: FileInfo? { get set }
+}

@@ -17,13 +17,13 @@ class SongTVCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        numberLabel?.font = Helper.defaultFont(withSize: 22.0)
+        numberLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .body)
         
-        referenceLabel?.font = Helper.defaultFont(withSize: 10.0)
+        referenceLabel?.font = Helper.defaultFont(withSize: 10.0, forTextStyle: .footnote)
         referenceLabel?.textColor = UIColor.gray
         referenceLabel?.highlightedTextColor = UIColor.white
         
-        titleLabel?.font = Helper.defaultFont(withSize: 16.0)
+        titleLabel?.font = Helper.defaultFont(withSize: 16.0, forTextStyle: .title3)
         titleLabel?.highlightedTextColor = UIColor.white
     }
     

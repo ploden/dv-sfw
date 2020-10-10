@@ -145,7 +145,7 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
             return ""
         }()
         
-        let song = songsManager.currentCollection?.songForNumber(songNumber)
+        let song = songsManager.songForNumber(songNumber)
         return song
     }
     

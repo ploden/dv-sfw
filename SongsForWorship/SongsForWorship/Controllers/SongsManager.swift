@@ -32,9 +32,11 @@ class SongsManager: Equatable {
         let collections = appConfig["Song collections"] as! [[String : Any]]
         
         for collection in collections {
+            /*
             let filename = collection["json_name"] as! String
             let displayName = collection["Display name"] as! String
             let pdfName = collection["PDF"] as! String
+             */
             var collectionSections = [SongCollectionSection]()
             
             let sections = collection["Sections"] as! [[String : Any]]
@@ -46,6 +48,7 @@ class SongsManager: Equatable {
                 collectionSections.append(newSection)
             }
             
+            /*
             let tuneInfos = collection["Tunes"] as? [[String : Any]]
 
             let blah: [SongCollectionTuneInfo] = tuneInfos?.compactMap {
@@ -55,8 +58,9 @@ class SongsManager: Equatable {
                 let directory = $0["Directory"] as! String
                 return SongCollectionTuneInfo(title: title, directory: directory, fileType: type, filenameFormat: format)
                 } ?? [SongCollectionTuneInfo]()
+             */
             
-            let newCollection = SongCollection(jsonFilename: filename, pdfFilename: pdfName, directory: directory, displayName: displayName, sections: collectionSections, tuneInfos: blah)
+            let newCollection = SongCollection(directory: directory, collectionDict: collection)
             songCollections.append(newCollection)
         }
     }
@@ -95,6 +99,29 @@ class SongsManager: Equatable {
 
     func removeObserver(forcurrentSong anObserver: PsalmObserver?) {
         NotificationCenter.default.removeObserver(anObserver as Any)
+    }
+    
+    func songForNumber(_ number: String?) -> Song? {
+        if let number = number {
+            let numAsInt: Int? = {
+                if let i = Int(number) {
+                    return i
+                } else if let i = Int(number.dropLast()) {
+                    return i
+                } else {
+                    return nil
+                }
+            }()
+
+            if let numAsInt = numAsInt {
+                if numAsInt > 150 {
+                    return songCollections.last?.songForNumber(number)
+                } else {
+                    return songCollections.first?.songForNumber(number)
+                }
+            }
+        }
+        return nil
     }
     
     class func songAtIndex(_ anIndex: Int, allSongs: [Song]?) -> Song? {

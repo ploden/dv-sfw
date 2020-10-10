@@ -9,70 +9,27 @@
 import UIKit
 import AVFoundation
 
-class TunesLoader {
-
-    class func loadTunesForPsalm(_ aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void) {
-        var tuneDescriptions: [TuneDescription] = []
-                
-        if
-            let currentlyLoadingPsalmNumber = aSong.number,
-            let harmonyPsalmNum = TunesLoader.songNumberForHarmonyURLFromNumber(currentlyLoadingPsalmNumber)
-        {
-            let harmonyFilename = "\(harmonyPsalmNum).1"
-            
-            if let harmonyFilePath = Bundle.main.path(forResource: harmonyFilename, ofType: "mid", inDirectory: "tune_midis") {
-                let desc = TuneDescription(length: nil, title: "Harmony", url: URL.init(fileURLWithPath: harmonyFilePath))
-                tuneDescriptions.append(desc)
-            }
-            
-            let partsPsalmNum = TunesLoader.songNumberForPartsURLFromNumber(currentlyLoadingPsalmNumber)
-            
-            for name in ["a", "b", "s", "t"] {
-                let filename = "psalm_\(partsPsalmNum)_\(name)_part"
-                let filePath = Bundle.main.path(forResource: filename, ofType: "mid", inDirectory: "parts_midis")
-                
-                if
-                    let filePath = filePath,
-                    let title = TunesVC.titleFromPartAbbreviation(name)
-                {
-                    let desc = TuneDescription(length: nil, title: title, url: URL.init(fileURLWithPath: filePath))
-                    tuneDescriptions.append(desc)
-                }
-            }
-        }
-        
-        completion(nil, tuneDescriptions)
-    }
+public class TunesLoader {
     
-    class func loadTunes(forPsalm aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void) {
+    class func loadTunes(forSong aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void) {
         var tuneDescriptions: [TuneDescription] = []
               
         if
             let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-            let mainDirectory = app.getAppConfig()["Directory"] as? String,
-            let currentlyLoadingPsalmNumber = aSong.number
+            let mainDirectory = app.getAppConfig()["Directory"] as? String
         {
             for tuneInfo in collection.tuneInfos {
-                var filename = tuneInfo.filenameFormat
+                if let filename = TunesLoader.filename(forTuneInfo: tuneInfo, song: aSong) {
+                    let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
+                    let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.fileType, inDirectory: subDirectory)
                     
-                if filename.contains("{number}") {
-                    filename = filename.replacingOccurrences(of: "{number}", with: currentlyLoadingPsalmNumber.lowercased())
-                }
-                
-                if
-                    let tuneWithoutMeter = aSong.tuneWithoutMeter,
-                    filename.contains("{info_tune_wo_meter}")
-                {
-                    filename = filename.replacingOccurrences(of: "{info_tune_wo_meter}", with: tuneWithoutMeter.lowercased())
-                }
-
-                let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
-                let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.fileType, inDirectory: subDirectory)
-                
-                if let filePath = filePath {
-                    let fileUrl = URL(fileURLWithPath: filePath)
-                    let desc = TuneDescription(length: nil, title: tuneInfo.title, url: fileUrl)
-                    tuneDescriptions.append(desc)
+                    if let filePath = filePath {
+                        let fileUrl = URL(fileURLWithPath: filePath)
+                        let desc = TuneDescription(length: nil, title: tuneInfo.title, url: fileUrl)
+                        tuneDescriptions.append(desc)
+                    } else {
+                        print("Tunes file not found: \(filename)")
+                    }
                 }
             }
         }
@@ -118,5 +75,22 @@ class TunesLoader {
             return aSongNumber
         }
         return nil
+    }
+    
+    static func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
+        var filename = tuneInfo.filenameFormat
+            
+        if filename.contains("{number}") {
+            filename = filename.replacingOccurrences(of: "{number}", with: song.number.lowercased())
+        }
+        
+        if
+            let tuneWithoutMeter = song.tune?.nameWithoutMeter,
+            filename.contains("{info_tune_wo_meter}")
+        {
+            filename = filename.replacingOccurrences(of: "{info_tune_wo_meter}", with: tuneWithoutMeter.lowercased())
+        }
+        
+        return filename
     }
 }

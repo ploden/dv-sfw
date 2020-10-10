@@ -13,16 +13,19 @@ var PlaybackRates = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
 var NumPlaybackRates: size_t = 6
 
 class Helper: NSObject {
-    class func defaultFont(withSize size: CGFloat) -> UIFont {
-        if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-            let fontName = app.getAppConfig()["Default font"] as? String,
-            let font = UIFont(name: fontName, size: size)
-        {
-            return font
-        } else {
-            return UIFont.systemFont(ofSize: size)
-        }        
+    class func defaultFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            if app.settings.shouldUseSystemFonts {
+                return UIFont.preferredFont(forTextStyle: textStyle)
+            } else if
+                let fontName = app.getAppConfig()["Default font"] as? String,
+                let font = UIFont(name: fontName, size: size)
+            {
+                return font
+            }
+        }
+        
+        return UIFont.systemFont(ofSize: size)
     }
 
     class func nameWithNamespace(name: String) -> String {
@@ -43,7 +46,7 @@ class Helper: NSObject {
         queue.async(execute: {
             var searchResults: [SearchResult] = []
 
-            let songNumberSearchResults = songsArray.filter { $0.number?.range(of: term, options: [.caseInsensitive]) != nil }
+            let songNumberSearchResults = songsArray.filter { $0.number.range(of: term, options: [.caseInsensitive]) != nil }
             for result in songNumberSearchResults {
                 let searchResult = SearchResult(sourceText: result.number, songIndex: result.index, songNumber: result.number, searchTerm: term)
                 searchResults.append(searchResult)
@@ -55,15 +58,15 @@ class Helper: NSObject {
                 searchResults.append(searchResult)
             }
 
-            let tuneSearchResults = songsArray.filter { $0.info_tune.range(of: term, options: [.caseInsensitive]) != nil }
+            let tuneSearchResults = songsArray.filter { $0.tune?.name.range(of: term, options: [.caseInsensitive]) != nil }
             for result in tuneSearchResults {
-                let searchResult = SearchResult(sourceText: result.info_tune, songIndex: result.index, songNumber: result.number, searchTerm: term)
+                let searchResult = SearchResult(sourceText: result.tune?.name, songIndex: result.index, songNumber: result.number, searchTerm: term)
                 searchResults.append(searchResult)
             }
 
-            let composerSearchResults = songsArray.filter { $0.info_composer.range(of: term, options: [.caseInsensitive]) != nil }
+            let composerSearchResults = songsArray.filter { $0.tune?.composer?.displayName?.range(of: term, options: [.caseInsensitive]) != nil }
             for result in composerSearchResults {
-                let searchResult = SearchResult(sourceText: result.info_composer, songIndex: result.index, songNumber: result.number, searchTerm: term)
+                let searchResult = SearchResult(sourceText: result.tune?.composer?.displayName, songIndex: result.index, songNumber: result.number, searchTerm: term)
                 searchResults.append(searchResult)
             }
 

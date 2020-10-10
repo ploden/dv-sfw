@@ -9,34 +9,38 @@
 import Foundation
 import UIKit
 
-public class Song: NSObject/*, Equatable, Hashable*/ {
-    var index: Int
-    var number: String?
-    var title: String = ""
-    var reference: String?
-    var verses_line_1: String = ""
-    var verses_line_2: String?
-    var info_composer: String = ""
-    var info_tune: String = ""
-    var meter: String = ""
-    var tuneWithoutMeter: String?
-    var stanzas: [String] = [String]()
-    var pdfPageNumbers: [Int]
-    var isTuneCopyrighted: Bool = false
+public class Song: NSObject {
+    public var index: Int
+    public var number: String
+    public var title: String = ""
+    public var reference: String?
+    public var verses_line_1: String = ""
+    public var verses_line_2: String?
+    //var info_composer: String = ""
+    //var info_tune: String = ""
+    //var meter: String = ""
+    //var tuneWithoutMeter: String?
+    public var stanzas: [String] = [String]()
+    public var pdfPageNumbers: [Int]
+    public var isTuneCopyrighted: Bool = false
+    public var tune: Tune?
     
-    init?(fromDict dict: [AnyHashable : Any], index anIndex: Int) {
+    init?(fromDict dict: [AnyHashable : Any], index anIndex: Int, tune aTune: Tune) {
         index = anIndex
-
-        number = dict["number"] as? String
+        tune = aTune
+        
+        number = dict["number"] as? String ?? ""
         title = dict["title"] as? String ?? ""
         reference = dict["reference"] as? String
         verses_line_1 = dict["verse_line_1"] as? String ?? ""
         verses_line_2 = dict["verse_line_2"] as? String ?? ""
         
+        /*
         info_composer = dict["info_composer"] as? String ?? ""
         info_tune = dict["info_tune"] as? String ?? ""
         meter = dict["info_meter"] as? String ?? ""
         tuneWithoutMeter = dict["info_tune_wo_meter"] as? String
+         */
 
         stanzas = [String]()
 

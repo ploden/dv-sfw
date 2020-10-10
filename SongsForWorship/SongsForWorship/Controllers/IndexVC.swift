@@ -17,14 +17,15 @@ extension Bundle {
 
 import MessageUI
 
-enum PFWIndexTableViewSection : Int {
-    case _Psalms = 0
-    case _Misc = 1
-    case _Feedback = 2
-    case _Count = 3
-}
-
 class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
+    enum TableViewSection: Int {
+        case psalms = 0, _Misc, _Feedback, _Count
+    }
+    
+    enum FeedbackSectionRow: Int {
+        case settings = 0, feedback, count
+    }
+    
     var songsManager: SongsManager!
     @IBOutlet private var indexTableView: UITableView?
     
@@ -43,7 +44,7 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
         indexTableView?.register(UINib(nibName: "GenericTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "GenericTVCell")
         
         if UIDevice.current.userInterfaceIdiom != .pad {
-            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: Helper.songsForWorshipBundle(), with: .none))
+            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
             navigationItem.titleView = navbarLogo
         }
     }
@@ -126,30 +127,42 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView?, didSelectFeedbackSectionRowWith index: Int) {
-        if MFMailComposeViewController.canSendMail() {
-            let subjectString: String = {
-                let appName = Bundle.main.appName
-                let version = Bundle.main.version
-                
-                return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
-            }()
+        if let rowIndex = FeedbackSectionRow(rawValue: index) {
+            switch rowIndex {
+            case .feedback:
+                if MFMailComposeViewController.canSendMail() {
+                    let subjectString: String = {
+                        let appName = Bundle.main.appName
+                        let version = Bundle.main.version
                         
-            let composeController = MFMailComposeViewController()
-            composeController.mailComposeDelegate = self
-            composeController.setToRecipients(["contact@deovolentellc.com"])
-            composeController.setSubject(subjectString)
-            
-            present(composeController, animated: true)
-        } else {
-            let alertController = UIAlertController(title: "Cannot Send Mail", message: "You need to set up an email account in order to send a support request email.", preferredStyle: .alert)
-            
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
+                    }()
+                    
+                    let composeController = MFMailComposeViewController()
+                    composeController.mailComposeDelegate = self
+                    composeController.setToRecipients(["contact@deovolentellc.com"])
+                    composeController.setSubject(subjectString)
+                    
+                    present(composeController, animated: true)
+                } else {
+                    let alertController = UIAlertController(title: "Cannot Send Mail", message: "You need to set up an email account in order to send a support request email.", preferredStyle: .alert)
+                    
+                    alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                    alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        }
+                    }))
+                    present(alertController, animated: true)
                 }
-            }))
-            present(alertController, animated: true)
+                break
+            case .settings:
+                if let vc = SettingsTableVC.pfw_instantiateFromStoryboard() {
+                    navigationController?.pushViewController(vc, animated: true)
+                }
+            default:
+                break
+            }
         }
     }
     
@@ -174,13 +187,13 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
                 }
                 
                 if
-                    let jsonName = item["json_name"],
-                    var hasFileURL = vc as? HasFileURL,
+                    let filename = item["filename"],
+                    let filetype = item["filetype"],
+                    var hasFileInfo = vc as? HasFileInfo,
                     let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-                    let directory = app.getAppConfig()["Directory"] as? String,
-                    let path = Bundle.main.path(forResource: jsonName, ofType: "json", inDirectory: directory)
+                    let directory = app.getAppConfig()["Directory"] as? String//,
                 {
-                    hasFileURL.fileURL = URL(fileURLWithPath: path)
+                    hasFileInfo.fileInfo = (filename, filetype, directory)
                 }
                 
                 navigationController?.pushViewController(vc, animated: true)
@@ -206,14 +219,14 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return PFWIndexTableViewSection._Count.rawValue
+        return TableViewSection._Count.rawValue
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
             return 1
-        case PFWIndexTableViewSection._Misc.rawValue:
+        case TableViewSection._Misc.rawValue:
             if
                 let app = UIApplication.shared.delegate as? PsalterAppDelegate,
                 let indexItems = app.getAppConfig()["Index"] as? [Any]
@@ -222,8 +235,8 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
             } else {
                 return 0
             }
-        case PFWIndexTableViewSection._Feedback.rawValue:
-            return 1
+        case TableViewSection._Feedback.rawValue:
+            return FeedbackSectionRow.count.rawValue
         default:
             return 0
         }
@@ -231,9 +244,9 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case PFWIndexTableViewSection._Misc.rawValue:
+        case TableViewSection._Misc.rawValue:
             return "Index"
-        case PFWIndexTableViewSection._Feedback.rawValue:
+        case TableViewSection._Feedback.rawValue:
             return "Feedback"
         default:
             return ""
@@ -253,36 +266,54 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
             let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
             generic?.textLabel?.textColor = UIColor.label
             generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
-            generic?.textLabel?.text = "Psalms"
+            generic?.textLabel?.text = songsManager.songCollections.compactMap { $0.displayName } .joined(separator: " & ")
             generic?.textLabel?.highlightedTextColor = UIColor.white
             cell = generic
-        } else if indexPath.section == PFWIndexTableViewSection._Misc.rawValue || indexPath.section == PFWIndexTableViewSection._Feedback.rawValue {
+        } else if indexPath.section == TableViewSection._Misc.rawValue {
             let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
             generic?.textLabel?.textColor = UIColor.label
+            generic?.textLabel?.numberOfLines = 2
             generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
             
             var cellText: String?
             
-            if indexPath.section == PFWIndexTableViewSection._Misc.rawValue {
+            if
+                let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+                let indexItems = app.getAppConfig()["Index"] as? [Any],
+                indexPath.row < indexItems.count
+            {
+                let item = indexItems[indexPath.row]
+                
                 if
-                    let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-                    let indexItems = app.getAppConfig()["Index"] as? [Any],
-                    indexPath.row < indexItems.count
+                    let item = item as? [String:String],
+                    let title = item["Title"]
                 {
-                    let item = indexItems[indexPath.row]
-                    
-                    if
-                        let item = item as? [String:String],
-                        let title = item["Title"]
-                    {
-                        cellText = title
-                    }
+                    cellText = title
                 }
-            } else if indexPath.section == PFWIndexTableViewSection._Feedback.rawValue {
-                cellText = "Send Feedback"
             }
             
             generic?.textLabel?.text = cellText
+            generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
+            generic?.textLabel?.highlightedTextColor = UIColor.white
+            cell = generic
+        } else if indexPath.section == TableViewSection._Feedback.rawValue {
+            let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
+            generic?.textLabel?.textColor = UIColor.label
+            
+            generic?.textLabel?.text = {
+                if let index = FeedbackSectionRow(rawValue: indexPath.row) {
+                    switch index {
+                    case .settings:
+                        return "Settings"
+                    case .feedback:
+                        return "Send Feedback"
+                    default:
+                        return nil
+                    }
+                }
+                return nil
+            }()
+            
             generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
             generic?.textLabel?.highlightedTextColor = UIColor.white
             cell = generic
@@ -305,9 +336,9 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
             if let vc = vc {
                 navigationController?.pushViewController(vc, animated: true)
             }
-        } else if indexPath.section == PFWIndexTableViewSection._Misc.rawValue {
+        } else if indexPath.section == TableViewSection._Misc.rawValue {
             self.tableView(tableView, didSelectMiscSectionRowWith: indexPath.row)
-        } else if indexPath.section == PFWIndexTableViewSection._Feedback.rawValue {
+        } else if indexPath.section == TableViewSection._Feedback.rawValue {
             self.tableView(tableView, didSelectFeedbackSectionRowWith: indexPath.row)
         }
     }

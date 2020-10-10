@@ -8,15 +8,19 @@
 
 import UIKit
 
-class FAQTableVC: UITableViewController, HasFileURL {
+class FAQTableVC: UITableViewController, HasFileInfo {
+    var fileInfo: FileInfo?
     private var faqs: [FAQ]?
-    var fileURL: URL?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let fileURL = fileURL {
-            faqs = FAQTableVC.readFAQs(fromFileURL: fileURL)
+        if
+            let fileInfo = fileInfo,
+            let path = Bundle.main.path(forResource: fileInfo.0, ofType: fileInfo.1, inDirectory: fileInfo.2)
+        {
+            let url = URL(fileURLWithPath: path)
+            faqs = FAQTableVC.readFAQs(fromFileURL: url)
         }
         
         tableView.rowHeight = UITableView.automaticDimension
