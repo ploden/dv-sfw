@@ -67,11 +67,9 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
         var mainController: UIViewController?
 
         if UIDevice.current.userInterfaceIdiom == .pad {
-            window?.overrideUserInterfaceStyle = .light
-
             let split = Helper.mainStoryboard_iPad().instantiateInitialViewController() as? UISplitViewController
             let nav = split?.viewControllers[0] as? UINavigationController
-
+            
             if let split = split {
                 for vc in split.viewControllers {
                     if
@@ -90,9 +88,7 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
 
             nav?.viewControllers = [index].compactMap { $0 }
             mainController = split
-        } else {
-            window?.overrideUserInterfaceStyle = .light
-            
+        } else {            
             UITabBar.appearance().tintColor = UIColor.white
 
             let sb = Helper.mainStoryboard_iPhone()

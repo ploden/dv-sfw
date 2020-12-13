@@ -19,7 +19,6 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     
     private var tunesVC: TunesVC?
     private var splitVCBarButtonItem: UIBarButtonItem?
-    @IBOutlet private var statusBarBackgroundView: UIView!
     @IBOutlet weak private var backgroundView: UIView?
     @IBOutlet weak var favoriteBarButtonItem: UIBarButtonItem?
     @IBOutlet weak var tunesBarButtonItem: UIBarButtonItem?
