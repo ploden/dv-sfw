@@ -206,6 +206,30 @@ class PDFPageView: UIView {
                     // left hand page
                     currentTranslateX = kLandscapeTranslateX
                 }
+            }  else if rect.size.width == 804.5 {
+                // iPad Air 4th gen landscape
+                currentScale = kLandscapeScale
+                currentTranslateY = kLandscapeTranslateY
+                
+                if pdfPageNumber % 2 == 1 {
+                    // right hand page
+                    currentTranslateX = kLandscapeTranslateX
+                } else {
+                    // left hand page
+                    currentTranslateX = kLandscapeTranslateX
+                }
+            } else if rect.size.width == 820.0 {
+                // iPad Air 4th gen portrait
+                currentScale = k10InchPortraitScale
+                currentTranslateY = k10InchPortraitTranslateY
+                
+                if pdfPageNumber % 2 == 1 {
+                    // right hand page
+                    currentTranslateX = k10InchPortraitTranslateXRight
+                } else {
+                    // left hand page
+                    currentTranslateX = k10InchPortraitTranslateXLeft
+                }
             } else {
                 assert(false, "PDFPageView: drawRect: insufficient info to draw page")
                 return
