@@ -41,22 +41,25 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
     }
     @IBOutlet weak var meterButton: UIButton? {
         didSet {
-            meterButton?.titleLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
+            meterButton?.titleLabel?.font = metreLabel?.font
         }
     }
     @IBOutlet weak var tuneButton: UIButton? {
         didSet {
-            tuneButton?.titleLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
+            tuneButton?.titleLabel?.font = metreLabel?.font
         }
     }
     @IBOutlet weak var composerButton: UIButton? {
         didSet {
-            composerButton?.titleLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
+            composerButton?.titleLabel?.font = metreLabel?.font
         }
     }
     @IBOutlet weak var metreLabel: UILabel? {
         didSet {
             metreLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
+            composerButton?.titleLabel?.font = metreLabel?.font
+            tuneButton?.titleLabel?.font = metreLabel?.font
+            meterButton?.titleLabel?.font = metreLabel?.font
         }
     }
     @IBOutlet weak var titleLabel: UILabel? {
