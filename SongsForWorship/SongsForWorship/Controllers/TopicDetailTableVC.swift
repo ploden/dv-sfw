@@ -16,8 +16,9 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.register(TopicTVCell.self, forCellReuseIdentifier: "TopicTVCell")
         tableView.register(UINib(nibName: "SongTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SongTVCell")
-        
+
         navigationItem.title = topic.topic.capitalized(with: NSLocale.current)
     }
     
@@ -39,11 +40,20 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return max(1, topic.subtopics.count)
+        let hasRedirects = topic.redirects.count > 0
+        let hasSubtopics = topic.subtopics.count > 0
+        
+        if hasSubtopics {
+            return topic.subtopics.count + (hasRedirects ? 1 : 0)
+        } else {
+            return 1 + (hasRedirects ? 1 : 0)
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if topic.subtopics.count > 0 {
+        if isRedirectsSection(for: section) {
+            return topic.redirects.count
+        } else if topic.subtopics.count > 0 {
             let subtopic = topic.subtopics[section]
             return subtopic.songNumbers.count
         } else {
@@ -52,7 +62,9 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section < topic.subtopics.count {
+        if isRedirectsSection(for: section) {
+            return "See also"
+        } else if section < topic.subtopics.count {
             let subtopic = topic.subtopics[section]
             return subtopic.topic.capitalized(with: NSLocale.current)
         }
@@ -61,12 +73,20 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let songCell = tableView.dequeueReusableCell(withIdentifier: "SongTVCell") as? SongTVCell
-        
-        let song = self.song(for: indexPath)
-        songCell?.configureWithPsalm(song, isFavorite: false)
-        
-        return songCell!
+        if isRedirectsSection(for: indexPath.section) {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TopicTVCell", for: indexPath) as? TopicTVCell
+
+            cell?.textLabel?.text = topic.redirects[indexPath.row].capitalized(with: NSLocale.current)
+            
+            return cell!
+        } else {
+            let songCell = tableView.dequeueReusableCell(withIdentifier: "SongTVCell") as? SongTVCell
+            
+            let song = self.song(for: indexPath)
+            songCell?.configureWithPsalm(song, isFavorite: false)
+            
+            return songCell!
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -94,6 +114,20 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     }
     
     // MARK: - Helpers
+    
+    func isRedirectsSection(for section: Int) -> Bool {
+        if topic.redirects.count == 0 {
+            return false
+        } else if topic.subtopics.count > 0 {
+            if section == topic.subtopics.count {
+                return true
+            }
+        } else if section == 1 {
+            return true
+        }
+        return false
+    }
+    
     func detailVC() -> DetailVC? {
         if let vcs = splitViewController?.viewControllers {
             for vc in vcs {

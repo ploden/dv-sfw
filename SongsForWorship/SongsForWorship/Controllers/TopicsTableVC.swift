@@ -58,10 +58,16 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TopicTVCell", for: indexPath) as? TopicTVCell
         
         cell?.textLabel?.text = {
-            if
-                let letterTopics = lettersTopics?[indexPath.section]
-            {
-                return letterTopics.topics[indexPath.row].topic.capitalized(with: NSLocale.current)
+            if let letterTopics = lettersTopics?[indexPath.section] {
+                let topic = letterTopics.topics[indexPath.row]
+                
+                let title = topic.topic.capitalized(with: NSLocale.current)
+                
+                if topic.songNumbers.count == 0 && topic.redirects.count == 1 {
+                    return "\(title) (See \(topic.redirects[0].capitalized(with: NSLocale.current)))"
+                } else {
+                    return title
+                }
             }
             return nil
         }()
@@ -87,8 +93,22 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
                         }
                     }
                 }
+            } else if topic.redirects.count == 1 && topic.songNumbers.count == 0 {
+                let redirect = topic.redirects[0]
+                
+                if
+                    let redirectedLetterTopic = lettersTopics?.first(where: { $0.letter == redirect.first }),
+                    let redirectedTopic = redirectedLetterTopic.topics.first(where: { $0.topic == redirect } )
+                {
+                    let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
+                    vc?.topic = redirectedTopic
+                    vc?.songsManager = songsManager
+                    if let vc = vc {
+                        navigationController?.pushViewController(vc, animated: true)
+                    }
+                }
             } else {
-                let isNotEmpty = topic.subtopics.count > 0 || topic.songNumbers.count > 0
+                let isNotEmpty = topic.subtopics.count > 0 || topic.songNumbers.count > 0 || topic.redirects.count > 0
                 
                 if isNotEmpty {
                     let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC

@@ -11,6 +11,8 @@ import Foundation
 struct Topic {
   var topic: String
   var songNumbers: [String]
+    var redirects: [String]
+
   var subtopics: [Topic]
   
   init?(dict: [AnyHashable : Any]?) {
@@ -20,10 +22,11 @@ struct Topic {
     
     topic = dict?["topic"] as? String ?? ""
     songNumbers = dict?["psalm_numbers"] as? [String] ?? [String]()
-    
+    redirects = dict?["redirects"] as? [String] ?? [String]()
+
     var tmpArray: [Topic] = []
     
-    if let aDict = dict?["subtopics"] as? [AnyHashable : Any] {
+    if let aDict = dict?["subtopics"] as? [Any] {
       for subtopicDict in aDict {
         if let subtopicDict = subtopicDict as? [AnyHashable : Any] {
           let sub = Topic(dict: subtopicDict)
