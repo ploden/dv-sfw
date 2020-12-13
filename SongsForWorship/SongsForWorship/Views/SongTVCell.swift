@@ -33,9 +33,9 @@ class SongTVCell: UITableViewCell {
         referenceLabel?.text = {
             if let ref = aSong?.reference {
                 if let _ = ref.rangeOfCharacter(from: CharacterSet(charactersIn: "-")) {
-                    return "Psalm \(ref)"
-                } else {
                     return "Ps. \(ref)"
+                } else {
+                    return "Psalm \(ref)"
                 }
             }
             return ""
