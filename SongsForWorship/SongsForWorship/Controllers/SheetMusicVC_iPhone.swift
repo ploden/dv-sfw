@@ -66,9 +66,12 @@ class SheetMusicVC_iPhone: UIViewController, UIScrollViewDelegate {
         } else if screenWidth == 736 {
             // iPhone 6 Plus
             containerViewHeight = 1176.0
+        } else if screenWidth == 926 {
+            // iPhone 12 Pro Max
+            containerViewHeight = 1246.0
         } else {
             // iPhone X
-            containerViewHeight = 1176.0
+            containerViewHeight = 1246.0
         }
         
         for counter in 0..<song.pdfPageNumbers.count {
@@ -119,13 +122,24 @@ class SheetMusicVC_iPhone: UIViewController, UIScrollViewDelegate {
                             aView.translateX = -235
                         }
                         aView.translateY = -312
+                    } else if screenWidth == 926 {
+                        // iPhone 12 Pro Max
+                        aView.scale = 2
+                        if orientation == .landscapeLeft {
+                            // smaller moves left
+                            aView.translateX = -230
+                        } else {
+                            // smaller moves left
+                            aView.translateX = -245
+                        }
+                        aView.translateY = -312
                     } else {
                         // iPhone X
                         aView.scale = 2
                         if orientation == .landscapeLeft {
-                            aView.translateX = -202
+                            aView.translateX = -200
                         } else {
-                            aView.translateX = -212
+                            aView.translateX = -216
                         }
                         aView.translateY = -312
                     }
@@ -160,13 +174,22 @@ class SheetMusicVC_iPhone: UIViewController, UIScrollViewDelegate {
                             aView.translateX = -230
                         }
                         aView.translateY = -312
+                    } else if screenWidth == 926 {
+                        // iPhone 12 Pro Max
+                        aView.scale = 2
+                        if orientation == .landscapeLeft {
+                            aView.translateX = -222
+                        } else {
+                            aView.translateX = -236
+                        }
+                        aView.translateY = -312
                     } else {
                         // iPhone X
                         aView.scale = 2
                         if orientation == .landscapeLeft {
                             aView.translateX = -192
                         } else {
-                            aView.translateX = -202
+                            aView.translateX = -206
                         }
                         aView.translateY = -312
                     }
