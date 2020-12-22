@@ -242,16 +242,6 @@ class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITa
         }
     }
     
-    /*
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if isSearching {
-            return 60.0
-        } else {
-            return 54.0
-        }
-    }
-     */
-    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if isSearching == false && isFavoritesSection(section) {
             return 44.0

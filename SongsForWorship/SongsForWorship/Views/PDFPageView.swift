@@ -41,6 +41,7 @@ private var k10InchLandscapeTranslateXLeft: CGFloat = -61.0
 private var k10InchLandscapeTranslateY: CGFloat = -68.0
 
 class PDFPageView: UIView {
+    var queue: OperationQueue?
     var scale: CGFloat = 0.0
     var translateX: CGFloat = 0.0
     var translateY: CGFloat = 0.0
@@ -48,23 +49,24 @@ class PDFPageView: UIView {
     var pdf: CGPDFDocument!
     private var imageRef: CGImage?
     private var imageRefRect: NSValue?
-
+    
     init() {
         super.init(frame: .zero)
-        self.backgroundColor = .white
+        self.backgroundColor = .systemBackground
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
-    func configure(_ pdfPageNumber: Int) {
+    func configure(_ pdfPageNumber: Int, queue: OperationQueue) {
+        self.queue = queue
         self.pdfPageNumber = pdfPageNumber
         imageRef = nil
         imageRefRect = nil
         setNeedsDisplay()
     }
-
+    
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
@@ -252,56 +254,72 @@ class PDFPageView: UIView {
         } else {
             let drawnRect = rect
             
-            PDFPageView.drawPageWithRect(drawnRect, currentScale: currentScale, currentTranslateX: currentTranslateX, currentTranslateY: currentTranslateY, pdf: pdf, pdfPageNumber: pdfPageNumber) { [weak self] drawnImage in
-                OperationQueue.main.addOperation({
+            queue?.addOperation {
+                let drawnImage = PDFPageView.drawPage(withRect: drawnRect, currentScale: currentScale, currentTranslateX: currentTranslateX, currentTranslateY: currentTranslateY, pdf: self.pdf, pdfPageNumber: self.pdfPageNumber, darkMode: false)
+                
+                OperationQueue.main.addOperation { [weak self] in
                     if let self = self {
                         self.imageRef = drawnImage
                         self.imageRefRect = NSValue(cgRect: drawnRect)
                         self.setNeedsDisplay()
                     }
-                })
+                }
             }
         }
     }
-
-    class func drawPageWithRect(_ rect: CGRect, currentScale: CGFloat, currentTranslateX: CGFloat, currentTranslateY: CGFloat, pdf: CGPDFDocument, pdfPageNumber: Int, completion: @escaping (CGImage?) -> Void) {
-        OperationQueue.main.addOperation {
-            var image: CGImage?
-            
-            autoreleasepool {
-                if let pageRef = pdf.page(at: pdfPageNumber) {
-                    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    
+    class func drawPage(withRect rect: CGRect, currentScale: CGFloat, currentTranslateX: CGFloat, currentTranslateY: CGFloat, pdf: CGPDFDocument, pdfPageNumber: Int, darkMode: Bool) -> CGImage? {
+        var image: CGImage?
+        
+        autoreleasepool {
+            if let pageRef = pdf.page(at: pdfPageNumber) {
+                let colorSpace = CGColorSpaceCreateDeviceRGB()
+                
+                let screenScale = UIScreen.main.scale
+                
+                let screenScaledWidth: CGFloat = rect.size.width * screenScale
+                let screenScaledHeight: CGFloat = rect.size.height * screenScale
+                
+                let context = CGContext(data: nil, width: Int(screenScaledWidth), height: Int(screenScaledHeight), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+                
+                if let context = context {
+                    context.translateBy(x: 0.0, y: screenScaledHeight)
                     
-                    let screenScale = UIScreen.main.scale
+                    context.scaleBy(x: 1.0, y: -1.0)
                     
-                    let screenScaledWidth: CGFloat = rect.size.width * screenScale
-                    let screenScaledHeight: CGFloat = rect.size.height * screenScale
+                    context.saveGState()
                     
-                    let context = CGContext(data: nil, width: Int(screenScaledWidth), height: Int(screenScaledHeight), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+                    context.scaleBy(x: currentScale * screenScale, y: currentScale * screenScale)
                     
-                    if let context = context {
-                        context.translateBy(x: 0.0, y: screenScaledHeight)
+                    let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
+                    
+                    let translateTransform = drawingTransform.translatedBy(x: currentTranslateX, y: currentTranslateY)
+                    
+                    context.concatenate(translateTransform)
+                    
+                    context.drawPDFPage(pageRef)
+                    
+                    image = context.makeImage()
+                    
+                    if darkMode {
+                        // Create a `CIImage` from the input image.
+                        let inputImage = CIImage(cgImage: image!)
                         
-                        context.scaleBy(x: 1.0, y: -1.0)
+                        // Create an inverting filter and set its input image.
+                        guard let filter = CIFilter(name: "CIColorInvert") else { return }
+                        filter.setValue(inputImage, forKey: kCIInputImageKey)
                         
-                        context.saveGState()
+                        // Get the output `CIImage` from the filter.
+                        guard let outputCIImage = filter.outputImage else { return }
                         
-                        context.scaleBy(x: currentScale * screenScale, y: currentScale * screenScale)
-                        
-                        let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
-                        
-                        let translateTransform = drawingTransform.translatedBy(x: currentTranslateX, y: currentTranslateY)
-                        
-                        context.concatenate(translateTransform)
-                        
-                        context.drawPDFPage(pageRef)
-                        
-                        image = context.makeImage()
+                        let context = CIContext(options: nil)
+                        image = context.createCGImage(outputCIImage, from: outputCIImage.extent)
                     }
                 }
-                completion(image)
             }
         }
+        
+        return image
     }
 
     class func psalm(forPdfPageNum pageNum: Int, allSongs: [AnyHashable]?) -> Song? {

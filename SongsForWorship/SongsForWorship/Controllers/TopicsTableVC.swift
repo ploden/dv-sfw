@@ -102,6 +102,12 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
                 {
                     let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
                     vc?.topic = redirectedTopic
+                    
+                    vc?.redirects = redirectedTopic.redirects.compactMap { aRedirect in
+                        let aRedirectedLetterTopic = lettersTopics?.first(where: { $0.letter == aRedirect.first })
+                        return aRedirectedLetterTopic?.topics.first(where: { $0.topic == redirect })
+                    }
+                    
                     vc?.songsManager = songsManager
                     if let vc = vc {
                         navigationController?.pushViewController(vc, animated: true)
@@ -113,6 +119,13 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
                 if isNotEmpty {
                     let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
                     vc?.topic = topic
+                    
+                    vc?.redirects = topic.redirects.compactMap { aRedirect in
+                        let aRedirectedLetterTopic = lettersTopics?.first(where: { $0.letter == aRedirect.first })
+                        let match = aRedirectedLetterTopic?.topics.first(where: { $0.topic == aRedirect })
+                        return match
+                    }
+                    
                     vc?.songsManager = songsManager
                     if let vc = vc {
                         navigationController?.pushViewController(vc, animated: true)

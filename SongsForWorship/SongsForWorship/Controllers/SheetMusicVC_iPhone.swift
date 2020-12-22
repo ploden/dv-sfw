@@ -10,6 +10,12 @@ import UIKit
 
 class SheetMusicVC_iPhone: UIViewController, UIScrollViewDelegate {
     var songsManager: SongsManager?
+    var queue: OperationQueue = {
+        var queue = OperationQueue()
+        queue.name = "Render pdf queue"
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
     var orientation: UIDeviceOrientation = .landscapeLeft
     override class var storyboardName: String {
         get {
@@ -23,6 +29,7 @@ class SheetMusicVC_iPhone: UIViewController, UIScrollViewDelegate {
             scrollView?.isPagingEnabled = true
             scrollView?.bounces = false
             scrollView?.contentInsetAdjustmentBehavior = .never
+            scrollView?.backgroundColor = .systemBackground
         }
     }
     var song: Song? {
@@ -195,7 +202,7 @@ class SheetMusicVC_iPhone: UIViewController, UIScrollViewDelegate {
                     }
                 }
                 
-                aView.configure(pageNumber)
+                aView.configure(pageNumber, queue: queue)
                 
                 aView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: containerViewHeight)
                 containerView.addSubview(aView)

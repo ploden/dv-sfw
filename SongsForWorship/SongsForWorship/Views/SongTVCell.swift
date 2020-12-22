@@ -17,7 +17,7 @@ class SongTVCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        numberLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .body)
+        numberLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .title2)
         
         referenceLabel?.font = Helper.defaultFont(withSize: 10.0, forTextStyle: .footnote)
         referenceLabel?.textColor = UIColor.gray

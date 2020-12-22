@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -23,8 +24,8 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                                <rect key="frame" x="0.0" y="21" width="47" height="21"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="7">
+                                <rect key="frame" x="0.0" y="21" width="41.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </label>
@@ -32,17 +33,17 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="3" firstAttribute="top" secondItem="UyA-p8-X8n" secondAttribute="top" id="6Uk-DG-HYz"/>
-                            <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="7" secondAttribute="trailing" id="A4A-Cz-NJ0"/>
                             <constraint firstItem="7" firstAttribute="top" secondItem="3" secondAttribute="bottom" id="Qvb-Ku-hJP"/>
                             <constraint firstAttribute="bottom" secondItem="7" secondAttribute="bottom" id="Yl7-Mf-gMp"/>
                             <constraint firstItem="7" firstAttribute="leading" secondItem="UyA-p8-X8n" secondAttribute="leading" id="ZOu-Hk-Y89"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="47" id="jJw-bu-B6g"/>
                             <constraint firstItem="3" firstAttribute="leading" secondItem="UyA-p8-X8n" secondAttribute="leading" id="qfj-eY-0Mr"/>
                             <constraint firstAttribute="trailing" secondItem="3" secondAttribute="trailing" id="r9w-t4-Ii0"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="7" secondAttribute="trailing" id="x5d-DV-Caw"/>
                         </constraints>
                     </view>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9">
-                        <rect key="frame" x="149" y="17" width="42" height="20"/>
+                        <rect key="frame" x="149.5" y="17" width="41.5" height="20"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </label>

@@ -9,10 +9,43 @@
 import UIKit
 
 class PlayRecordingTVCell: UITableViewCell {
-    @IBOutlet private weak var albumTitleLabel: UILabel?
+    @IBOutlet private weak var albumTitleLabel: UILabel? {
+        didSet {
+            albumTitleLabel?.font = {
+                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+                    if app.settings.shouldUseSystemFonts {
+                        return UIFont.preferredFont(forTextStyle: .title3)
+                    }
+                }
+                return UIFont.systemFont(ofSize: 14.0, weight: .light)
+            }()
+        }
+    }
     @IBOutlet private weak var artworkImageView: UIImageView?
-    @IBOutlet private weak var trackTitleLabel: UILabel?
-    @IBOutlet private weak var artistLabel: UILabel?
+    @IBOutlet private weak var trackTitleLabel: UILabel? {
+        didSet {
+            trackTitleLabel?.font = {
+                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+                    if app.settings.shouldUseSystemFonts {
+                        return UIFont.preferredFont(forTextStyle: .title2)
+                    }
+                }
+                return UIFont.systemFont(ofSize: 14.0, weight: .light)
+            }()
+        }
+    }
+    @IBOutlet private weak var artistLabel: UILabel? {
+        didSet {
+            artistLabel?.font = {
+                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+                    if app.settings.shouldUseSystemFonts {
+                        return UIFont.preferredFont(forTextStyle: .title3)
+                    }
+                }
+                return UIFont.systemFont(ofSize: 14.0, weight: .light)
+            }()
+        }
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()

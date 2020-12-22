@@ -254,28 +254,23 @@ class PlayerController {
             wasPlaying = true
             stopPlaying()
         }
-                
-        if let obj = playerTracks[track] {
-            currentTrack = track
             
-            if (obj is TuneDescription) {
-                let desc = obj as? TuneDescription
-                
-                if wasPlaying {
-                    /*
-                     For reasons that I do not understand, stopping one track and then immediately starting
-                     another does not work.
-                     */
-                    OperationQueue.main.addOperation({ [weak self] in
-                        self?.playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
-                    })
-                } else {
-                    playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
-                }
-            } else if (obj is MPMediaItem) {
-                let item = obj as? MPMediaItem
-                playMediaItem(item, atTime: time, withDelay: delay, rate: playbackRate)
+        currentTrack = track
+        
+        if let desc = playerTracks[track] as? TuneDescription {
+            if wasPlaying {
+                /*
+                 For reasons that I do not understand, stopping one track and then immediately starting
+                 another does not work.
+                 */
+                OperationQueue.main.addOperation({ [weak self] in
+                    self?.playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
+                })
+            } else {
+                playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
             }
+        } else if let item = playerTracks[track] as? MPMediaItem {
+            playMediaItem(item, atTime: time, withDelay: delay, rate: playbackRate)
         }
     }
     
@@ -324,15 +319,15 @@ class PlayerController {
         
         let col = MPMediaItemCollection(items: [mediaItem].compactMap { $0 })
         player?.setQueue(with: col)
-        
-        weak var weakSelf = self
-        
-        player?.prepareToPlay(completionHandler: { error in
+                
+        player?.prepareToPlay(completionHandler: { [weak self] error in
             if error == nil {
                 OperationQueue.main.addOperation({
-                    weakSelf?.player?.play()
-                    weakSelf?.delegate?.playbackStateDidChangeForPlayerController(weakSelf)
+                    self?.player?.play()
+                    self?.delegate?.playbackStateDidChangeForPlayerController(self)
                 })
+            } else {
+                print(error)
             }
         })
     }

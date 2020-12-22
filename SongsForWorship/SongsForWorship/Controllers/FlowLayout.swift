@@ -14,7 +14,7 @@ class FlowLayout: UICollectionViewFlowLayout {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         scrollDirection = UICollectionView.ScrollDirection.horizontal
-        currentSize = CGSize.zero
+        currentSize = CGSize.zero        
     }
     
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {

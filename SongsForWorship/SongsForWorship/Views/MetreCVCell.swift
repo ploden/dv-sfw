@@ -23,7 +23,7 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
                 return nil
             }()
             metreLabel?.attributedText = song?.attributedMetreText()
-            composerButton?.setTitle(song?.tune?.composer?.displayName, for: .normal)
+            composerLabel?.text = song?.tune?.composer?.displayName
             
             if
                 let meter = song?.tune?.meter,
@@ -49,15 +49,15 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
             tuneButton?.titleLabel?.font = metreLabel?.font
         }
     }
-    @IBOutlet weak var composerButton: UIButton? {
+    @IBOutlet weak var composerLabel: UILabel? {
         didSet {
-            composerButton?.titleLabel?.font = metreLabel?.font
+            composerLabel?.font = metreLabel?.font
         }
     }
     @IBOutlet weak var metreLabel: UILabel? {
         didSet {
             metreLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
-            composerButton?.titleLabel?.font = metreLabel?.font
+            composerLabel?.font = metreLabel?.font
             tuneButton?.titleLabel?.font = metreLabel?.font
             meterButton?.titleLabel?.font = metreLabel?.font
         }

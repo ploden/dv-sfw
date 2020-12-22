@@ -28,6 +28,22 @@ class Helper: NSObject {
         return UIFont.systemFont(ofSize: size)
     }
 
+    class func defaultBoldFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            if app.settings.shouldUseSystemFonts {
+                let font = UIFont.preferredFont(forTextStyle: textStyle)
+                return UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: 0)
+            } else if
+                let fontName = app.getAppConfig()["Default bold font"] as? String,
+                let font = UIFont(name: fontName, size: size)
+            {
+                return font
+            }
+        }
+        
+        return UIFont.boldSystemFont(ofSize: size)
+    }
+    
     class func nameWithNamespace(name: String) -> String {
         return name
     }

@@ -11,11 +11,14 @@ import UIKit
 
 class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     var topic: Topic!
+    var redirects: [Topic] = [Topic]()
     var songsManager: SongsManager!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 50.0
         tableView.register(TopicTVCell.self, forCellReuseIdentifier: "TopicTVCell")
         tableView.register(UINib(nibName: "SongTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SongTVCell")
 
@@ -40,7 +43,7 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        let hasRedirects = topic.redirects.count > 0
+        let hasRedirects = redirects.count > 0
         let hasSubtopics = topic.subtopics.count > 0
         
         if hasSubtopics {
@@ -52,7 +55,7 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isRedirectsSection(for: section) {
-            return topic.redirects.count
+            return redirects.count
         } else if topic.subtopics.count > 0 {
             let subtopic = topic.subtopics[section]
             return subtopic.songNumbers.count
@@ -76,7 +79,7 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
         if isRedirectsSection(for: indexPath.section) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TopicTVCell", for: indexPath) as? TopicTVCell
 
-            cell?.textLabel?.text = topic.redirects[indexPath.row].capitalized(with: NSLocale.current)
+            cell?.textLabel?.text = redirects[indexPath.row].topic.capitalized(with: NSLocale.current)
             
             return cell!
         } else {
@@ -90,7 +93,16 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let song = self.song(for: indexPath) {
+        if isRedirectsSection(for: indexPath.section) {
+            let redirect = redirects[indexPath.row]
+            
+            let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
+            vc?.topic = redirect
+            vc?.songsManager = songsManager
+            if let vc = vc {
+                navigationController?.pushViewController(vc, animated: true)
+            }
+        } else if let song = self.song(for: indexPath) {
             songsManager.setcurrentSong(song, songsToDisplay: songsToDisplay(for: indexPath))
             
             if UIDevice.current.userInterfaceIdiom != .pad {
@@ -103,14 +115,6 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
             } else {
             }
         }
-    }
-    
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50.0
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 54.0
     }
     
     // MARK: - Helpers

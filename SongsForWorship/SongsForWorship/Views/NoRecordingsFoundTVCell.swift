@@ -10,5 +10,16 @@ import Foundation
 import UIKit
 
 class NoRecordingsFoundTVCell: UITableViewCell {
-    @IBOutlet weak var messageLabel: UILabel?
+    @IBOutlet weak var messageLabel: UILabel? {
+        didSet {
+            messageLabel?.font = {
+                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+                    if app.settings.shouldUseSystemFonts {
+                        return UIFont.preferredFont(forTextStyle: .body)
+                    }
+                }
+                return UIFont.systemFont(ofSize: 14.0, weight: .light)
+            }()
+        }
+    }
 }

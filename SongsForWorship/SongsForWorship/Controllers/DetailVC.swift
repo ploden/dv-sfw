@@ -12,6 +12,12 @@ private var kIsFavoriteText = "\u{2605}"
 private var kIsNotFavoriteText = "\u{2606}"
 
 class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, PsalmObserver {
+    var queue: OperationQueue = {
+        var queue = OperationQueue()
+        queue.name = "Render pdf queue"
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
     var songsManager: SongsManager?
     var tunesButtonImage: UIImage?
     weak var delegate: DetailVCDelegate?
@@ -145,12 +151,16 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
         {
             pageNum = PDFPageView.pageNumberForPsalm(current, allSongs: songsToDisplay, idx: nil)
             
-            if collectionView.numberOfItems(inSection: 0) == 1 || songsToDisplay.count != collectionView.numberOfItems(inSection: 0) {
+            //if collectionView.numberOfItems(inSection: 0) == 1 || songsToDisplay.count != collectionView.numberOfItems(inSection: 0) {
+            if collectionView.numberOfItems(inSection: 0) == 1 {
                 collectionView.reloadData()
             }
             
             if pageNum < collectionView.numberOfItems(inSection: 0) {
-                collectionView.scrollToItem(at: IndexPath(item: pageNum, section: 0), at: [], animated: false)
+                print("pageNum: \(pageNum)")
+                let item = IndexPath(item: pageNum, section: 0)
+                collectionView.layoutIfNeeded()
+                collectionView.scrollToItem(at: item, at: .centeredHorizontally, animated: false)
             }
         }
     }
@@ -237,7 +247,9 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     // MARK: - collection view
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if (songsManager?.currentSong) != nil {
-            return PDFPageView.numberOfPages(songsToDisplay())
+            let numberOfPages = PDFPageView.numberOfPages(songsToDisplay())
+            print("numberOfPages: \(numberOfPages)")
+            return numberOfPages
         } else {
             return 1
         }
@@ -248,9 +260,10 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
             let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "LogoCVCell", for: indexPath) as? LogoCVCell
             return cvc!
         } else {
+            print("item: \(indexPath.item)")
             if
                 let songsToDisplay = songsToDisplay(),
-                let song = PDFPageView.songForPageNumber(indexPath.row, allSongs: songsToDisplay)
+                let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay)
             {
                 if (song.isTuneCopyrighted) {
                     let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "MetreCVCell", for: indexPath) as? MetreCVCell
@@ -259,7 +272,7 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
                 } else {
                     let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "SheetMusicCVCell", for: indexPath) as? SheetMusicCVCell
                     if let songsManager = songsManager {
-                        cvc?.configureWithPageNumber(indexPath.item, allSongs: songsToDisplay, songsManager: songsManager)
+                        cvc?.configureWithPageNumber(indexPath.item, allSongs: songsToDisplay, songsManager: songsManager, queue: queue)
                     }
                     return cvc!
                 }

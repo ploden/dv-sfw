@@ -51,6 +51,9 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        indexTableView?.reloadData()
+        
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)
         }
@@ -265,7 +268,7 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
         if indexPath.section == 0 {
             let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
             generic?.textLabel?.textColor = UIColor.label
-            generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
+            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
             generic?.textLabel?.text = songsManager.songCollections.compactMap { $0.displayName } .joined(separator: " & ")
             generic?.textLabel?.highlightedTextColor = UIColor.white
             cell = generic
@@ -273,7 +276,7 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
             let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
             generic?.textLabel?.textColor = UIColor.label
             generic?.textLabel?.numberOfLines = 2
-            generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
+            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
             
             var cellText: String?
             
@@ -293,7 +296,7 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
             }
             
             generic?.textLabel?.text = cellText
-            generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
+            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
             generic?.textLabel?.highlightedTextColor = UIColor.white
             cell = generic
         } else if indexPath.section == TableViewSection._Feedback.rawValue {
@@ -313,8 +316,8 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
                 }
                 return nil
             }()
-            
-            generic?.textLabel?.font = generic?.textLabel?.font.withSize(genericCellFontSize)
+                        
+            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
             generic?.textLabel?.highlightedTextColor = UIColor.white
             cell = generic
         }

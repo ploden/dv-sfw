@@ -10,6 +10,14 @@ import Foundation
 import UIKit
 
 class FAQTVCell: UITableViewCell {
-    @IBOutlet weak var questionLabel: UILabel?
-    @IBOutlet weak var answerLabel: UILabel?
+    @IBOutlet weak var questionLabel: UILabel? {
+        didSet {
+            questionLabel?.font = Helper.defaultBoldFont(withSize: 14.0, forTextStyle: .body)
+        }
+    }
+    @IBOutlet weak var answerLabel: UILabel? {
+        didSet {
+            answerLabel?.font = Helper.defaultFont(withSize: 14.0, forTextStyle: .body)
+        }
+    }
 }
