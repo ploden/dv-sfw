@@ -253,9 +253,10 @@ class PDFPageView: UIView {
             context?.restoreGState()
         } else {
             let drawnRect = rect
-            
+            let darkMode = self.traitCollection.userInterfaceStyle == .dark
+
             queue?.addOperation {
-                let drawnImage = PDFPageView.drawPage(withRect: drawnRect, currentScale: currentScale, currentTranslateX: currentTranslateX, currentTranslateY: currentTranslateY, pdf: self.pdf, pdfPageNumber: self.pdfPageNumber, darkMode: false)
+                let drawnImage = PDFPageView.drawPage(withRect: drawnRect, currentScale: currentScale, currentTranslateX: currentTranslateX, currentTranslateY: currentTranslateY, pdf: self.pdf, pdfPageNumber: self.pdfPageNumber, darkMode: darkMode)
                 
                 OperationQueue.main.addOperation { [weak self] in
                     if let self = self {
