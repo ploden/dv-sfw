@@ -8,6 +8,8 @@
 
 import UIKit
 import QuartzCore
+import Accelerate
+import simd
 
 private var kPortraitScale: CGFloat = 1.50
 private var kPortraitTranslateX: CGFloat = -130.0
@@ -39,6 +41,10 @@ private var k10InchLandscapeScale: CGFloat = 1.20
 private var k10InchLandscapeTranslateXRight: CGFloat = -70.0
 private var k10InchLandscapeTranslateXLeft: CGFloat = -61.0
 private var k10InchLandscapeTranslateY: CGFloat = -68.0
+
+enum PDFPageOrientation {
+    case left, right
+}
 
 class PDFPageView: UIView {
     var queue: OperationQueue?
@@ -236,6 +242,11 @@ class PDFPageView: UIView {
                 assert(false, "PDFPageView: drawRect: insufficient info to draw page")
                 return
             }
+            
+            let currentScaleXY = PDFPageView.calculateScaleXY(forRect: rect, orientation: UIDevice.current.orientation, pageOrientation: pdfPageNumber % 2 == 1 ? PDFPageOrientation.right : PDFPageOrientation.left)
+            currentScale = currentScaleXY.scale
+            currentTranslateX = currentScaleXY.x
+            currentTranslateY = currentScaleXY.y
         } else {
             currentScale = scale
             currentTranslateX = translateX
@@ -405,5 +416,167 @@ class PDFPageView: UIView {
         }
 
         return NSNotFound
+    }
+    
+    class func calculateVandermonde(points: [simd_double2]) -> [[Double]] {
+        let exponents = (0 ..< points.count).map {
+            return Double($0)
+        }
+
+        let vandermonde: [[Double]] = points.map { point in
+            let bases = [Double](repeating: point.x,
+                                 count: points.count)
+            return vForce.pow(bases: bases,
+                              exponents: exponents)
+        }
+        
+        return vandermonde
+    }
+    
+    class func calculateScaleXY(forRect rect: CGRect, orientation: UIDeviceOrientation, pageOrientation: PDFPageOrientation) -> ScaleXY {
+        let dicts: [[String:Any]]? = {
+            let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
+            let dirName = targetName.lowercased() + "-resources"
+            
+            if let path = Bundle.main.path(forResource: "pfw_pdf_rendering", ofType: "plist", inDirectory: dirName) {
+                let plistXML = FileManager.default.contents(atPath: path)!
+                do {//convert the data to a dictionary and handle errors.
+                    let plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainers, format: .none) as! [[String:Any]]
+                    return plistData
+                } catch {
+                    print("Error reading plist: \(error)")
+                }
+            }
+            return nil
+        }()
+        
+        let orientationString = orientation == .portrait ? "Portrait" : "Landscape"
+        let pageOrientationString = pageOrientation == .right ? "Right" : "Left"
+
+        let ipads = dicts?.filter { ($0["DeviceType"] as? String) == "iPad" && ($0["DeviceOrientation"] as? String) == orientationString && ($0["PageOrientation"] as? String) == pageOrientationString }
+        
+        let first = ipads?.first { $0["ScreenWidth"] as? CGFloat == rect.width }
+        
+        if
+            let first = first,
+            let s = first["Scale"] as? NSNumber,
+            let x = first["TranslateX"] as? NSNumber,
+            let y = first["TranslateY"] as? NSNumber
+        {
+            return ScaleXY(scale: CGFloat(s.floatValue), x: CGFloat(x.floatValue), y: CGFloat(y.floatValue))
+        } else if let ipads = ipads {
+            var scalePoints = [simd_double2]()
+            var xPoints = [simd_double2]()
+            var yPoints = [simd_double2]()
+            
+            for pad in ipads {
+                if
+                    let width = pad["ScreenWidth"] as? NSNumber,
+                    let s = pad["Scale"] as? NSNumber,
+                    let x = pad["TranslateX"] as? NSNumber,
+                    let y = pad["TranslateY"] as? NSNumber
+                {
+                    scalePoints.append(simd_double2(width.doubleValue, s.doubleValue))
+                    xPoints.append(simd_double2(width.doubleValue, x.doubleValue))
+                    yPoints.append(simd_double2(width.doubleValue, y.doubleValue))
+                }
+            }
+            
+            let scaleCoefficients = PDFPageView.calculateCoefficients(points: Set(scalePoints).map { $0 })
+            let xCoefficients = PDFPageView.calculateCoefficients(points: Set(xPoints).map { $0 })
+            let yCoefficients = PDFPageView.calculateCoefficients(points: Set(yPoints).map { $0 })
+
+            let variables: [Double] = [Double(rect.width)]
+
+            let scaleResult = vDSP.evaluatePolynomial(usingCoefficients: scaleCoefficients, withVariables: variables).first!
+            let xResult = vDSP.evaluatePolynomial(usingCoefficients: xCoefficients, withVariables: variables).first!
+            let yResult = vDSP.evaluatePolynomial(usingCoefficients: yCoefficients, withVariables: variables).first!
+
+            return ScaleXY(scale: CGFloat(scaleResult), x: CGFloat(xResult), y: CGFloat(yResult))
+        }
+        
+        return ScaleXY(scale: 0.0, x: 0.0, y: 0.0)
+    }
+    
+    static func calculateCoefficients(points: [simd_double2]) -> [Double] {
+        let coefficients: [Double] = {
+            let vandermonde = PDFPageView.calculateVandermonde(points: points)
+            var a = vandermonde.flatMap{ $0 }
+            var b = points.map{ $0.y }
+            
+            do {
+                try PDFPageView.solveLinearSystem(a: &a,
+                                                     a_rowCount: points.count,
+                                                     a_columnCount: points.count,
+                                                     b: &b,
+                                                     b_count: points.count)
+            } catch {
+                fatalError("Unable to solve linear system.")
+            }
+            
+            vDSP.reverse(&b)
+            
+            return b
+        }()
+        
+        return coefficients
+    }
+    
+    static func solveLinearSystem(a: inout [Double],
+                                  a_rowCount: Int, a_columnCount: Int,
+                                  b: inout [Double],
+                                  b_count: Int) throws {
+        
+        var info = Int32(0)
+        
+        // 1: Specify transpose.
+        var trans = Int8("T".utf8.first!)
+        
+        // 2: Define constants.
+        var m = __CLPK_integer(a_rowCount)
+        var n = __CLPK_integer(a_columnCount)
+        var lda = __CLPK_integer(a_rowCount)
+        var nrhs = __CLPK_integer(1) // assumes `b` is a column matrix
+        var ldb = __CLPK_integer(b_count)
+        
+        // 3: Workspace query.
+        var workDimension = Double(0)
+        var minusOne = Int32(-1)
+        
+        dgels_(&trans, &m, &n,
+               &nrhs,
+               &a, &lda,
+               &b, &ldb,
+               &workDimension, &minusOne,
+               &info)
+        
+        if info != 0 {
+            throw LAPACKError.internalError
+        }
+        
+        // 4: Create workspace.
+        var lwork = Int32(workDimension)
+        var workspace = [Double](repeating: 0,
+                                 count: Int(workDimension))
+        
+        // 5: Solve linear system.
+        dgels_(&trans, &m, &n,
+               &nrhs,
+               &a, &lda,
+               &b, &ldb,
+               &workspace, &lwork,
+               &info)
+        
+        if info < 0 {
+            throw LAPACKError.parameterHasIllegalValue(parameterIndex: abs(Int(info)))
+        } else if info > 0 {
+            throw LAPACKError.diagonalElementOfTriangularFactorIsZero(index: Int(info))
+        }
+    }
+
+    public enum LAPACKError: Swift.Error {
+        case internalError
+        case parameterHasIllegalValue(parameterIndex: Int)
+        case diagonalElementOfTriangularFactorIsZero(index: Int)
     }
 }
