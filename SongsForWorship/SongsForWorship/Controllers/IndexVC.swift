@@ -85,6 +85,29 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
     }
     
     // MARK: - Helper methods
+    
+    private func createEmailUrl(to: String, subject: String, body: String) -> URL? {
+        let subjectEncoded = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let bodyEncoded = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        
+        let gmailUrl = URL(string: "googlegmail://co?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+        let outlookUrl = URL(string: "ms-outlook://compose?to=\(to)&subject=\(subjectEncoded)")
+        let yahooMail = URL(string: "ymail://mail/compose?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+        let sparkUrl = URL(string: "readdle-spark://compose?recipient=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+        
+        if let gmailUrl = gmailUrl, UIApplication.shared.canOpenURL(gmailUrl) {
+            return gmailUrl
+        } else if let outlookUrl = outlookUrl, UIApplication.shared.canOpenURL(outlookUrl) {
+            return outlookUrl
+        } else if let yahooMail = yahooMail, UIApplication.shared.canOpenURL(yahooMail) {
+            return yahooMail
+        } else if let sparkUrl = sparkUrl, UIApplication.shared.canOpenURL(sparkUrl) {
+            return sparkUrl
+        } else {
+            return nil
+        }
+    }
+    
     func detailVC() -> DetailVC? {
         if let vcs = splitViewController?.viewControllers {
             for vc in vcs {
@@ -133,22 +156,24 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
         if let rowIndex = FeedbackSectionRow(rawValue: index) {
             switch rowIndex {
             case .feedback:
+                let recipient = "contact@deovolentellc.com"
+                let subject: String = {
+                    let appName = Bundle.main.appName
+                    let version = Bundle.main.version
+                    return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
+                }()
+                
                 if MFMailComposeViewController.canSendMail() {
-                    let subjectString: String = {
-                        let appName = Bundle.main.appName
-                        let version = Bundle.main.version
-                        
-                        return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
-                    }()
-                    
                     let composeController = MFMailComposeViewController()
                     composeController.mailComposeDelegate = self
-                    composeController.setToRecipients(["contact@deovolentellc.com"])
-                    composeController.setSubject(subjectString)
+                    composeController.setToRecipients([recipient])
+                    composeController.setSubject(subject)
                     
                     present(composeController, animated: true)
+                } else if let emailUrl = createEmailUrl(to: recipient, subject: subject, body: "") {
+                    UIApplication.shared.open(emailUrl)
                 } else {
-                    let alertController = UIAlertController(title: "Cannot Send Mail", message: "You need to set up an email account in order to send a support request email.", preferredStyle: .alert)
+                    let alertController = UIAlertController(title: "Cannot Send Mail", message: "Please set up an email account in order to send a support request email.", preferredStyle: .alert)
                     
                     alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                     alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
