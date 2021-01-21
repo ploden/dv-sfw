@@ -57,9 +57,11 @@ class TextViewVC: UIViewController, HasFileInfo {
         if let markdownString = try? String(contentsOf: url, encoding: String.Encoding.utf8) {
             let down = Down(markdownString: markdownString)
             
-            let attributedString = try? down.toAttributedString()
-            
-            return attributedString
+            if let attributedString = try? down.toAttributedString() {
+                let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
+                mutableAttributedString.addAttribute(.foregroundColor, value: UIColor.label, range: NSRange(location: 0, length: mutableAttributedString.length))
+                return mutableAttributedString
+            }                        
         }
         return nil
     }
