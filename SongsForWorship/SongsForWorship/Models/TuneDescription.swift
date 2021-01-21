@@ -8,8 +8,21 @@
 
 import Foundation
 
-struct TuneDescription {
+public enum TuneDescriptionMediaType {
+    case midi, mp3
+}
+
+public class TuneDescription: NSObject {
     let length: String?
     let title: String
     let url: URL
+    let mediaType: TuneDescriptionMediaType
+    
+    public init(length: String?, title: String, url: URL, mediaType: TuneDescriptionMediaType) {
+        self.length = length
+        self.title = title
+        self.url = url
+        self.mediaType = mediaType
+        super.init()
+    }
 }

@@ -7,15 +7,9 @@
 //
 
 import Foundation
+import UIKit
 
-@objc public protocol TunesLoaderHelpers {
+@objc public protocol TunesLoader {
     @objc dynamic static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
-}
-
-extension TunesLoader: TunesLoaderHelpers {
-    
-    @objc public dynamic static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
-        return self.defaultFilename(forTuneInfo: tuneInfo, song: song)
-    }
-
+    @objc dynamic static func loadTunes(forSong aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void)
 }

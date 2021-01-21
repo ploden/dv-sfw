@@ -9,33 +9,7 @@
 import UIKit
 import AVFoundation
 
-public class TunesLoader {
-    
-    class func loadTunes(forSong aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void) {
-        var tuneDescriptions: [TuneDescription] = []
-              
-        if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-            let mainDirectory = app.getAppConfig()["Directory"] as? String
-        {
-            for tuneInfo in collection.tuneInfos {
-                if let filename = TunesLoader.filename(forTuneInfo: tuneInfo, song: aSong) {
-                    let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
-                    let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.fileType, inDirectory: subDirectory)
-                    
-                    if let filePath = filePath {
-                        let fileUrl = URL(fileURLWithPath: filePath)
-                        let desc = TuneDescription(length: nil, title: tuneInfo.title, url: fileUrl)
-                        tuneDescriptions.append(desc)
-                    } else {
-                        print("Tunes file not found: \(filename)")
-                    }
-                }
-            }
-        }
-        
-        completion(nil, tuneDescriptions)
-    }
+public class BaseTunesLoader {
     
     class func lengthString(forDuration aDuration: TimeInterval) -> String {
         let length = aDuration
@@ -93,4 +67,38 @@ public class TunesLoader {
         
         return filename
     }
+}
+
+extension BaseTunesLoader: TunesLoader {
+    
+    @objc public dynamic static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
+        return self.defaultFilename(forTuneInfo: tuneInfo, song: song)
+    }
+
+    @objc public dynamic static func loadTunes(forSong aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void) {
+        var tuneDescriptions: [TuneDescription] = []
+              
+        if
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let mainDirectory = app.getAppConfig()["Directory"] as? String
+        {
+            for tuneInfo in collection.tuneInfos {
+                if let filename = BaseTunesLoader.filename(forTuneInfo: tuneInfo, song: aSong) {
+                    let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
+                    let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.fileType, inDirectory: subDirectory)
+                    
+                    if let filePath = filePath {
+                        let fileUrl = URL(fileURLWithPath: filePath)
+                        let desc = TuneDescription(length: nil, title: tuneInfo.title, url: fileUrl, mediaType: .midi)
+                        tuneDescriptions.append(desc)
+                    } else {
+                        print("Tunes file not found: \(filename)")
+                    }
+                }
+            }
+        }
+        
+        completion(nil, tuneDescriptions)
+    }
+    
 }
