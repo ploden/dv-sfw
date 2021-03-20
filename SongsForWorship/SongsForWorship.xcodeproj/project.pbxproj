@@ -12,11 +12,16 @@
 		8D35567724F122A200AC6C9A /* Tune.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D35567624F122A200AC6C9A /* Tune.swift */; };
 		8D3DB3F1251322950027EC66 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3DB3F0251322950027EC66 /* Settings.swift */; };
 		8D3DB3F3251325310027EC66 /* SoundFond.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3DB3F2251325310027EC66 /* SoundFond.swift */; };
+		8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42245D26064F7800F7EB99 /* IndexRow.swift */; };
+		8D422463260659F600F7EB99 /* IndexSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D422462260659F600F7EB99 /* IndexSection.swift */; };
+		8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42246726065AD300F7EB99 /* AppConfig.swift */; };
 		8D50B97424F4C7F600AFDC29 /* Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D50B97324F4C7F600AFDC29 /* Composer.swift */; };
 		8D50B97724F583E000AFDC29 /* TunesLoaderHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D50B97624F583E000AFDC29 /* TunesLoaderHelpers.swift */; };
 		8D72DC1A24EC55B700A8F7AA /* SongCollectionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D72DC1924EC55B700A8F7AA /* SongCollectionFactory.swift */; };
 		8D7DABE324EE391600FD7D91 /* SongTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D7DABE124EE391600FD7D91 /* SongTVCell.xib */; };
 		8D7DABE424EE391600FD7D91 /* SongTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7DABE224EE391600FD7D91 /* SongTVCell.swift */; };
+		8D8D9B3225A50B1800828D0E /* PDFRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */; };
+		8D8D9B3C25A50BDA00828D0E /* SongsForWorshipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8D9B3B25A50BDA00828D0E /* SongsForWorshipUITests.swift */; };
 		8D99C18124CED392005B34F2 /* SongsForWorship.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D99C17724CED391005B34F2 /* SongsForWorship.framework */; };
 		8D99C18624CED392005B34F2 /* SongsForWorshipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C18524CED392005B34F2 /* SongsForWorshipTests.swift */; };
 		8D99C18824CED392005B34F2 /* SongsForWorship.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D99C17A24CED391005B34F2 /* SongsForWorship.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,7 +43,7 @@
 		8D99C1F824CED40A005B34F2 /* SongCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1A824CED40A005B34F2 /* SongCollection.swift */; };
 		8D99C1F924CED40A005B34F2 /* AVMIDIPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1A924CED40A005B34F2 /* AVMIDIPlayer.swift */; };
 		8D99C1FA24CED40A005B34F2 /* FAQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AA24CED40A005B34F2 /* FAQ.swift */; };
-		8D99C1FB24CED40A005B34F2 /* TunesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AB24CED40A005B34F2 /* TunesLoader.swift */; };
+		8D99C1FB24CED40A005B34F2 /* BaseTunesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */; };
 		8D99C1FC24CED40A005B34F2 /* Topic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AC24CED40A005B34F2 /* Topic.swift */; };
 		8D99C1FE24CED40A005B34F2 /* DetailVCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AE24CED40A005B34F2 /* DetailVCDelegate.swift */; };
 		8D99C1FF24CED40A005B34F2 /* NoRecordingsFoundTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1B024CED40A005B34F2 /* NoRecordingsFoundTVCell.swift */; };
@@ -115,11 +120,18 @@
 		8D35567624F122A200AC6C9A /* Tune.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tune.swift; sourceTree = "<group>"; };
 		8D3DB3F0251322950027EC66 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		8D3DB3F2251325310027EC66 /* SoundFond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFond.swift; sourceTree = "<group>"; };
+		8D42245D26064F7800F7EB99 /* IndexRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRow.swift; sourceTree = "<group>"; };
+		8D422462260659F600F7EB99 /* IndexSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexSection.swift; sourceTree = "<group>"; };
+		8D42246726065AD300F7EB99 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		8D50B97324F4C7F600AFDC29 /* Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composer.swift; sourceTree = "<group>"; };
 		8D50B97624F583E000AFDC29 /* TunesLoaderHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunesLoaderHelpers.swift; sourceTree = "<group>"; };
 		8D72DC1924EC55B700A8F7AA /* SongCollectionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCollectionFactory.swift; sourceTree = "<group>"; };
 		8D7DABE124EE391600FD7D91 /* SongTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongTVCell.xib; sourceTree = "<group>"; };
 		8D7DABE224EE391600FD7D91 /* SongTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongTVCell.swift; sourceTree = "<group>"; };
+		8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingTests.swift; sourceTree = "<group>"; };
+		8D8D9B3925A50BDA00828D0E /* SongsForWorshipUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SongsForWorshipUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D8D9B3B25A50BDA00828D0E /* SongsForWorshipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsForWorshipUITests.swift; sourceTree = "<group>"; };
+		8D8D9B3D25A50BDA00828D0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D99C17724CED391005B34F2 /* SongsForWorship.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SongsForWorship.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D99C17A24CED391005B34F2 /* SongsForWorship.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SongsForWorship.h; sourceTree = "<group>"; };
 		8D99C17B24CED391005B34F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -144,7 +156,7 @@
 		8D99C1A824CED40A005B34F2 /* SongCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongCollection.swift; sourceTree = "<group>"; };
 		8D99C1A924CED40A005B34F2 /* AVMIDIPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVMIDIPlayer.swift; sourceTree = "<group>"; };
 		8D99C1AA24CED40A005B34F2 /* FAQ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FAQ.swift; sourceTree = "<group>"; };
-		8D99C1AB24CED40A005B34F2 /* TunesLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TunesLoader.swift; sourceTree = "<group>"; };
+		8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTunesLoader.swift; sourceTree = "<group>"; };
 		8D99C1AC24CED40A005B34F2 /* Topic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Topic.swift; sourceTree = "<group>"; };
 		8D99C1AE24CED40A005B34F2 /* DetailVCDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailVCDelegate.swift; sourceTree = "<group>"; };
 		8D99C1B024CED40A005B34F2 /* NoRecordingsFoundTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoRecordingsFoundTVCell.swift; sourceTree = "<group>"; };
@@ -205,6 +217,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8D8D9B3625A50BDA00828D0E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D99C17424CED391005B34F2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -224,11 +243,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8D8D9B3A25A50BDA00828D0E /* SongsForWorshipUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8D8D9B3B25A50BDA00828D0E /* SongsForWorshipUITests.swift */,
+				8D8D9B3D25A50BDA00828D0E /* Info.plist */,
+			);
+			path = SongsForWorshipUITests;
+			sourceTree = "<group>";
+		};
 		8D99C16D24CED391005B34F2 = {
 			isa = PBXGroup;
 			children = (
 				8D99C17924CED391005B34F2 /* SongsForWorship */,
 				8D99C18424CED392005B34F2 /* SongsForWorshipTests */,
+				8D8D9B3A25A50BDA00828D0E /* SongsForWorshipUITests */,
 				8D99C17824CED391005B34F2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -238,6 +267,7 @@
 			children = (
 				8D99C17724CED391005B34F2 /* SongsForWorship.framework */,
 				8D99C18024CED392005B34F2 /* SongsForWorshipTests.xctest */,
+				8D8D9B3925A50BDA00828D0E /* SongsForWorshipUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -270,6 +300,7 @@
 			children = (
 				8D99C18524CED392005B34F2 /* SongsForWorshipTests.swift */,
 				8D99C18724CED392005B34F2 /* Info.plist */,
+				8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */,
 			);
 			path = SongsForWorshipTests;
 			sourceTree = "<group>";
@@ -324,12 +355,15 @@
 				8D99C1AC24CED40A005B34F2 /* Topic.swift */,
 				8D35567624F122A200AC6C9A /* Tune.swift */,
 				8D99C1A424CED40A005B34F2 /* TuneDescription.swift */,
-				8D99C1AB24CED40A005B34F2 /* TunesLoader.swift */,
+				8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */,
 				8D50B97324F4C7F600AFDC29 /* Composer.swift */,
 				8D50B97624F583E000AFDC29 /* TunesLoaderHelpers.swift */,
 				8D3DB3F0251322950027EC66 /* Settings.swift */,
 				8D3DB3F2251325310027EC66 /* SoundFond.swift */,
 				8D09B672259AFBBD002558A1 /* ScaleXY.swift */,
+				8D42245D26064F7800F7EB99 /* IndexRow.swift */,
+				8D422462260659F600F7EB99 /* IndexSection.swift */,
+				8D42246726065AD300F7EB99 /* AppConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -416,6 +450,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		8D8D9B3825A50BDA00828D0E /* SongsForWorshipUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D8D9B3E25A50BDA00828D0E /* Build configuration list for PBXNativeTarget "SongsForWorshipUITests" */;
+			buildPhases = (
+				8D8D9B3525A50BDA00828D0E /* Sources */,
+				8D8D9B3625A50BDA00828D0E /* Frameworks */,
+				8D8D9B3725A50BDA00828D0E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SongsForWorshipUITests;
+			productName = SongsForWorshipUITests;
+			productReference = 8D8D9B3925A50BDA00828D0E /* SongsForWorshipUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		8D99C17624CED391005B34F2 /* SongsForWorship */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8D99C18B24CED392005B34F2 /* Build configuration list for PBXNativeTarget "SongsForWorship" */;
@@ -461,10 +512,13 @@
 		8D99C16E24CED391005B34F2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1160;
+				LastSwiftUpdateCheck = 1220;
 				LastUpgradeCheck = 1160;
 				ORGANIZATIONNAME = "Deo Volente, LLC";
 				TargetAttributes = {
+					8D8D9B3825A50BDA00828D0E = {
+						CreatedOnToolsVersion = 12.2;
+					};
 					8D99C17624CED391005B34F2 = {
 						CreatedOnToolsVersion = 11.6;
 						LastSwiftMigration = 1160;
@@ -492,11 +546,19 @@
 			targets = (
 				8D99C17624CED391005B34F2 /* SongsForWorship */,
 				8D99C17F24CED392005B34F2 /* SongsForWorshipTests */,
+				8D8D9B3825A50BDA00828D0E /* SongsForWorshipUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8D8D9B3725A50BDA00828D0E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D99C17524CED391005B34F2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -535,6 +597,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8D8D9B3525A50BDA00828D0E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D8D9B3C25A50BDA00828D0E /* SongsForWorshipUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D99C17324CED391005B34F2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -546,6 +616,7 @@
 				8D99C22B24CED40A005B34F2 /* TopicDetailTableVC.swift in Sources */,
 				8D50B97424F4C7F600AFDC29 /* Composer.swift in Sources */,
 				8D99C21B24CED40A005B34F2 /* MetreCVCell.swift in Sources */,
+				8D422463260659F600F7EB99 /* IndexSection.swift in Sources */,
 				8D99C22524CED40A005B34F2 /* TopicsTableVC.swift in Sources */,
 				8D99C22824CED40A005B34F2 /* FAQTableVC.swift in Sources */,
 				8D99C20D24CED40A005B34F2 /* TuneCell.swift in Sources */,
@@ -562,6 +633,7 @@
 				8D99C21924CED40A005B34F2 /* TunesHeaderView.swift in Sources */,
 				8D99C1F224CED40A005B34F2 /* SongCollectionSection.swift in Sources */,
 				8D99C22124CED40A005B34F2 /* DetailVC.swift in Sources */,
+				8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */,
 				8D99C23024CED40A005B34F2 /* NavigationController.swift in Sources */,
 				8D99C21424CED40A005B34F2 /* EnableRecordingsTVCell.swift in Sources */,
 				8D99C22324CED40A005B34F2 /* SongIndexVC.swift in Sources */,
@@ -583,7 +655,7 @@
 				8DA2204D24DEC8020014B557 /* HasFileURL.swift in Sources */,
 				8D50B97724F583E000AFDC29 /* TunesLoaderHelpers.swift in Sources */,
 				8D72DC1A24EC55B700A8F7AA /* SongCollectionFactory.swift in Sources */,
-				8D99C1FB24CED40A005B34F2 /* TunesLoader.swift in Sources */,
+				8D99C1FB24CED40A005B34F2 /* BaseTunesLoader.swift in Sources */,
 				8D99C21E24CED40A005B34F2 /* Helper.swift in Sources */,
 				8D99C20124CED40A005B34F2 /* PlayTrackTVCell.swift in Sources */,
 				8D99C22024CED40A005B34F2 /* HasStoryboardName.swift in Sources */,
@@ -598,6 +670,7 @@
 				8D99C20424CED40A005B34F2 /* TopicTVCell.swift in Sources */,
 				8D7DABE424EE391600FD7D91 /* SongTVCell.swift in Sources */,
 				8D99C1F524CED40A005B34F2 /* PlayerTrack.swift in Sources */,
+				8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */,
 				8D3DB3F3251325310027EC66 /* SoundFond.swift in Sources */,
 				8D217968250CE61500DAD788 /* SettingsTableVC.swift in Sources */,
 				8D35567724F122A200AC6C9A /* Tune.swift in Sources */,
@@ -612,6 +685,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D99C18624CED392005B34F2 /* SongsForWorshipTests.swift in Sources */,
+				8D8D9B3225A50B1800828D0E /* PDFRenderingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,6 +711,46 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		8D8D9B3F25A50BDA00828D0E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B4553A7542;
+				INFOPLIST_FILE = SongsForWorshipUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.deovolentellc.SongsForWorshipUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8D8D9B4025A50BDA00828D0E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B4553A7542;
+				INFOPLIST_FILE = SongsForWorshipUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.deovolentellc.SongsForWorshipUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		8D99C18924CED392005B34F2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -762,7 +876,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = B4553A7542;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -776,6 +890,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.deovolentellc.SongsForWorship;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
@@ -790,7 +905,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = B4553A7542;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -804,6 +919,7 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.deovolentellc.SongsForWorship;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
@@ -853,6 +969,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8D8D9B3E25A50BDA00828D0E /* Build configuration list for PBXNativeTarget "SongsForWorshipUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D8D9B3F25A50BDA00828D0E /* Debug */,
+				8D8D9B4025A50BDA00828D0E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8D99C17124CED391005B34F2 /* Build configuration list for PBXProject "SongsForWorship" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

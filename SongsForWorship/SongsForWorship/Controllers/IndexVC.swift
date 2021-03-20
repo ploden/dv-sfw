@@ -17,16 +17,14 @@ extension Bundle {
 
 import MessageUI
 
-class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
-    enum TableViewSection: Int {
-        case psalms = 0, _Misc, _Feedback, _Count
-    }
+class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
+    var songsManager: SongsManager?
+    var sections: [IndexSection]!
     
     enum FeedbackSectionRow: Int {
         case settings = 0, feedback, count
     }
     
-    var songsManager: SongsManager!
     @IBOutlet private var indexTableView: UITableView?
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -194,41 +192,6 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
         }
     }
     
-    func tableView(_ tableView: UITableView?, didSelectMiscSectionRowWith index: Int) {
-        if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-            let indexItems = app.getAppConfig()["Index"] as? [Any],
-            index < indexItems.count
-        {
-            let item = indexItems[index]
-            
-            if
-                let item = item as? [String:String],
-                let name = item["Storyboard name"],
-                let id = item["Storyboard ID"]
-            {
-                let sb = UIStoryboard(name: name, bundle: Helper.songsForWorshipBundle())
-                let vc = sb.instantiateViewController(withIdentifier: id)
-                
-                if var hasSongs = vc as? HasSongsManager {
-                    hasSongs.songsManager = songsManager
-                }
-                
-                if
-                    let filename = item["filename"],
-                    let filetype = item["filetype"],
-                    var hasFileInfo = vc as? HasFileInfo,
-                    let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-                    let directory = app.getAppConfig()["Directory"] as? String//,
-                {
-                    hasFileInfo.fileInfo = (filename, filetype, directory)
-                }
-                
-                navigationController?.pushViewController(vc, animated: true)
-            }
-        }
-    }
-    
     // MARK: - rotation
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -247,38 +210,24 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return TableViewSection._Count.rawValue
+        return sections.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return 1
-        case TableViewSection._Misc.rawValue:
-            if
-                let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-                let indexItems = app.getAppConfig()["Index"] as? [Any]
-            {
-                return indexItems.count
-            } else {
-                return 0
-            }
-        case TableViewSection._Feedback.rawValue:
-            return FeedbackSectionRow.count.rawValue
-        default:
-            return 0
+        if section < sections.count {
+            let indexSection = sections[section]
+            return indexSection.rows?.count ?? 0
         }
+        
+        return 0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case TableViewSection._Misc.rawValue:
-            return "Index"
-        case TableViewSection._Feedback.rawValue:
-            return "Feedback"
-        default:
-            return ""
+        if section < sections.count {
+            let indexSection = sections[section]
+            return indexSection.title
         }
+        return nil
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -290,84 +239,68 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
         
         var cell: UITableViewCell? = nil
         
-        if indexPath.section == 0 {
-            let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
-            generic?.textLabel?.textColor = UIColor.label
-            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
-            generic?.textLabel?.text = songsManager.songCollections.compactMap { $0.displayName } .joined(separator: " & ")
-            generic?.textLabel?.highlightedTextColor = UIColor.white
-            cell = generic
-        } else if indexPath.section == TableViewSection._Misc.rawValue {
-            let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
-            generic?.textLabel?.textColor = UIColor.label
-            generic?.textLabel?.numberOfLines = 2
-            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
+        if indexPath.section < sections.count {
+            let indexSection = sections[indexPath.section]
             
-            var cellText: String?
-            
-            if
-                let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-                let indexItems = app.getAppConfig()["Index"] as? [Any],
-                indexPath.row < indexItems.count
-            {
-                let item = indexItems[indexPath.row]
+            if indexPath.row < indexSection.rows?.count ?? 0 {
+                let indexRow = indexSection.rows?[indexPath.row]
                 
-                if
-                    let item = item as? [String:String],
-                    let title = item["Title"]
-                {
-                    cellText = title
-                }
+                let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
+                generic?.textLabel?.textColor = UIColor.label
+                generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
+                generic?.textLabel?.text = indexRow?.title //songsManager?.songCollections.compactMap { $0.displayName } .joined(separator: " & ")
+                generic?.textLabel?.highlightedTextColor = UIColor.white
+                cell = generic
             }
-            
-            generic?.textLabel?.text = cellText
-            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
-            generic?.textLabel?.highlightedTextColor = UIColor.white
-            cell = generic
-        } else if indexPath.section == TableViewSection._Feedback.rawValue {
-            let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
-            generic?.textLabel?.textColor = UIColor.label
-            
-            generic?.textLabel?.text = {
-                if let index = FeedbackSectionRow(rawValue: indexPath.row) {
-                    switch index {
-                    case .settings:
-                        return "Settings"
-                    case .feedback:
-                        return "Send Feedback"
-                    default:
-                        return nil
-                    }
-                }
-                return nil
-            }()
-                        
-            generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
-            generic?.textLabel?.highlightedTextColor = UIColor.white
-            cell = generic
         }
-        
-        if cell != nil {
-            return cell!
-        } else {
-            return UITableViewCell()
-        }
+                
+        return cell ?? UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.section == 0 {
-            let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "PsalmIndexVC") as? SongIndexVC
-            vc?.songsManager = songsManager
-            detailVC()?.delegate = vc
-            if let vc = vc {
-                navigationController?.pushViewController(vc, animated: true)
+        if indexPath.section < sections.count {
+            let indexSection = sections[indexPath.section]
+            
+            if indexPath.row < indexSection.rows?.count ?? 0 {
+                if
+                    let indexRow = indexSection.rows?[indexPath.row],
+                    let name = indexRow.storyboardName,
+                    let id = indexRow.storyboardID
+                {
+                    let sb = UIStoryboard(name: name, bundle: Helper.songsForWorshipBundle())
+                    let vc = sb.instantiateViewController(withIdentifier: id)
+                    
+                    if var hasSongs = vc as? HasSongsManager {
+                        hasSongs.songsManager = songsManager
+                    }
+                    
+                    if
+                        let filename = indexRow.filename,
+                        let filetype = indexRow.filetype,
+                        var hasFileInfo = vc as? HasFileInfo,
+                        let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+                        let directory = app.getAppConfig()["Directory"] as? String
+                    {
+                        hasFileInfo.fileInfo = (filename, filetype, directory)
+                    }
+                    
+                    if
+                        let vc = vc as? IndexVC,
+                        let index = indexRow.index
+                    {
+                        vc.sections = index
+                    }
+                    
+                    if let vc = vc as? DetailVCDelegate {
+                        detailVC()?.delegate = vc
+                    }
+                    
+                    vc.title = indexRow.title
+                    navigationController?.pushViewController(vc, animated: true)
+                }
             }
-        } else if indexPath.section == TableViewSection._Misc.rawValue {
-            self.tableView(tableView, didSelectMiscSectionRowWith: indexPath.row)
-        } else if indexPath.section == TableViewSection._Feedback.rawValue {
-            self.tableView(tableView, didSelectFeedbackSectionRowWith: indexPath.row)
         }
     }
     
@@ -390,7 +323,7 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
                 indexTableView.deleteRows(at: [indexPath], with: .bottom)
             }
             
-            if let song = IndexVC.favoritePsalmForIndexPath(indexPath, allSongs: songsManager.currentCollection?.songs) {
+            if let song = IndexVC.favoritePsalmForIndexPath(indexPath, allSongs: songsManager?.currentCollection?.songs) {
                 FavoritesSyncronizer.removeFromFavorites(song)
             }
             
@@ -404,7 +337,7 @@ class IndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableV
     
     // MARK: - DetailVCDelegate
     func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
-        return IndexVC.favoriteSongs(songsManager.currentCollection?.songs)
+        return IndexVC.favoriteSongs(songsManager?.currentCollection?.songs)
     }
     
     func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {

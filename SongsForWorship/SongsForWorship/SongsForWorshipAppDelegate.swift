@@ -17,8 +17,24 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 // MARK: Application lifecycle
 
 @UIApplicationMain
-open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
+open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDelegate {
     private var songsManager: SongsManager?
+    lazy public var appConfig: AppConfig = {
+        let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
+        let dirName = targetName.lowercased() + "-resources"
+        
+        let url = URL(fileURLWithPath: Bundle.main.path(forResource: "AppConfig", ofType: "plist", inDirectory: dirName) ?? "")
+        
+        var result: AppConfig?
+        
+        do {
+            let data = try Data.init(contentsOf: url, options: .mappedIfSafe)
+            let decoder = PropertyListDecoder()
+            result = try decoder.decode(AppConfig.self, from: data)
+        } catch {}
+        
+        return result!
+    }()
     public var window: UIWindow?
     public var settings: Settings = Settings() {
         didSet {
@@ -47,6 +63,15 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
 
         songsManager = SongsManager(appConfig: getAppConfig())
         songsManager?.loadSongs()
+        
+        if
+            let defaultCollection = songsManager?.songCollections.first,
+            let defaultSong = defaultCollection.songs?.first
+        {
+            songsManager?.selectSongCollection(withName: defaultCollection.displayName)
+            songsManager?.setcurrentSong(defaultSong, songsToDisplay: defaultCollection.songs)
+        }
+        
         updateFavoritesShortcuts()
 
         let navBarAppearance = UINavigationBarAppearance()
@@ -79,11 +104,13 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
                         detail.navigationItem.leftItemsSupplementBackButton = true
                         detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
                         detail.songsManager = songsManager
+                        detail.delegate = self
                     }
                 }
             }
 
             let index = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "IndexVC") as? IndexVC
+            index?.sections = appConfig.index
             index?.songsManager = songsManager
 
             nav?.viewControllers = [index].compactMap { $0 }
@@ -97,6 +124,7 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
                 navigationController = nv
                 let index = navigationController?.viewControllers[0] as? IndexVC
                 index?.songsManager = songsManager
+                index?.sections = appConfig.index
                 mainController = navigationController
             }
         }
@@ -194,5 +222,14 @@ open class PsalterAppDelegate: UIResponder, UIApplicationDelegate {
         } catch {}
         
         return dict!
+    }
+    
+    
+    func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
+        return songsManager?.currentCollection?.songs
+    }
+    
+    func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {
+        return false
     }
 }

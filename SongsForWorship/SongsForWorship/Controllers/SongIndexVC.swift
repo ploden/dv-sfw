@@ -10,7 +10,7 @@ import UIKit
 
 private var kSearchCellID = "SearchResultTVCell"
 
-class SongIndexVC: UIViewController, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIViewControllerPreviewingDelegate, UISearchControllerDelegate, UISearchResultsUpdating, PsalmObserver, SongCollectionObserver {
+class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIViewControllerPreviewingDelegate, UISearchControllerDelegate, UISearchResultsUpdating, PsalmObserver, SongCollectionObserver {
     private var firstTime: Bool = false
     private var isPerformingSearch = false
     private var isObservingcurrentSong = false

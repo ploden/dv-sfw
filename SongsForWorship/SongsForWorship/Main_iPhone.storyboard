@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LR8-G6-QN7">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LR8-G6-QN7">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -47,19 +48,19 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Text view text." textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3eR-m4-OE8">
                                 <rect key="frame" x="15" y="0.0" width="384" height="862"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="RWP-vz-rNF"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="3eR-m4-OE8" firstAttribute="leading" secondItem="RWP-vz-rNF" secondAttribute="leading" constant="15" id="2H9-ag-4V6"/>
                             <constraint firstItem="3eR-m4-OE8" firstAttribute="top" secondItem="XMh-Cx-r3c" secondAttribute="top" id="9Vl-1d-xcv"/>
                             <constraint firstItem="RWP-vz-rNF" firstAttribute="bottom" secondItem="3eR-m4-OE8" secondAttribute="bottom" id="QnB-a0-Jqw"/>
                             <constraint firstItem="RWP-vz-rNF" firstAttribute="trailing" secondItem="3eR-m4-OE8" secondAttribute="trailing" constant="15" id="lMa-PD-sDF"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="RWP-vz-rNF"/>
                     </view>
                     <connections>
                         <outlet property="textView" destination="3eR-m4-OE8" id="gdK-Bi-R1R"/>
@@ -76,7 +77,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="662-X2-Wyn">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FAQTVCell" rowHeight="56" id="Qsx-vt-iP1" customClass="FAQTVCell" customModule="SongsForWorship" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.5" width="414" height="56"/>
@@ -161,13 +162,14 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="5zh-wL-IyT">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
-                                <color key="backgroundColor" systemColor="systemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="2Un-3n-Ifx" id="d4V-n9-6qO"/>
                                     <outlet property="delegate" destination="2Un-3n-Ifx" id="LgY-uc-gri"/>
                                 </connections>
                             </tableView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="GEl-4c-4bn"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="5zh-wL-IyT" secondAttribute="bottom" id="FpK-DK-FOT"/>
@@ -175,7 +177,6 @@
                             <constraint firstItem="5zh-wL-IyT" firstAttribute="leading" secondItem="ttz-qK-V7f" secondAttribute="leading" id="nQ3-nL-1Fn"/>
                             <constraint firstAttribute="trailing" secondItem="5zh-wL-IyT" secondAttribute="trailing" id="nqT-Qm-4Mt"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="GEl-4c-4bn"/>
                     </view>
                     <navigationItem key="navigationItem" id="Z9q-HB-wXK"/>
                     <connections>
@@ -217,7 +218,7 @@
         <!--Psalms-->
         <scene sceneID="8sc-pL-jsj">
             <objects>
-                <viewController storyboardIdentifier="PsalmIndexVC" title="Psalms" automaticallyAdjustsScrollViewInsets="NO" id="5LM-c6-nlE" customClass="SongIndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SongIndexVC" title="Psalms" automaticallyAdjustsScrollViewInsets="NO" id="5LM-c6-nlE" customClass="SongIndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="sKr-TP-GG9">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -233,6 +234,7 @@
                                 </connections>
                             </tableView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="qCW-F8-NjE"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="7mZ-U7-gQD" secondAttribute="bottom" id="37p-qQ-PEX"/>
@@ -240,7 +242,6 @@
                             <constraint firstItem="7mZ-U7-gQD" firstAttribute="top" secondItem="qCW-F8-NjE" secondAttribute="top" id="gJm-4I-zmI"/>
                             <constraint firstAttribute="trailing" secondItem="7mZ-U7-gQD" secondAttribute="trailing" id="jMC-Do-Oxq"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="qCW-F8-NjE"/>
                     </view>
                     <connections>
                         <outlet property="songIndexTableView" destination="7mZ-U7-gQD" id="emW-AP-dew"/>
@@ -257,7 +258,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="s1n-WM-RtQ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SettingsTVCell" textLabel="izo-uH-Fp5" rowHeight="56" style="IBUITableViewCellStyleDefault" id="gKC-mk-V4m" customClass="GenericTVCell" customModule="SongsForWorship" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.5" width="414" height="56"/>
@@ -288,4 +289,15 @@
             <point key="canvasLocation" x="1446.4000000000001" y="-924.73763118440786"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGroupedBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>

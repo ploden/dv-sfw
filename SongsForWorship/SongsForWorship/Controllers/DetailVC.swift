@@ -50,9 +50,6 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
         let metreClassStr = "MetreCVCell"
         collectionView?.register(UINib(nibName: metreClassStr, bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: metreClassStr)
         
-        let logoClassStr = "LogoCVCell"
-        collectionView?.register(UINib(nibName: logoClassStr, bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: logoClassStr)
-        
         let musicClassStr = "SheetMusicCVCell"
         collectionView?.register(UINib(nibName: musicClassStr, bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: musicClassStr)
         
@@ -246,36 +243,28 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     
     // MARK: - collection view
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if (songsManager?.currentSong) != nil {
-            let numberOfPages = PDFPageView.numberOfPages(songsToDisplay())
-            print("numberOfPages: \(numberOfPages)")
+        if let _ = songsManager?.currentSong {
+            let numberOfPages = PDFPageView.numberOfPages(songsToDisplay())            
             return numberOfPages
-        } else {
-            return 1
         }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.item == 0 && songsManager?.currentSong == nil {
-            let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "LogoCVCell", for: indexPath) as? LogoCVCell
-            return cvc!
-        } else {
-            print("item: \(indexPath.item)")
-            if
-                let songsToDisplay = songsToDisplay(),
-                let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay)
-            {
-                if (song.isTuneCopyrighted) {
-                    let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "MetreCVCell", for: indexPath) as? MetreCVCell
-                    cvc?.song = song
-                    return cvc!
-                } else {
-                    let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "SheetMusicCVCell", for: indexPath) as? SheetMusicCVCell
-                    if let songsManager = songsManager {
-                        cvc?.configureWithPageNumber(indexPath.item, allSongs: songsToDisplay, songsManager: songsManager, queue: queue)
-                    }
-                    return cvc!
+        if
+            let songsToDisplay = songsToDisplay(),
+            let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay)
+        {
+            if (song.isTuneCopyrighted) {
+                let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "MetreCVCell", for: indexPath) as? MetreCVCell
+                cvc?.song = song
+                return cvc!
+            } else {
+                let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "SheetMusicCVCell", for: indexPath) as? SheetMusicCVCell
+                if let songsManager = songsManager {
+                    cvc?.configureWithPageNumber(indexPath.item, allSongs: songsToDisplay, songsManager: songsManager, queue: queue)
                 }
+                return cvc!
             }
         }
         
