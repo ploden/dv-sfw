@@ -18,8 +18,7 @@ class Helper: NSObject {
             if app.settings.shouldUseSystemFonts {
                 return UIFont.preferredFont(forTextStyle: textStyle)
             } else if
-                let fontName = app.getAppConfig()["Default font"] as? String,
-                let font = UIFont(name: fontName, size: size)
+                let font = UIFont(name: app.appConfig.defaultFont, size: size)
             {
                 return font
             }
@@ -34,7 +33,7 @@ class Helper: NSObject {
                 let font = UIFont.preferredFont(forTextStyle: textStyle)
                 return UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: 0)
             } else if
-                let fontName = app.getAppConfig()["Default bold font"] as? String,
+                let fontName = app.appConfig.defaultBoldFontName,
                 let font = UIFont(name: fontName, size: size)
             {
                 return font
@@ -126,10 +125,8 @@ class Helper: NSObject {
         let cal = Calendar.current
         let yearComponent = cal.component(Calendar.Component.year, from: nonnullNow)
 
-        if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-            let copyright = app.getAppConfig()["Copyright"]
-        {
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            let copyright = app.appConfig.copyright
             return String(format: "© %ld \(copyright).\nUsed with permission.", yearComponent)
         } else {
             return String(format: "© %ld.\nUsed with permission.", yearComponent)

@@ -10,8 +10,10 @@
 		8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D09B672259AFBBD002558A1 /* ScaleXY.swift */; };
 		8D217968250CE61500DAD788 /* SettingsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D217967250CE61500DAD788 /* SettingsTableVC.swift */; };
 		8D35567724F122A200AC6C9A /* Tune.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D35567624F122A200AC6C9A /* Tune.swift */; };
+		8D37C1E22608921F000708D7 /* SongCollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */; };
+		8D37C1E72608930C000708D7 /* SoundFontConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D37C1E62608930C000708D7 /* SoundFontConfig.swift */; };
 		8D3DB3F1251322950027EC66 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3DB3F0251322950027EC66 /* Settings.swift */; };
-		8D3DB3F3251325310027EC66 /* SoundFond.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3DB3F2251325310027EC66 /* SoundFond.swift */; };
+		8D3DB3F3251325310027EC66 /* SoundFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3DB3F2251325310027EC66 /* SoundFont.swift */; };
 		8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42245D26064F7800F7EB99 /* IndexRow.swift */; };
 		8D422463260659F600F7EB99 /* IndexSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D422462260659F600F7EB99 /* IndexSection.swift */; };
 		8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42246726065AD300F7EB99 /* AppConfig.swift */; };
@@ -118,8 +120,10 @@
 		8D09B672259AFBBD002558A1 /* ScaleXY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleXY.swift; sourceTree = "<group>"; };
 		8D217967250CE61500DAD788 /* SettingsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableVC.swift; sourceTree = "<group>"; };
 		8D35567624F122A200AC6C9A /* Tune.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tune.swift; sourceTree = "<group>"; };
+		8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCollectionConfig.swift; sourceTree = "<group>"; };
+		8D37C1E62608930C000708D7 /* SoundFontConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFontConfig.swift; sourceTree = "<group>"; };
 		8D3DB3F0251322950027EC66 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
-		8D3DB3F2251325310027EC66 /* SoundFond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFond.swift; sourceTree = "<group>"; };
+		8D3DB3F2251325310027EC66 /* SoundFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFont.swift; sourceTree = "<group>"; };
 		8D42245D26064F7800F7EB99 /* IndexRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRow.swift; sourceTree = "<group>"; };
 		8D422462260659F600F7EB99 /* IndexSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexSection.swift; sourceTree = "<group>"; };
 		8D42246726065AD300F7EB99 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
@@ -359,11 +363,13 @@
 				8D50B97324F4C7F600AFDC29 /* Composer.swift */,
 				8D50B97624F583E000AFDC29 /* TunesLoaderHelpers.swift */,
 				8D3DB3F0251322950027EC66 /* Settings.swift */,
-				8D3DB3F2251325310027EC66 /* SoundFond.swift */,
+				8D3DB3F2251325310027EC66 /* SoundFont.swift */,
 				8D09B672259AFBBD002558A1 /* ScaleXY.swift */,
 				8D42245D26064F7800F7EB99 /* IndexRow.swift */,
 				8D422462260659F600F7EB99 /* IndexSection.swift */,
 				8D42246726065AD300F7EB99 /* AppConfig.swift */,
+				8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */,
+				8D37C1E62608930C000708D7 /* SoundFontConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -617,9 +623,11 @@
 				8D50B97424F4C7F600AFDC29 /* Composer.swift in Sources */,
 				8D99C21B24CED40A005B34F2 /* MetreCVCell.swift in Sources */,
 				8D422463260659F600F7EB99 /* IndexSection.swift in Sources */,
+				8D37C1E72608930C000708D7 /* SoundFontConfig.swift in Sources */,
 				8D99C22524CED40A005B34F2 /* TopicsTableVC.swift in Sources */,
 				8D99C22824CED40A005B34F2 /* FAQTableVC.swift in Sources */,
 				8D99C20D24CED40A005B34F2 /* TuneCell.swift in Sources */,
+				8D37C1E22608921F000708D7 /* SongCollectionConfig.swift in Sources */,
 				8D99C21024CED40A005B34F2 /* GenericTVCell.swift in Sources */,
 				8D99C1F824CED40A005B34F2 /* SongCollection.swift in Sources */,
 				8D99C1F724CED40A005B34F2 /* LetterTopics.swift in Sources */,
@@ -671,7 +679,7 @@
 				8D7DABE424EE391600FD7D91 /* SongTVCell.swift in Sources */,
 				8D99C1F524CED40A005B34F2 /* PlayerTrack.swift in Sources */,
 				8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */,
-				8D3DB3F3251325310027EC66 /* SoundFond.swift in Sources */,
+				8D3DB3F3251325310027EC66 /* SoundFont.swift in Sources */,
 				8D217968250CE61500DAD788 /* SettingsTableVC.swift in Sources */,
 				8D35567724F122A200AC6C9A /* Tune.swift in Sources */,
 				8D3DB3F1251322950027EC66 /* Settings.swift in Sources */,

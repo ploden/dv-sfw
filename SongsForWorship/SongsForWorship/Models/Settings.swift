@@ -9,7 +9,7 @@
 import Foundation
 
 open class Settings {
-    var shouldUseSystemFonts = false
+    open var shouldUseSystemFonts = false
     var soundFonts: [SoundFont] = [SoundFont]()
     var selectedSoundFont: SoundFont?
     

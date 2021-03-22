@@ -78,18 +78,17 @@ extension BaseTunesLoader: TunesLoader {
     @objc public dynamic static func loadTunes(forSong aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void) {
         var tuneDescriptions: [TuneDescription] = []
               
-        if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-            let mainDirectory = app.getAppConfig()["Directory"] as? String
-        {
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            let mainDirectory = app.appConfig.directory
+            
             for tuneInfo in collection.tuneInfos {
                 if let filename = BaseTunesLoader.filename(forTuneInfo: tuneInfo, song: aSong) {
                     let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
-                    let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.fileType, inDirectory: subDirectory)
+                    let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.filetype, inDirectory: subDirectory)
                     
                     if let filePath = filePath {
-                        let fileUrl = URL(fileURLWithPath: filePath)
-                        let desc = TuneDescription(length: nil, title: tuneInfo.title, url: fileUrl, mediaType: .midi)
+                        let fileUrl = URL(fileURLWithPath: filePath)                        
+                        let desc = TuneDescription(length: nil, title: tuneInfo.title, composer: nil, copyright: nil, url: fileUrl, mediaType: .midi)
                         tuneDescriptions.append(desc)
                     } else {
                         print("Tunes file not found: \(filename)")

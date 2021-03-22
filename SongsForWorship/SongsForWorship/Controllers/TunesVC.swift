@@ -13,7 +13,39 @@ enum PFWTunesVCTableViewSection : Int {
     case _Count = 2
 }
 
-class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, PlayerControlsViewDelegate, PlayerControllerDelegate, HasSongsManager, PsalmObserver {
+@objc public protocol ExtensibleTunesVC {
+    @objc dynamic func tuneCell(for tableView: UITableView, forRowAt indexPath: IndexPath) -> UITableViewCell
+}
+
+extension TunesVC: ExtensibleTunesVC {
+    @objc dynamic public func tuneCell(for tableView: UITableView, forRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell: UITableViewCell?
+
+        if
+            let tuneTracks = tuneTracks,
+            tuneTracks.count > 0
+        {
+            let playTrackTVCell = tableView.dequeueReusableCell(withIdentifier: "PlayTrackTVCell") as? PlayTrackTVCell
+            
+            if indexPath.row < tuneTracks.count {
+                playTrackTVCell?.trackTitleLabel?.text = tuneTracks[indexPath.row].title
+            }
+            
+            cell = playTrackTVCell
+        } else {
+            cell = headerCell(for: tableView)
+        }
+        
+        
+        if cell == nil {
+            cell = UITableViewCell()
+        }
+        
+        return cell!
+    }
+}
+
+open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, PlayerControlsViewDelegate, PlayerControllerDelegate, HasSongsManager, PsalmObserver {
     override class var storyboardName: String {
         get {
             return "SongDetail"
@@ -33,17 +65,29 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
         didSet {
         }
     }
-    private var tuneTracks: [PlayerTrack]?
+    open var tuneTracks: [PlayerTrack]?
     private var recordingTracks: [PlayerTrack]?
     var songsManager: SongsManager?
     var loadedPsalmNumber: String?
-    @IBOutlet weak var tunesTableView: UITableView?
+    @IBOutlet weak var tunesTableView: UITableView? {
+        didSet {
+            if let tunesTableView = tunesTableView {
+                tunesTableView.separatorStyle = {
+                    if hasTableViewHeaders(tableView: tunesTableView) {
+                        return UITableViewCell.SeparatorStyle.singleLine
+                    } else {
+                        return UITableViewCell.SeparatorStyle.none
+                    }
+                }()
+            }
+        }
+    }
     @IBOutlet weak var tuneProgressBar: UIProgressView?
     var lastSelectedCell: IndexPath?
     var lastLoadedPsalmNumber: String?
     
     // MARK: - UIViewController
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         
         if var textAttributes = navigationController?.navigationBar.titleTextAttributes {
@@ -91,11 +135,11 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
         tunesTableView?.rowHeight = UITableView.automaticDimension
     }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }
     
-    override var shouldAutorotate: Bool {
+    open override var shouldAutorotate: Bool {
         return false
     }
     
@@ -199,29 +243,42 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
     }
     
     // MARK: - UITableView
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = tunesTableView?.dequeueReusableHeaderFooterView(withIdentifier: "TunesHeaderView") as? TunesHeaderView
-        
-        header?.headerTitleLabel?.text = {
-            if section == 0 {
-                return "Tunes for Sheet Music"
-            } else {
-                return "Recordings"
-            }
-        }()
-        
-        return header
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if hasTableViewHeaders(tableView: tableView) {
+            let header = tunesTableView?.dequeueReusableHeaderFooterView(withIdentifier: "TunesHeaderView") as? TunesHeaderView
+            
+            header?.headerTitleLabel?.text = {
+                if section == 0 {
+                    return "Tunes for Sheet Music"
+                } else {
+                    return "Recordings"
+                }
+            }()
+            
+            return header
+        } else {
+            return nil
+        }
     }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 54.0
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if hasTableViewHeaders(tableView: tableView) {
+            return 54.0
+        }
+        return 0.0
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        if
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            app.appConfig.tuneRecordings == false
+        {
+            return 1
+        }
         return PFWTunesVCTableViewSection._Count.rawValue
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case PFWTunesVCTableViewSection._Tune.rawValue:
             let num_rows = tuneTracks?.count ?? 0
@@ -234,22 +291,28 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
         }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell?
         
         switch indexPath.section {
         case PFWTunesVCTableViewSection._Tune.rawValue:
-            if tuneTracks?.count == 0 {
-                cell = headerCell(for: tableView)
-            } else {
+            cell = tuneCell(for: tableView, forRowAt: indexPath)
+            /*
+            if
+                let tuneTracks = tuneTracks,
+                tuneTracks.count > 0
+            {
                 let playTrackTVCell = tableView.dequeueReusableCell(withIdentifier: "PlayTrackTVCell") as? PlayTrackTVCell
                 
-                if indexPath.row < (tuneTracks?.count ?? 0) {
-                    playTrackTVCell?.trackTitleLabel?.text = tuneTracks?[indexPath.row].title
+                if indexPath.row < tuneTracks.count {
+                    playTrackTVCell?.trackTitleLabel?.text = tuneTracks[indexPath.row].title
                 }
                 
                 cell = playTrackTVCell
+            } else {
+                cell = headerCell(for: tableView)
             }
+         */
         case PFWTunesVCTableViewSection._Recording.rawValue:
             if let recordingTracks = recordingTracks {
                 if recordingTracks.count == 0 {
@@ -278,7 +341,7 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
         return cell!
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
         case PFWTunesVCTableViewSection._Tune.rawValue:
             if
@@ -331,6 +394,11 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
     }
     
     // MARK: - Helper methods
+    
+    func hasTableViewHeaders(tableView: UITableView) -> Bool {
+        return tableView.numberOfSections > 1
+    }
+    
     func configureSelectedTrackTitleLabel() {
         playerControlsView?.trackTitleLabel?.text = {
             if let currentTrack = self.playerController.currentTrack {
@@ -346,31 +414,23 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
     
     static let headerCellCellIdentifier = "Cell"
     
-    func headerCell(for tableView: UITableView?) -> UITableViewCell {
+    open func headerCell(for tableView: UITableView?) -> UITableViewCell {        
+        let cell = tableView?.dequeueReusableCell(withIdentifier: TunesVC.headerCellCellIdentifier) ?? UITableViewCell(style: .default, reuseIdentifier: TunesVC.headerCellCellIdentifier)
         
-        var cell = tableView?.dequeueReusableCell(withIdentifier: TunesVC.headerCellCellIdentifier)
-        
-        if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: TunesVC.headerCellCellIdentifier)
-        }
-        
-        if tuneTracks?.count == 0 {
-            if playerController.loadTunesDidFail {
-                cell?.textLabel?.text = "No Tunes Found"
-            } else if songsManager?.currentSong?.isTuneCopyrighted == true {
-                cell?.textLabel?.text = "No Tunes available for this psalm."
-            } else {
-                cell?.textLabel?.text = "Loading..."
-            }
+        if playerController.loadTunesDidFail {
+            cell.textLabel?.text = "No Tunes Found"
+        } else if songsManager?.currentSong?.isTuneCopyrighted == true {
+            cell.textLabel?.text = "No Tunes available for this song."
         } else {
-            cell?.textLabel?.text = "Tunes"
+            cell.textLabel?.text = "Loading..."
         }
-        cell?.textLabel?.textAlignment = .center
-        cell?.textLabel?.font = UIFont(name: "Arial", size: 18.0)
-        cell?.textLabel?.textColor = UIColor.label
-        cell?.selectionStyle = .none
         
-        return cell!
+        cell.textLabel?.textAlignment = .center
+        cell.textLabel?.font = UIFont(name: "Arial", size: 18.0)
+        cell.textLabel?.textColor = UIColor.label
+        cell.selectionStyle = .none
+        
+        return cell
     }
     
     func recordingHeaderCell(for tableView: UITableView?) -> UITableViewCell {
@@ -509,7 +569,7 @@ class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVA
             }
         }
         
-        tuneTracks = newTunes
+        tuneTracks = newTunes.count > 0 ? newTunes : tunes
         
         recordingTracks = tracks?.filter { $0.trackType == .recording }
         

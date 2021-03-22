@@ -280,10 +280,9 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
                         let filename = indexRow.filename,
                         let filetype = indexRow.filetype,
                         var hasFileInfo = vc as? HasFileInfo,
-                        let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-                        let directory = app.getAppConfig()["Directory"] as? String
+                        let app = UIApplication.shared.delegate as? PsalterAppDelegate                        
                     {
-                        hasFileInfo.fileInfo = (filename, filetype, directory)
+                        hasFileInfo.fileInfo = (filename, filetype, app.appConfig.directory)
                     }
                     
                     if

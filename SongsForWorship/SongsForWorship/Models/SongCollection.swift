@@ -22,57 +22,53 @@ extension Notification.Name {
     @objc func selectedCollectionDidChange(_ notification: Notification)
 }
 
-open class SongCollection: Equatable {
+open class SongCollection: NSObject {
     public static func == (lhs: SongCollection, rhs: SongCollection) -> Bool {
         return lhs.displayName == rhs.displayName
     }
     
-    let collectionDict: [String : Any]
     let jsonFilename: String
     let pdfFilename: String
     let directory: String
     let displayName: String
     let pdf: CGPDFDocument
     let sections: [SongCollectionSection]
-    let tuneInfos: [SongCollectionTuneInfo]
+    public let tuneInfos: [SongCollectionTuneInfo]
     private(set) lazy var songs: [Song]? = {
         let songs = readSongsFromFile(jsonFilename: jsonFilename, directory: directory)
-        for song in songs! {
-            TunesLoader.loadTunes(forSong: song, collection: self) { [weak self] someError, someTuneDescriptions in }
+        
+        func loadAll(idx: Int) {
+            var song = songs![idx]
+            
+            BaseTunesLoader.loadTunes(forSong: song, collection: self) { [weak self] someError, someTuneDescriptions in
+                if idx+1 < songs!.count {
+                    loadAll(idx: idx+1)
+                }
+            }
         }
+        
+        //loadAll(idx: 0)
         return songs
     }()
 
-    required public init(directory: String, collectionDict: [String : Any]) {
-        self.collectionDict = collectionDict
-        
-        self.jsonFilename = collectionDict["json_name"] as! String
-        self.displayName = collectionDict["Display name"] as! String
-        self.pdfFilename = collectionDict["PDF"] as! String
+    required public init(directory: String, collectionConfig: SongCollectionConfig) {        
+        self.jsonFilename = collectionConfig.jsonFilename
+        self.displayName = collectionConfig.displayName
+        self.pdfFilename = collectionConfig.pdfFilename
         
         self.directory = directory
-        
-        let sections = collectionDict["Sections"] as! [[String : Any]]
-        
+                
         var collectionSections = [SongCollectionSection]()
 
-        for section in sections {
-            let title = section["Title"] as! String
-            let count = section["Count"] as! NSNumber
-            let newSection = SongCollectionSection(title: title, count: count.intValue)
+        for section in collectionConfig.sections {
+            let newSection = SongCollectionSection(title: section.title, count: section.count)
             collectionSections.append(newSection)
         }
         
         self.sections = collectionSections
         
-        let tuneInfoDicts = collectionDict["Tunes"] as? [[String : Any]]
-
-        let tuneInfos: [SongCollectionTuneInfo]? = tuneInfoDicts?.compactMap {
-            let title = $0["Title"] as! String
-            let format = $0["Format"] as! String
-            let type = $0["Type"] as! String
-            let directory = $0["Directory"] as! String
-            return SongCollectionTuneInfo(title: title, directory: directory, fileType: type, filenameFormat: format)
+        let tuneInfos: [SongCollectionTuneInfo]? = collectionConfig.tunes.compactMap {            
+            return SongCollectionTuneInfo(title: $0.title, directory: $0.directory, fileType: $0.filetype, filenameFormat: $0.filenameFormat)
         }
         
         self.tuneInfos = tuneInfos ?? [SongCollectionTuneInfo]()
@@ -127,6 +123,8 @@ open class SongCollection: Equatable {
                 let tune = Tune(name: dict["info_tune"] as? String ?? "",
                                 nameWithoutMeter: dict["info_tune_wo_meter"] as? String ?? "",
                                 composer: composer,
+                                composerDate: nil,
+                                composerCopyright: dict["composer_copyright"] as? String,
                                 isCopyrighted: isTuneCopyrighted,
                                 meter: dict["info_meter"] as? String ?? "")
                 

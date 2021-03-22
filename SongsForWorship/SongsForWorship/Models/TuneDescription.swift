@@ -15,12 +15,16 @@ public enum TuneDescriptionMediaType {
 public class TuneDescription: NSObject {
     let length: String?
     let title: String
+    let composer: String?
+    let copyright: String?
     let url: URL
     let mediaType: TuneDescriptionMediaType
     
-    public init(length: String?, title: String, url: URL, mediaType: TuneDescriptionMediaType) {
+    public init(length: String?, title: String, composer: String?, copyright: String?, url: URL, mediaType: TuneDescriptionMediaType) {
         self.length = length
         self.title = title
+        self.composer = composer
+        self.copyright = copyright
         self.url = url
         self.mediaType = mediaType
         super.init()

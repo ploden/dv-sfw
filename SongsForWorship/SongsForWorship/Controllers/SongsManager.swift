@@ -27,11 +27,8 @@ class SongsManager: Equatable {
         }
     }
     
-    required init(appConfig: [String : Any]) {
-        let directory = appConfig["Directory"] as! String
-        let collections = appConfig["Song collections"] as! [[String : Any]]
-        
-        for collection in collections {
+    required init(appConfig: AppConfig) {
+        for collection in appConfig.songCollections {
             /*
             let filename = collection["json_name"] as! String
             let displayName = collection["Display name"] as! String
@@ -39,12 +36,10 @@ class SongsManager: Equatable {
              */
             var collectionSections = [SongCollectionSection]()
             
-            let sections = collection["Sections"] as! [[String : Any]]
+            let sections = collection.sections
             
             for section in sections {
-                let title = section["Title"] as! String
-                let count = section["Count"] as! NSNumber
-                let newSection = SongCollectionSection(title: title, count: count.intValue)
+                let newSection = SongCollectionSection(title: section.title, count: section.count)
                 collectionSections.append(newSection)
             }
             
@@ -60,7 +55,7 @@ class SongsManager: Equatable {
                 } ?? [SongCollectionTuneInfo]()
              */
             
-            let newCollection = SongCollection(directory: directory, collectionDict: collection)
+            let newCollection = SongCollection(directory: appConfig.directory, collectionConfig: collection)
             songCollections.append(newCollection)
         }
     }

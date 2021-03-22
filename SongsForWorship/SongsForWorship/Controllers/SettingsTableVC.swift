@@ -40,11 +40,8 @@ class SettingsTableVC: UITableViewController {
             case .textSize:
                 return 1
             case .soundFonts:
-                if
-                    let app = UIApplication.shared.delegate as? PsalterAppDelegate,
-                    let soundFonts = app.getAppConfig()["Sound fonts"] as? [Any]
-                {
-                    return soundFonts.count
+                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+                    return app.appConfig.soundFonts.count
                 }
             default:
                 return 0

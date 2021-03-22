@@ -1,5 +1,5 @@
 //
-//  SoundFond.swift
+//  SoundFont.swift
 //  SongsForWorship
 //
 //  Created by Philip Loden on 9/17/20.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-struct SoundFont: Equatable {
+struct SoundFont: Decodable, Equatable {
     var filename: String
     var fileExtension: String
     var isDefault: Bool = false
-    var title: String    
+    var title: String
 }

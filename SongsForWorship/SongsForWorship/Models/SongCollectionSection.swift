@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct SongCollectionSection {
+public struct SongCollectionSection: Decodable {
     let title: String
     let count: Int
 }

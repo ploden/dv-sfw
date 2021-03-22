@@ -85,7 +85,7 @@ class PlayerController {
                     let song = self.song,
                     let collection = self.collection
                 {
-                    TunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
+                    BaseTunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
                         if let _ = someError {
                             OperationQueue.main.addOperation({
                                 self?.loadTunesDidFail = true
@@ -109,6 +109,7 @@ class PlayerController {
         }
     }
     private var midiPlayer: AVMIDIPlayer?
+    private var mp3Player: AVAudioPlayer?
     private var player: MPMusicPlayerController?
     private var playerTracks: [PlayerTrack : Any] = [PlayerTrack : Any]()
     
@@ -130,11 +131,19 @@ class PlayerController {
     }
     
     func isPlaying() -> Bool {
-        return midiPlayer?.isPlaying ?? false || (player?.playbackState == .playing)
+        if let midiPlayer = midiPlayer {
+            return midiPlayer.isPlaying
+        } else if let mp3Player = mp3Player {
+            return mp3Player.isPlaying
+        } else if let player = player {
+            return player.playbackState == .playing
+        }
+        return false
     }
     
     func restartTrack() {
         midiPlayer?.currentPosition = 0
+        mp3Player?.currentTime = 0
         player?.skipToBeginning()
     }
     
@@ -156,6 +165,8 @@ class PlayerController {
         
         midiPlayer?.stop()
         midiPlayer = nil
+        mp3Player?.stop()
+        mp3Player = nil
         player?.stop()
         
         delegate?.playbackStateDidChangeForPlayerController(self)
@@ -164,6 +175,7 @@ class PlayerController {
     func pause() {
         isPaused = true
         midiPlayer?.stop()
+        mp3Player?.pause()
         player?.pause()
         delegate?.playbackStateDidChangeForPlayerController(self)
     }
@@ -176,6 +188,7 @@ class PlayerController {
         if let currentTrack = currentTrack {
             if currentTrack.trackType == PlayerTrackType.tune {
                 midiPlayer?.play(nil)
+                mp3Player?.play()
             } else if currentTrack.trackType == PlayerTrackType.recording {
                 player?.play()
             }
@@ -188,7 +201,7 @@ class PlayerController {
     func currentPosition() -> TimeInterval {
         if let currentTrack = currentTrack {
             if currentTrack.trackType == PlayerTrackType.tune {
-                return midiPlayer?.currentPosition ?? 0.0
+                return midiPlayer?.currentPosition ?? mp3Player?.currentTime ?? 0.0
             } else if currentTrack.trackType == PlayerTrackType.recording {
                 return player?.currentPlaybackTime ?? 0.0
             }
@@ -199,7 +212,7 @@ class PlayerController {
     func duration() -> TimeInterval {
         if let currentTrack = currentTrack {
             if currentTrack.trackType == PlayerTrackType.tune {
-                return midiPlayer?.duration ?? 0.0
+                return midiPlayer?.duration ?? mp3Player?.duration ?? 0.0
             } else if currentTrack.trackType == PlayerTrackType.recording {
                 let obj = playerTracks[currentTrack]
                 
@@ -283,24 +296,35 @@ class PlayerController {
         } catch {
             print("There was an error setting the session category: \(error)")
         }
-                
+        
         if
             let tuneDescription = tuneDescription,
             let presetURL = AVMIDIPlayer.songSoundBankUrl()
         {
             do {
-                let player = try AVMIDIPlayer(withTune: tuneDescription, soundBankURL: presetURL)
-                player.rate = playbackRate
-                player.currentPosition = time
-                midiPlayer = player
                 
-                weak var weakSelf = self
-                
-                player.play({
-                    OperationQueue.main.addOperation({
-                        weakSelf?.tunePlayerDidFinishPlaying()
+                switch tuneDescription.mediaType {
+                case .mp3:
+                    let player = try AVAudioPlayer(contentsOf: tuneDescription.url)
+                    player.enableRate = true
+                    player.prepareToPlay()
+                    player.rate = playbackRate
+                    player.currentTime = time
+                    mp3Player = player
+                    
+                    player.play()
+                case .midi:
+                    let player = try AVMIDIPlayer(withTune: tuneDescription, soundBankURL: presetURL)
+                    player.rate = playbackRate
+                    player.currentPosition = time
+                    midiPlayer = player
+                                        
+                    player.play({ [weak self] in
+                        OperationQueue.main.addOperation({
+                            self?.tunePlayerDidFinishPlaying()
+                        })
                     })
-                })
+                }
             } catch {
                 print("There was an error starting playback! \(error)")
             }

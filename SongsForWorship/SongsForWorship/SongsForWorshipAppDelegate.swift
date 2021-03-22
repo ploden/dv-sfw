@@ -31,27 +31,19 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
             let data = try Data.init(contentsOf: url, options: .mappedIfSafe)
             let decoder = PropertyListDecoder()
             result = try decoder.decode(AppConfig.self, from: data)
-        } catch {}
+        } catch {
+            print("There was an error reading app config! \(error)")
+        }
         
         return result!
     }()
     public var window: UIWindow?
     public var settings: Settings = Settings() {
         didSet {
-            if let soundFontDicts = getAppConfig()["Sound fonts"] as? [[String:Any]] {
-                let soundFonts: [SoundFont] = soundFontDicts.compactMap {
-                    if
-                        let filename = $0["filename"] as? String,
-                        let fileExtension = $0["filetype"] as? String,
-                        let title = $0["Title"] as? String,
-                        let isDefault = $0["default"] as? Bool
-                    {
-                        return SoundFont(filename: filename, fileExtension: fileExtension, isDefault: isDefault, title: title)
-                    }
-                    return nil
-                }
-                settings.soundFonts = soundFonts
+            let soundFonts: [SoundFont] = appConfig.soundFonts.compactMap {
+                return SoundFont(filename: $0.filename, fileExtension: $0.filetype, isDefault: $0.isDefault, title: $0.title)                    
             }
+            settings.soundFonts = soundFonts
         }
     }
     weak var navigationController: UINavigationController?
@@ -61,7 +53,7 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
         syncInstance.synciCloud()
         NotificationCenter.default.addObserver(self, selector: #selector(favoritesChanged(_:)), name: NSNotification.Name.favoritesDidChange, object: nil)
 
-        songsManager = SongsManager(appConfig: getAppConfig())
+        songsManager = SongsManager(appConfig: appConfig)
         songsManager?.loadSongs()
         
         if
@@ -207,23 +199,6 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
             UIApplication.shared.shortcutItems = FavoritesSyncronizer.favoriteShortcutItems(songs)
         }
     }
-    
-    func getAppConfig() -> [String : Any]
-    {
-        var dict: [String : Any]?
-        
-        let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
-        let dirName = targetName.lowercased() + "-resources"
-        
-        let url = URL(fileURLWithPath: Bundle.main.path(forResource: "AppConfig", ofType: "plist", inDirectory: dirName) ?? "")
-        do {
-            let x = try PropertyListSerialization.propertyList(from: Data(contentsOf: url), options: .mutableContainersAndLeaves, format: nil)
-            dict = x as? [String : Any]
-        } catch {}
-        
-        return dict!
-    }
-    
     
     func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
         return songsManager?.currentCollection?.songs
