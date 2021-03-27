@@ -81,11 +81,14 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
         
         if let topic = topic {
             if topic.subtopics.count == 0 && topic.songNumbers.count == 1 {
-                if UIDevice.current.userInterfaceIdiom != .pad {
-                    if let song = songsManager?.songForNumber(topic.songNumbers.first) {
-                        songsManager?.setcurrentSong(song, songsToDisplay: [song])
-                        
-                        // FIXME: replace tab bar
+                if let song = songsManager?.songForNumber(topic.songNumbers.first) {
+                    songsManager?.setcurrentSong(song, songsToDisplay: [song])
+                    
+                    if UIDevice.current.userInterfaceIdiom != .pad {
+                        if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
+                            vc.songsManager = songsManager
+                            navigationController?.pushViewController(vc, animated: true)
+                        }
                     }
                 }
             } else if topic.redirects.count == 1 && topic.songNumbers.count == 0 {
