@@ -12,11 +12,15 @@ import MediaPlayer
 typealias PFWPlaybackRate = Float
 
 protocol PlayerControllerDelegate: class {
-    func playerControllerTracksDidChange(_ playerController: PlayerController?, tracks: [PlayerTrack]?)
-    func playbackStateDidChangeForPlayerController(_ playerController: PlayerController?)
+    func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?)
+    func playbackStateDidChangeForPlayerController(_ playerController: PlayerController)
 }
 
-class PlayerController {
+enum PlayerControllerState: Int {
+    case tunesNotLoaded, loadingTunes, loadingTunesDidSucceed, loadingTunesDidFail
+}
+
+class PlayerController: NSObject {
     var timePosition: TimeInterval = 0
     var loadTunesDidFail: Bool = false
     var loopCounter: Int8 = 0 {
@@ -26,6 +30,7 @@ class PlayerController {
     }
     weak var delegate: PlayerControllerDelegate?
     var isPaused: Bool = false
+    var state: PlayerControllerState = .tunesNotLoaded
     private var playbackRate: PFWPlaybackRate?
     private var _currentTrack: PlayerTrack?
     var currentTrack: PlayerTrack? {
@@ -40,17 +45,16 @@ class PlayerController {
         }
     }
     var collection: SongCollection?
-    var song: Song? {
+    private(set) var song: Song? {
         didSet {
-            stopPlaying()
-            
-            currentTrack = nil
-            playerTracks.removeAll()
-            
             if let song = song {
                 if isPlaying() {
                     stopPlaying()
                 }
+                
+                currentTrack = nil
+                playerTracks.removeAll()
+                state = .tunesNotLoaded
                 
                 let authStatus = MPMediaLibrary.authorizationStatus()
                 
@@ -80,31 +84,6 @@ class PlayerController {
                 default:
                     break
                 }
-                
-                if
-                    let song = self.song,
-                    let collection = self.collection
-                {
-                    BaseTunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
-                        if let _ = someError {
-                            OperationQueue.main.addOperation({
-                                self?.loadTunesDidFail = true
-                                self?.delegate?.playerControllerTracksDidChange(self, tracks: self?.tracks())
-                            })
-                        } else {
-                            OperationQueue.main.addOperation({
-                                for desc in someTuneDescriptions {
-                                    let track = PlayerTrack(tuneDescription: desc)
-                                    self?.playerTracks[track] = desc
-                                }
-                                self?.delegate?.playerControllerTracksDidChange(self, tracks: self?.tracks())
-                            })
-                        }
-                    })
-                } else {
-                    playerTracks.removeAll()
-                    delegate?.playerControllerTracksDidChange(self, tracks: tracks())
-                }
             }
         }
     }
@@ -113,10 +92,55 @@ class PlayerController {
     private var player: MPMusicPlayerController?
     private var playerTracks: [PlayerTrack : Any] = [PlayerTrack : Any]()
     
-    init() {
+    override init() {
+        super.init()
         NotificationCenter.default.addObserver(self, selector: #selector(stopPlaying), name: NSNotification.Name("stop playing"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(_:)), name: .AVPlayerItemDidPlayToEndTime, object: nil)
     }    
+    
+    required init(withSong aSong: Song, collection: SongCollection, delegate: PlayerControllerDelegate) {
+        super.init()
+        NotificationCenter.default.addObserver(self, selector: #selector(stopPlaying), name: NSNotification.Name("stop playing"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(_:)), name: .AVPlayerItemDidPlayToEndTime, object: nil)
+        self.song = aSong
+        self.collection = collection
+        self.delegate = delegate
+    }
+    
+    func loadTunes() {
+        playerTracks.removeAll()
+
+        if
+            let song = self.song,
+            let collection = self.collection
+        {
+            state = .loadingTunes
+            BaseTunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
+                if let _ = someError {
+                    OperationQueue.main.addOperation({
+                        self?.state = .loadingTunesDidFail
+                        if let self = self {
+                            self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
+                        }
+                    })
+                } else {
+                    OperationQueue.main.addOperation({
+                        self?.state = .loadingTunesDidSucceed
+                        for desc in someTuneDescriptions {
+                            let track = PlayerTrack(tuneDescription: desc)
+                            self?.playerTracks[track] = desc
+                        }
+                        if let self = self {
+                            self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
+                        }
+                    })
+                }
+            })
+        } else {
+            state = .tunesNotLoaded
+            delegate?.playerControllerTracksDidChange(self, tracks: tracks())
+        }
+    }
     
     func makeQuery(with predicate: MPMediaPropertyPredicate?) -> MPMediaQuery? {
         let query = MPMediaQuery.songs()
@@ -287,7 +311,7 @@ class PlayerController {
         }
     }
     
-    func playTuneDescription(_ tuneDescription: TuneDescription?, atTime time: TimeInterval, withDelay delay: TimeInterval, rate playbackRate: PFWPlaybackRate) {
+    func playTuneDescription(_ tuneDescription: TuneDescription, atTime time: TimeInterval, withDelay delay: TimeInterval, rate playbackRate: PFWPlaybackRate) {
         self.playbackRate = playbackRate
         isPaused = false
         
@@ -297,40 +321,38 @@ class PlayerController {
             print("There was an error setting the session category: \(error)")
         }
         
-        if
-            let tuneDescription = tuneDescription,
-            let presetURL = AVMIDIPlayer.songSoundBankUrl()
-        {
-            do {
+        do {
+            
+            switch tuneDescription.mediaType {
+            case .mp3:
+                let player = try AVAudioPlayer(contentsOf: tuneDescription.url)
+                player.enableRate = true
+                player.prepareToPlay()
+                player.rate = playbackRate
+                player.currentTime = time
+                player.delegate = self
+                mp3Player = player
                 
-                switch tuneDescription.mediaType {
-                case .mp3:
-                    let player = try AVAudioPlayer(contentsOf: tuneDescription.url)
-                    player.enableRate = true
-                    player.prepareToPlay()
-                    player.rate = playbackRate
-                    player.currentTime = time
-                    mp3Player = player
-                    
-                    player.play()
-                case .midi:
+                player.play()
+                delegate?.playbackStateDidChangeForPlayerController(self)
+            case .midi:
+                if let presetURL = AVMIDIPlayer.songSoundBankUrl() {
                     let player = try AVMIDIPlayer(withTune: tuneDescription, soundBankURL: presetURL)
                     player.rate = playbackRate
                     player.currentPosition = time
                     midiPlayer = player
-                                        
+                    
                     player.play({ [weak self] in
                         OperationQueue.main.addOperation({
                             self?.tunePlayerDidFinishPlaying()
                         })
                     })
+                    delegate?.playbackStateDidChangeForPlayerController(self)
                 }
-            } catch {
-                print("There was an error starting playback! \(error)")
             }
+        } catch {
+            print("There was an error starting playback! \(error)")
         }
-        
-        delegate?.playbackStateDidChangeForPlayerController(self)
     }
     
     func playMediaItem(_ mediaItem: MPMediaItem?, atTime time: TimeInterval, withDelay delay: TimeInterval, rate playbackRate: PFWPlaybackRate) {
@@ -348,12 +370,16 @@ class PlayerController {
             if error == nil {
                 OperationQueue.main.addOperation({
                     self?.player?.play()
-                    self?.delegate?.playbackStateDidChangeForPlayerController(self)
+                    if let self = self {
+                        self.delegate?.playbackStateDidChangeForPlayerController(self)
+                    }
                 })
             } else {
                 print(error)
             }
         })
+        
+        delegate?.playbackStateDidChangeForPlayerController(self)
     }
     
     @objc func playerItemDidReachEnd(_ notification: Notification?) {
@@ -365,5 +391,11 @@ class PlayerController {
             self.currentTrack = currentTrack
             delegate?.playbackStateDidChangeForPlayerController(self)
         }
+    }
+}
+
+extension PlayerController: AVAudioPlayerDelegate {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        delegate?.playbackStateDidChangeForPlayerController(self)
     }
 }

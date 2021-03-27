@@ -10,17 +10,45 @@
 import UIKit
 
 class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsToDisplay, HasSongsManager {
+    enum imageNames: String {
+        case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark"
+    }
+    override class var storyboardName: String {
+        get {
+            return "SongDetail"
+        }
+    }
     var songsToDisplay: [Song]?
     var songsManager: SongsManager?
     var newWindow: UIWindow?
+    lazy var tunesVC: TunesVC = {
+        return TunesVC.pfw_instantiateFromStoryboard() as! TunesVC
+    }()
     private var hasScrolled = false
     private var shouldScrollToStartingIndex = false
+    lazy private var playerController: PlayerController? = {
+        if
+            let songsManager = songsManager,
+            let currentSong = songsManager.currentSong,
+            let currentCollection = songsManager.currentCollection
+        {
+            return PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)            
+        }
+        return nil
+    }()
     
-    @IBOutlet private var rotateIconContainerView: UIView!
-    @IBOutlet private var rotateIconView: UIView!
+    @IBOutlet private var favoriteBarButtonItem: UIBarButtonItem?
+    @IBOutlet private var playBarButtonItem: UIBarButtonItem?
+    @IBOutlet private var showPlayerBarButtonItem: UIBarButtonItem?
     @IBOutlet weak var collectionView: UICollectionView?
+    @IBOutlet weak var toolbar: UIToolbar?
     
     private var indexPathOfLastDisplayedCell: IndexPath?
+    lazy private var activityIndicatorBarButtonItem: UIBarButtonItem = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.startAnimating()
+        return UIBarButtonItem(customView: activityIndicator)
+    }()
     
     // MARK: - UIViewController
     override func viewDidLoad() {
@@ -35,9 +63,12 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         navigationController?.navigationBar.compactAppearance = navigationBarAppearance
         navigationController?.navigationBar.standardAppearance = navigationBarAppearance
         
+        navigationItem.title = songsManager?.currentSong?.number
+        
         shouldScrollToStartingIndex = true
         
         configureFavoriteBarButtonItem()
+        configurePlayerBarButtonItems()
         
         collectionView?.register(UINib(nibName: "MetreCVCell", bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: "MetreCVCell")
     }
@@ -185,14 +216,24 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
             if let ip = ip {
                 if !(navigationItem.title != nil) || indexPathOfLastDisplayedCell?.compare(ip) != .orderedSame {
                     let song = SongsManager.songAtIndex(ip.row, allSongs: songsManager?.songsToDisplay)
-                    if let number = song?.number {
-                        tabBarController?.navigationItem.title = number
-                    }
                     songsManager?.setcurrentSong(song, songsToDisplay: songsManager?.songsToDisplay)
                 }
             }
             self.indexPathOfLastDisplayedCell = ip
         }
+        if playerController?.song != songsManager?.currentSong {
+            playerController?.stopPlaying()
+            playerController = nil
+            if
+                let songsManager = songsManager,
+                let currentSong = songsManager.currentSong,
+                let currentCollection = songsManager.currentCollection
+            {
+                self.playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+            }
+        }
+        navigationItem.title = songsManager?.currentSong?.number
+        configurePlayerBarButtonItems()
         configureFavoriteBarButtonItem()
     }
     
@@ -229,14 +270,90 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                 let currentSong = songsManager?.currentSong,
                 FavoritesSyncronizer.isFavorite(currentSong)
             {
-                return UIImage(named: "heart_filled", in: Helper.songsForWorshipBundle(), with: .none)
+                return UIImage(systemName: imageNames.isFavorite.rawValue)
             } else {
-                return UIImage(named: "heart_outline", in: Helper.songsForWorshipBundle(), with: .none)
+                return UIImage(systemName: imageNames.isNotFavorite.rawValue)
             }
         }()
         
-        let favoriteBarButtonItem = UIBarButtonItem(image: img, style: .plain, target: self, action: #selector(favoriteBarButtonItemTapped(_:)))
-        parent?.navigationItem.rightBarButtonItem = favoriteBarButtonItem
+        favoriteBarButtonItem?.image = img        
+    }
+    
+    func showActivityIndicatorBarButtonItem(replacing item: UIBarButtonItem?) {
+        if
+            let item = item,
+            let idx = toolbar?.items?.firstIndex(of: item)
+        {
+            toolbar?.items?.insert(activityIndicatorBarButtonItem, at: idx)
+            toolbar?.items?.remove(at: idx+1)
+        }
+    }
+
+    func showPlayBarButtonItem() {
+        if
+            let playBarButtonItem = playBarButtonItem,
+            let idx = toolbar?.items?.firstIndex(of: activityIndicatorBarButtonItem),
+            toolbar?.items?.contains(playBarButtonItem) == false
+        {
+            toolbar?.items?.insert(playBarButtonItem, at: idx)
+            toolbar?.items?.remove(at: idx+1)
+        }
+    }
+    
+    func showShowPlayerBarButtonItem() {
+        if
+            let showPlayerBarButtonItem = showPlayerBarButtonItem,
+            let idx = toolbar?.items?.firstIndex(of: activityIndicatorBarButtonItem),
+            toolbar?.items?.contains(showPlayerBarButtonItem) == false
+        {
+            toolbar?.items?.insert(showPlayerBarButtonItem, at: idx)
+            toolbar?.items?.remove(at: idx+1)
+        }
+    }
+    
+    func configurePlayerBarButtonItems() {
+        func defaulConfig() {
+            showPlayBarButtonItem()
+            playBarButtonItem?.isEnabled = true
+            playBarButtonItem?.image = UIImage(systemName: imageNames.play.rawValue)
+            showPlayerBarButtonItem?.isEnabled = true
+        }
+        
+        if
+            let playerController = playerController,
+            let currentSong = songsManager?.currentSong
+        {
+            if playerController.song == currentSong {
+                if playerController.isPlaying() {
+                    showPlayBarButtonItem()
+                    showShowPlayerBarButtonItem()
+                    playBarButtonItem?.image = UIImage(systemName: imageNames.pause.rawValue)
+                    playBarButtonItem?.isEnabled = true
+                    showPlayerBarButtonItem?.isEnabled = true
+                } else if playerController.state == .loadingTunes {
+                    if toolbar?.items?.contains(activityIndicatorBarButtonItem) == false {
+                        showActivityIndicatorBarButtonItem(replacing: showPlayerBarButtonItem)
+                    }
+                } else if playerController.state == .loadingTunesDidFail {
+                    showPlayBarButtonItem()
+                    showShowPlayerBarButtonItem()
+                    playBarButtonItem?.image = UIImage(systemName: imageNames.play.rawValue)
+                    playBarButtonItem?.isEnabled = false
+                    showPlayerBarButtonItem?.isEnabled = false
+                } else if playerController.state == .loadingTunesDidSucceed || playerController.state == .tunesNotLoaded {
+                    showPlayBarButtonItem()
+                    showShowPlayerBarButtonItem()
+                    playBarButtonItem?.image = UIImage(systemName: imageNames.play.rawValue)
+                    playBarButtonItem?.isEnabled = true
+                    showPlayerBarButtonItem?.isEnabled = true
+                }
+            } else {
+                defaulConfig()
+            }
+        } else {
+            playBarButtonItem?.isEnabled = false
+            showPlayerBarButtonItem?.isEnabled = false
+        }
     }
     
     // MARK: - IBActions
@@ -253,5 +370,124 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         }
     }
     
+    @IBAction func playTapped(_ sender: Any) {
+        if playerController == nil || playerController?.song != songsManager?.currentSong {
+            if
+                let songsManager = songsManager,
+                let currentSong = songsManager.currentSong,
+                let currentCollection = songsManager.currentCollection
+            {
+                self.playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+            }
+        }
+        
+        if let playerController = playerController {
+            if playerController.isPlaying() {
+                playerController.pause()
+            } else if playerController.isPaused {
+                playerController.resume()
+            } else if playerController.state == .tunesNotLoaded {
+                showActivityIndicatorBarButtonItem(replacing: playBarButtonItem)
+                showPlayerBarButtonItem?.isEnabled = false
+                playerController.loadTunes()
+            } else if playerController.state == .loadingTunesDidSucceed {
+                if let currentTrack = playerController.currentTrack {
+                    playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: 1.0)
+                }
+            }
+        }
+        
+        configurePlayerBarButtonItems()
+    }
+    
+    @IBAction func showPlayerTapped(_ sender: Any) {
+        if playerController == nil || playerController?.song != songsManager?.currentSong {
+            if
+                let songsManager = songsManager,
+                let currentSong = songsManager.currentSong,
+                let currentCollection = songsManager.currentCollection
+            {
+                self.playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+            }
+        }
+        
+        if let playerController = playerController {
+            if playerController.state == .loadingTunesDidSucceed {
+                showTunesVC()
+            } else {
+                showActivityIndicatorBarButtonItem(replacing: showPlayerBarButtonItem)
+                playBarButtonItem?.isEnabled = false
+                playerController.loadTunes()
+            }
+        }
+    }
+    
+    func showTunesVC() {
+        tunesVC.songsManager = songsManager
+        tunesVC.playerController = playerController
+        tunesVC.modalPresentationStyle = .popover
+        
+        tunesVC.popoverPresentationController?.barButtonItem = showPlayerBarButtonItem
+        
+        if let pres = tunesVC.presentationController {
+            pres.delegate = self
+        }
+        
+        tunesVC.popoverPresentationController?.backgroundColor = tunesVC.view.backgroundColor
+        
+        tunesVC.preferredContentSize = CGSize(width: 375, height: 155)
+        
+        present(tunesVC, animated: true, completion: nil)
+    }
+    
     // MARK: - Custom getters
+}
+
+extension MetreVC_iPhone: UIPopoverPresentationControllerDelegate {
+    public func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+        return .none
+    }
+    
+    public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        if let presentedVC = presentationController.presentedViewController as? TunesVC {
+            presentedVC.playerController?.delegate = self
+            configurePlayerBarButtonItems()
+        }
+    }
+}
+
+extension MetreVC_iPhone: PlayerControllerDelegate {
+    func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?) {
+        
+        if playerController.song == songsManager?.currentSong {
+            if playerController.state == .loadingTunesDidSucceed {
+                if
+                    let playBarButtonItem = playBarButtonItem,
+                    toolbar?.items?.contains(activityIndicatorBarButtonItem) == true && toolbar?.items?.contains(playBarButtonItem) == false
+                {
+                    if playerController.currentTrack == nil {
+                        playerController.currentTrack = tracks?.first
+                    }
+                    if let currentTrack = playerController.currentTrack {
+                        playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: 1.0)
+                    }
+                } else if
+                    let showPlayerBarButtonItem = showPlayerBarButtonItem,
+                    toolbar?.items?.contains(activityIndicatorBarButtonItem) == true && toolbar?.items?.contains(showPlayerBarButtonItem) == false
+                {
+                    if playerController.currentTrack == nil {
+                        playerController.currentTrack = tracks?.first
+                    }
+                    showTunesVC()
+                }
+            }
+        }
+        
+        configurePlayerBarButtonItems()
+    }
+    
+    func playbackStateDidChangeForPlayerController(_ playerController: PlayerController) {
+        configurePlayerBarButtonItems()
+    }
+    
 }

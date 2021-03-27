@@ -17,4 +17,5 @@ public struct AppConfig: Decodable {
     let songCollections: [SongCollectionConfig]
     let soundFonts: [SoundFontConfig]
     let tuneRecordings: Bool
+    let shouldShowAdditionalTunes: Bool
 }

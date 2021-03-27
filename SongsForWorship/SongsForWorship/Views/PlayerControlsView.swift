@@ -13,14 +13,24 @@ var PFWNumPlaybackRates: size_t = 6
 
 class PlayerControlsView: UIView {
     weak var delegate: PlayerControlsViewDelegate?
-    @IBOutlet private weak var playbackRateSegmentedControl: UISegmentedControl?
+    @IBOutlet private weak var playbackRateSegmentedControl: UISegmentedControl? {
+        didSet {
+            let font = UIFont.boldSystemFont(ofSize: 12.0)
+            let normalAttribute: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: UIColor.white]
+            playbackRateSegmentedControl?.setTitleTextAttributes(normalAttribute, for: .normal)
+            let selectedAttribute: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: UIColor.black]
+            playbackRateSegmentedControl?.setTitleTextAttributes(selectedAttribute, for: .selected)
+        }
+    }
     @IBOutlet private weak var volumeSlider: UISlider?
     @IBOutlet weak var loopButton: UIButton?
     @IBOutlet weak var prevButton: UIButton?
     @IBOutlet weak var playButton: UIButton?
     @IBOutlet weak var nextButton: UIButton?
     @IBOutlet weak var trackTitleLabel: UILabel?
-    
+    @IBOutlet weak var timeElapsedLabel: UILabel?
+    @IBOutlet weak var timeRemainingLabel: UILabel?
+
     override func awakeFromNib() {
         super.awakeFromNib()
 

@@ -46,6 +46,9 @@ extension TunesVC: ExtensibleTunesVC {
 }
 
 open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, PlayerControlsViewDelegate, PlayerControllerDelegate, HasSongsManager, PsalmObserver {
+    enum ImageNames: String {
+        case pause = "pause.fill", play = "play.fill", repeatTrack = "repeat" 
+    }
     override class var storyboardName: String {
         get {
             return "SongDetail"
@@ -61,8 +64,19 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         }
     }
     private var progressUpdateTimer: Timer?
-    private var playerController: PlayerController = PlayerController() {
+    lazy var playerController: PlayerController? = {
+        if
+            let songsManager = songsManager,
+            let currentSong = songsManager.currentSong,
+            let currentCollection = songsManager.currentCollection
+        {
+            return PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+        }
+        return nil
+    }() {
         didSet {
+            playerController?.delegate = self
+            configurePlayerControlsView()
         }
     }
     open var tuneTracks: [PlayerTrack]?
@@ -83,6 +97,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         }
     }
     @IBOutlet weak var tuneProgressBar: UIProgressView?
+    @IBOutlet weak var tableViewHeightConstraint: NSLayoutConstraint?
     var lastSelectedCell: IndexPath?
     var lastLoadedPsalmNumber: String?
     
@@ -107,9 +122,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         let currentSong = songsManager?.currentSong
         change(currentSong)
-        
-        configureSelectedTrackTitleLabel()
-        
+                
         let playTrackClassStr = "PlayTrackTVCell"
         tunesTableView?.register(UINib(nibName: playTrackClassStr, bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: playTrackClassStr)
         
@@ -125,14 +138,25 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         let recordingsDisabledClassStr = "RecordingsDisabledTVCell"
         tunesTableView?.register(UINib(nibName: recordingsDisabledClassStr, bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: recordingsDisabledClassStr)
         
-        playerController.delegate = self
-        playerController.song = currentSong
-        playerController.collection = songsManager?.currentCollection
-        
         tunesTableView?.register(UINib(nibName: "TunesHeaderView", bundle: Helper.songsForWorshipBundle()), forHeaderFooterViewReuseIdentifier: "TunesHeaderView")
         
         tunesTableView?.estimatedRowHeight = 44.0
         tunesTableView?.rowHeight = UITableView.automaticDimension
+        
+        if
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            app.appConfig.shouldShowAdditionalTunes == false
+        {
+            tableViewHeightConstraint?.constant = 0.0
+            tableViewHeightConstraint?.priority = .required
+        }
+        
+        configurePlayerControlsView()
+    }
+    
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configurePlayerControlsView()
     }
     
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -151,8 +175,17 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             playerControlsView?.playButton?.isSelected = false
             tuneTracks = nil
             recordingTracks = nil
-            playerController.song = currentSong
-            playerController.collection = songsManager?.currentCollection
+
+            playerController?.stopPlaying()
+            playerController = nil
+            
+            if
+                let currentSong = currentSong,
+                let currentCollection = songsManager?.currentCollection
+            {
+                playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+            }
+                                    
             tunesTableView?.reloadData()
             lastLoadedPsalmNumber = currentSong?.number
         }
@@ -163,7 +196,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     func timePosition() -> TimeInterval {
-        return playerController.timePosition
+        return playerController?.timePosition ?? 0.0
     }
     
     // MARK: - NSObject
@@ -179,10 +212,13 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         playerControlsView?.loopButton?.isSelected = !(playerControlsView?.loopButton?.isSelected)!
         
         if playerControlsView?.loopButton?.isSelected != nil {
-            playerController.loopCounter = Int8(songsManager?.currentSong?.stanzas.count ?? 0)
-            playerControlsView?.configureLoopButtonWithNumber(NSNumber(value: playerController.loopCounter))
+            playerController?.loopCounter = Int8(songsManager?.currentSong?.stanzas.count ?? 0)
+            
+            if let playerController = playerController {
+                playerControlsView?.configureLoopButtonWithNumber(NSNumber(value: playerController.loopCounter))
+            }
         } else {
-            playerController.loopCounter = 0
+            playerController?.loopCounter = 0
         }
     }
     
@@ -191,21 +227,25 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             return
         }
         
-        if isPlaying() {
-            // pause
-            pausePlayback()
-        } else if playerController.isPaused {
-            // resume
-            resumePlayback()
-        } else {
-            // begin
-            if
-                let currentTrack = playerController.currentTrack,
-                let playerControlsView = playerControlsView
-            {
-                playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: playerControlsView.currentPlaybackRate())
+        if let playerController = playerController {
+            if isPlaying() {
+                // pause
+                pausePlayback()
+            } else if playerController.isPaused {
+                // resume
+                resumePlayback()
+            } else {
+                // begin
+                if
+                    let currentTrack = playerController.currentTrack,
+                    let playerControlsView = playerControlsView
+                {
+                    playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: playerControlsView.currentPlaybackRate())
+                }
             }
         }
+        
+        configurePlayerControlsView()
     }
     
     @IBAction func prevButtonPressed() {
@@ -220,7 +260,10 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     func playbackRateDidChange() {
         if isPlaying() {
-            if let playerControlsView = playerControlsView {
+            if
+                let playerController = playerController,
+                let playerControlsView = playerControlsView
+            {
                 playerController.changePlaybackRate(playerControlsView.currentPlaybackRate())
             }
         }
@@ -350,7 +393,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                 indexPath.row < tuneTracks.count
             {
                 let track = tuneTracks[indexPath.row]
-                playerController.playTrack(track, atTime: 0.0, withDelay: 0.0, rate: playerControlsView.currentPlaybackRate())
+                playerController?.playTrack(track, atTime: 0.0, withDelay: 0.0, rate: playerControlsView.currentPlaybackRate())
             }
         case PFWTunesVCTableViewSection._Recording.rawValue:
             if
@@ -359,7 +402,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                 indexPath.row < recordingTracks.count
             {
                 let track = recordingTracks[indexPath.row]
-                playerController.playTrack(track, atTime: 0.0, withDelay: 0.0, rate: playerControlsView.currentPlaybackRate())
+                playerController?.playTrack(track, atTime: 0.0, withDelay: 0.0, rate: playerControlsView.currentPlaybackRate())
             } else {
                 let authStatus = MPMediaLibrary.authorizationStatus()
                 
@@ -372,8 +415,9 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                     MPMediaLibrary.requestAuthorization({ authorizationStatus in
                         OperationQueue.main.addOperation({
                             if authorizationStatus == .authorized {
-                                weakSelf?.playerController.song = weakSelf?.songsManager?.currentSong
-                                weakSelf?.playerController.collection = weakSelf?.songsManager?.currentCollection
+                                // FIXME:
+                                //weakSelf?.playerController.song = weakSelf?.songsManager?.currentSong
+                                //weakSelf?.playerController.collection = weakSelf?.songsManager?.currentCollection
                             } else {
                                 // user did not authorize
                                 weakSelf?.tunesTableView?.reloadData()
@@ -399,9 +443,36 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         return tableView.numberOfSections > 1
     }
     
+    func configurePlayerControlsView() {
+        updateProgressView()
+        
+        if let playerController = playerController {
+            if playerController.isPlaying() {
+                playerControlsView?.playButton?.setImage(UIImage(systemName: ImageNames.pause.rawValue), for: .normal)
+                
+                if progressUpdateTimer == nil {
+                    initiateProgressUpdateTimer()
+                }
+            } else {
+                invalidateProgressUpdateTimer()
+                playerControlsView?.playButton?.setImage(UIImage(systemName: ImageNames.play.rawValue), for: .normal)
+            }
+            
+            playerControlsView?.configureLoopButtonWithNumber(NSNumber(value: playerController.loopCounter))
+            
+            configureSelectedTrackTitleLabel()
+            
+            if playerController.loopCounter > 0 {
+                
+            } else {
+                
+            }
+        }
+    }
+    
     func configureSelectedTrackTitleLabel() {
         playerControlsView?.trackTitleLabel?.text = {
-            if let currentTrack = self.playerController.currentTrack {
+            if let currentTrack = self.playerController?.currentTrack {
                 if currentTrack.trackType == .tune {
                     return currentTrack.title
                 } else if currentTrack.trackType == .recording {
@@ -417,12 +488,14 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     open func headerCell(for tableView: UITableView?) -> UITableViewCell {        
         let cell = tableView?.dequeueReusableCell(withIdentifier: TunesVC.headerCellCellIdentifier) ?? UITableViewCell(style: .default, reuseIdentifier: TunesVC.headerCellCellIdentifier)
         
-        if playerController.loadTunesDidFail {
-            cell.textLabel?.text = "No Tunes Found"
-        } else if songsManager?.currentSong?.isTuneCopyrighted == true {
-            cell.textLabel?.text = "No Tunes available for this song."
-        } else {
-            cell.textLabel?.text = "Loading..."
+        if let playerController = playerController {
+            if playerController.loadTunesDidFail {
+                cell.textLabel?.text = "No Tunes Found"
+            } else if songsManager?.currentSong?.isTuneCopyrighted == true {
+                cell.textLabel?.text = "No Tunes available for this song."
+            } else {
+                cell.textLabel?.text = "Loading..."
+            }
         }
         
         cell.textLabel?.textAlignment = .center
@@ -500,23 +573,23 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     // MARK: - MIDI
     func isPlaying() -> Bool {
-        return playerController.isPlaying()
+        return playerController?.isPlaying() ?? false
     }
     
     func pausePlayback() {
-        playerController.pause()
+        playerController?.pause()
     }
     
     func resumePlayback() {
-        playerController.resume()
+        playerController?.resume()
     }
     
     func restartTrack() {
-        playerController.restartTrack()
+        playerController?.restartTrack()
     }
     
     func stopPlaying() {
-        playerController.stopPlaying()
+        playerController?.stopPlaying()
     }
     
     func initiateProgressUpdateTimer() {
@@ -529,15 +602,26 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     func updateProgressView() {
-        if playerController.isPlaying() || playerController.isPaused {
-            let duration = playerController.duration()
-            let currentPos = playerController.currentPosition()
-            
-            let progressPercent = Float(currentPos / duration)
-            
-            tuneProgressBar?.progress = progressPercent
-        } else {
-            tuneProgressBar?.progress = 0.0
+        if let playerController = playerController {
+            if playerController.isPlaying() || playerController.isPaused {
+                let duration = playerController.duration()
+                let currentPos = playerController.currentPosition()
+                
+                let progressPercent = Float(currentPos / duration)
+                
+                tuneProgressBar?.progress = progressPercent
+                
+                func intervalToString(interval: TimeInterval) -> String {
+                    let minutes = Int(interval/60)
+                    let seconds = Int(interval - Double(minutes * 60))
+                    return "\(minutes):\(seconds < 10 ? "0\(seconds)" : "\(seconds)")"
+                }
+                
+                playerControlsView?.timeElapsedLabel?.text = intervalToString(interval: currentPos)
+                playerControlsView?.timeRemainingLabel?.text = "-\(intervalToString(interval: duration - currentPos))"
+            } else {
+                tuneProgressBar?.progress = 0.0
+            }
         }
     }
     
@@ -546,68 +630,47 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     // MARK: - PFWPlayerControllerDelegate
-    func playerControllerTracksDidChange(_ playerController: PlayerController?, tracks: [PlayerTrack]?) {
-        tuneTracks = nil
-        recordingTracks = nil
-        
-        let tunes = tracks?.filter { $0.trackType == .tune }
-        
-        var newTunes: [PlayerTrack] = []
-        
-        let titles = ["harmony", "soprano", "tenor", "alto", "bass"]
-        
-        for title in titles {
-            let matches = tunes?.filter {
-                if let _ = $0.title?.range(of: title, options: .caseInsensitive) {
-                    return true
+    func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?) {
+        if playerController.song == self.songsManager?.currentSong {
+            tuneTracks = nil
+            recordingTracks = nil
+            
+            let tunes = tracks?.filter { $0.trackType == .tune }
+            
+            var newTunes: [PlayerTrack] = []
+            
+            let titles = ["harmony", "soprano", "tenor", "alto", "bass"]
+            
+            for title in titles {
+                let matches = tunes?.filter {
+                    if let _ = $0.title?.range(of: title, options: .caseInsensitive) {
+                        return true
+                    }
+                    return false
                 }
-                return false
+                
+                if let firstObject = matches?.first {
+                    newTunes.append(firstObject)
+                }
             }
             
-            if let firstObject = matches?.first {
-                newTunes.append(firstObject)
+            tuneTracks = newTunes.count > 0 ? newTunes : tunes
+            
+            recordingTracks = tracks?.filter { $0.trackType == .recording }
+            
+            if self.playerController?.currentTrack == nil {
+                self.playerController?.currentTrack = tuneTracks?.first
             }
+            
+            updateProgressView()
+            tunesTableView?.reloadData()
+            configurePlayerControlsView()
         }
-        
-        tuneTracks = newTunes.count > 0 ? newTunes : tunes
-        
-        recordingTracks = tracks?.filter { $0.trackType == .recording }
-        
-        if self.playerController.currentTrack == nil {
-            self.playerController.currentTrack = tuneTracks?.first
-        }
-        
-        updateProgressView()
-        tunesTableView?.reloadData()
     }
     
-    func playbackStateDidChangeForPlayerController(_ playerController: PlayerController?) {
-        updateProgressView()
-        
-        if self.playerController.isPlaying() {
-            playerControlsView?.playButton?.isSelected = true
-            
-            if progressUpdateTimer == nil {
-                initiateProgressUpdateTimer()
-            }
-        } else {
-            invalidateProgressUpdateTimer()
-            playerControlsView?.playButton?.isSelected = false
-        }
-        
-        if let playerController = playerController {
-            playerControlsView?.configureLoopButtonWithNumber(NSNumber(value: playerController.loopCounter))
-        }
-        
-        configureSelectedTrackTitleLabel()
-        
-        if self.playerController.loopCounter > 0 {
-            playerControlsView?.loopButton?.isSelected = true
-            if let playerController = playerController {
-                playerControlsView?.configureLoopButtonWithNumber(NSNumber(value: playerController.loopCounter))
-            }
-        } else {
-            playerControlsView?.loopButton?.isSelected = false
+    func playbackStateDidChangeForPlayerController(_ playerController: PlayerController) {
+        if playerController.song == self.songsManager?.currentSong {
+            configurePlayerControlsView()
         }
     }
 }

@@ -159,6 +159,7 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
 
             songsManager?.setcurrentSong(song, songsToDisplay: IndexVC.favoriteSongs(songsManager?.currentCollection?.songs))
 
+            /*
             if !(navigationController?.visibleViewController is TabBarController) {
                 let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
                 vc?.songsManager = songsManager
@@ -166,6 +167,9 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
                     navigationController?.show(vc, sender: nil)
                 }
             }
+ */
+            // FIXME: replace tab bar
+
 
             handeled = true
         }

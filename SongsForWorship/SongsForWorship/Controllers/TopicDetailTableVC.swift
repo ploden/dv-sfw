@@ -106,12 +106,16 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
             songsManager.setcurrentSong(song, songsToDisplay: songsToDisplay(for: indexPath))
             
             if UIDevice.current.userInterfaceIdiom != .pad {
+                /*
                 let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
                 vc?.songsManager = songsManager
                 
                 if let vc = vc {
                     navigationController?.pushViewController(vc, animated: true)
                 }
+ */
+                // FIXME: replace tab bar
+
             } else {
             }
         }

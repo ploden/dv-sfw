@@ -24,6 +24,8 @@ public class Song: NSObject {
     public var pdfPageNumbers: [Int]
     public var isTuneCopyrighted: Bool = false
     public var tune: Tune?
+    public var left: [String]?
+    public var right: [String]?
     
     init?(fromDict dict: [AnyHashable : Any], index anIndex: Int, tune aTune: Tune) {
         index = anIndex
@@ -35,12 +37,10 @@ public class Song: NSObject {
         verses_line_1 = dict["verse_line_1"] as? String ?? ""
         verses_line_2 = dict["verse_line_2"] as? String ?? ""
         
-        /*
-        info_composer = dict["info_composer"] as? String ?? ""
-        info_tune = dict["info_tune"] as? String ?? ""
-        meter = dict["info_meter"] as? String ?? ""
-        tuneWithoutMeter = dict["info_tune_wo_meter"] as? String
-         */
+        if let leftRight = dict["left_right"] as? [AnyHashable : Any] {
+            left = leftRight["left"] as? [String]
+            right = leftRight["right"] as? [String]
+        }
 
         stanzas = [String]()
 

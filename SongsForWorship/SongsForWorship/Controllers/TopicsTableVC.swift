@@ -85,12 +85,7 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
                     if let song = songsManager?.songForNumber(topic.songNumbers.first) {
                         songsManager?.setcurrentSong(song, songsToDisplay: [song])
                         
-                        let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
-                        vc?.songsManager = songsManager
-                        
-                        if let vc = vc {
-                            navigationController?.pushViewController(vc, animated: true)
-                        }
+                        // FIXME: replace tab bar
                     }
                 }
             } else if topic.redirects.count == 1 && topic.songNumbers.count == 0 {

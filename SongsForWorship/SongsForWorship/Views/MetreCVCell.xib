@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -22,16 +20,16 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="455"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="1000" ambiguous="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ufP-v0-4Pg">
+                    <scrollView multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="1000" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ufP-v0-4Pg">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="455"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="This is a Psalm title." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" minimumFontSize="16" translatesAutoresizingMaskIntoConstraints="NO" id="XgI-li-hFF">
-                                <rect key="frame" x="67" y="20" width="186.5" height="26"/>
+                                <rect key="frame" x="62.5" y="20" width="195.5" height="26"/>
                                 <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="22"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="This is the verses label This is the verses label This is the verses" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" minimumFontSize="14" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="300" translatesAutoresizingMaskIntoConstraints="NO" id="7N1-aB-mRJ">
-                                <rect key="frame" x="10" y="54" width="300" height="33"/>
+                                <rect key="frame" x="14.5" y="54" width="291" height="33"/>
                                 <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="14"/>
                                 <color key="textColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -40,79 +38,59 @@
                                 <rect key="frame" x="12" y="101" width="296" height="21"/>
                                 <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="18"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" ambiguous="YES" text="© 2009 Crown and Covenant Publications. Used with permission." lineBreakMode="tailTruncation" minimumFontSize="10" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QGt-on-hZf">
-                                <rect key="frame" x="33" y="296" width="254" height="11"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gw8-fW-W2U">
+                                <rect key="frame" x="12" y="166" width="100" height="20.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="ZZS-aA-RSi"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="© 2009 Crown and Covenant Publications. Used with permission." lineBreakMode="tailTruncation" minimumFontSize="10" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QGt-on-hZf">
+                                <rect key="frame" x="28" y="224.5" width="264" height="10.5"/>
                                 <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="9"/>
                                 <color key="textColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" verticalHuggingPriority="1000" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ia5-Wd-SSf">
-                                <rect key="frame" x="12" y="232" width="296" height="44"/>
-                                <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Composer" lineBreakMode="tailTruncation" numberOfLines="0" minimumFontSize="16" translatesAutoresizingMaskIntoConstraints="NO" id="1rc-zb-SJm" userLabel="Composer">
-                                        <rect key="frame" x="0.0" y="0.0" width="148" height="14"/>
-                                        <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="12"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="right" contentVerticalAlignment="top" buttonType="system" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="1Db-og-Blb">
-                                        <rect key="frame" x="148" y="-6" width="148" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="fUi-H0-T8j"/>
-                                        </constraints>
-                                        <edgeInsets key="layoutMargins" top="0.0" left="8" bottom="8" right="8"/>
-                                        <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="12"/>
-                                        <state key="normal" title="Wallace CM">
-                                            <color key="titleColor" systemColor="labelColor"/>
-                                        </state>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="top" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bWO-YF-vA2">
-                                        <rect key="frame" x="148" y="16" width="148" height="26"/>
-                                        <fontDescription key="fontDescription" name="StempelGaramondLTStd-Roman" family="Stempel Garamond LT Std" pointSize="12"/>
-                                        <state key="normal" title="CM">
-                                            <color key="titleColor" systemColor="labelColor"/>
-                                        </state>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="Label" textAlignment="right" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kLM-hL-Lyb">
+                                <rect key="frame" x="160" y="166" width="150" height="20.5"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="bWO-YF-vA2" secondAttribute="bottom" id="0i4-AN-Rjs"/>
-                                    <constraint firstItem="1rc-zb-SJm" firstAttribute="top" secondItem="ia5-Wd-SSf" secondAttribute="top" id="5nX-er-QYe"/>
-                                    <constraint firstItem="bWO-YF-vA2" firstAttribute="trailing" secondItem="1Db-og-Blb" secondAttribute="trailing" id="BxR-vH-R4j"/>
-                                    <constraint firstItem="bWO-YF-vA2" firstAttribute="top" secondItem="1Db-og-Blb" secondAttribute="bottom" constant="-8" id="Kkt-uu-q08"/>
-                                    <constraint firstItem="1Db-og-Blb" firstAttribute="top" secondItem="ia5-Wd-SSf" secondAttribute="top" constant="-6" id="PsT-RY-VP8"/>
-                                    <constraint firstItem="1rc-zb-SJm" firstAttribute="width" secondItem="ia5-Wd-SSf" secondAttribute="width" multiplier="1:2" id="UAv-F3-h30"/>
-                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="1rc-zb-SJm" secondAttribute="bottom" id="VfQ-xU-LbO"/>
-                                    <constraint firstItem="bWO-YF-vA2" firstAttribute="width" secondItem="ia5-Wd-SSf" secondAttribute="width" multiplier="1:2" id="gOP-Gu-xWn"/>
-                                    <constraint firstAttribute="trailing" secondItem="1Db-og-Blb" secondAttribute="trailing" id="m2c-r3-k2S"/>
-                                    <constraint firstItem="1Db-og-Blb" firstAttribute="width" secondItem="ia5-Wd-SSf" secondAttribute="width" multiplier="1:2" id="oCP-bW-0WB"/>
-                                    <constraint firstItem="1rc-zb-SJm" firstAttribute="leading" secondItem="ia5-Wd-SSf" secondAttribute="leading" id="qN8-hi-Dih"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="sUu-X4-fxz"/>
                                 </constraints>
-                            </view>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="7N1-aB-mRJ" secondAttribute="centerX" id="0AJ-yb-PE6"/>
+                            <constraint firstItem="QGt-on-hZf" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Gw8-fW-W2U" secondAttribute="bottom" constant="38" id="1y8-9K-3QU"/>
+                            <constraint firstItem="QGt-on-hZf" firstAttribute="top" relation="greaterThanOrEqual" secondItem="kLM-hL-Lyb" secondAttribute="bottom" constant="38" id="31E-vb-Nqp"/>
                             <constraint firstItem="XgI-li-hFF" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ufP-v0-4Pg" secondAttribute="leading" priority="999" constant="10" id="3zx-cD-ErD"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="7N1-aB-mRJ" secondAttribute="trailing" constant="10" id="43t-9v-Ur8"/>
+                            <constraint firstItem="kLM-hL-Lyb" firstAttribute="top" secondItem="MZ0-TP-MPK" secondAttribute="bottom" constant="44" id="4Fx-sJ-NRA"/>
                             <constraint firstAttribute="trailing" secondItem="XgI-li-hFF" secondAttribute="trailing" priority="1" constant="40" placeholder="YES" id="706-ZE-Ivi"/>
                             <constraint firstAttribute="width" constant="320" placeholder="YES" id="8Kz-du-XRw"/>
                             <constraint firstItem="MZ0-TP-MPK" firstAttribute="top" secondItem="7N1-aB-mRJ" secondAttribute="bottom" constant="14" id="Cmk-Oh-cSI"/>
                             <constraint firstItem="MZ0-TP-MPK" firstAttribute="leading" secondItem="ufP-v0-4Pg" secondAttribute="leading" constant="12" id="FIj-EZ-qLe"/>
                             <constraint firstAttribute="trailing" secondItem="MZ0-TP-MPK" secondAttribute="trailing" constant="12" id="FO7-bW-Gfh"/>
-                            <constraint firstItem="ia5-Wd-SSf" firstAttribute="top" secondItem="MZ0-TP-MPK" secondAttribute="bottom" constant="110" id="Ihz-ct-Wl5"/>
                             <constraint firstAttribute="centerX" secondItem="MZ0-TP-MPK" secondAttribute="centerX" id="JbG-YO-Adp"/>
                             <constraint firstAttribute="centerX" secondItem="QGt-on-hZf" secondAttribute="centerX" id="KUz-ph-Ngb"/>
                             <constraint firstItem="7N1-aB-mRJ" firstAttribute="top" secondItem="XgI-li-hFF" secondAttribute="bottom" constant="8" id="PLy-OW-gsf"/>
-                            <constraint firstItem="QGt-on-hZf" firstAttribute="top" secondItem="ia5-Wd-SSf" secondAttribute="bottom" constant="20" id="UOm-yd-Tzw"/>
                             <constraint firstAttribute="bottom" secondItem="QGt-on-hZf" secondAttribute="bottom" constant="10" id="Uob-cX-AGA"/>
                             <constraint firstItem="XgI-li-hFF" firstAttribute="leading" secondItem="ufP-v0-4Pg" secondAttribute="leading" priority="1" constant="40" placeholder="YES" id="bW5-Kh-Mo1"/>
                             <constraint firstItem="XgI-li-hFF" firstAttribute="centerX" secondItem="ufP-v0-4Pg" secondAttribute="centerX" id="cxP-bD-efu"/>
-                            <constraint firstItem="ia5-Wd-SSf" firstAttribute="trailing" secondItem="MZ0-TP-MPK" secondAttribute="trailing" id="eg6-qB-MZW"/>
+                            <constraint firstItem="Gw8-fW-W2U" firstAttribute="leading" secondItem="MZ0-TP-MPK" secondAttribute="leading" id="fS8-Ee-GzR"/>
                             <constraint firstItem="XgI-li-hFF" firstAttribute="top" secondItem="ufP-v0-4Pg" secondAttribute="top" constant="20" id="kJ9-3l-iIf"/>
                             <constraint firstItem="7N1-aB-mRJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ufP-v0-4Pg" secondAttribute="leading" constant="10" id="lHF-Gn-6X4"/>
-                            <constraint firstItem="ia5-Wd-SSf" firstAttribute="leading" secondItem="MZ0-TP-MPK" secondAttribute="leading" id="ptW-y0-BG1"/>
+                            <constraint firstAttribute="trailing" secondItem="kLM-hL-Lyb" secondAttribute="trailing" constant="10" id="quo-9s-Qim"/>
                             <constraint firstAttribute="centerX" secondItem="XgI-li-hFF" secondAttribute="centerX" id="shm-0F-vIc"/>
+                            <constraint firstItem="kLM-hL-Lyb" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Gw8-fW-W2U" secondAttribute="trailing" constant="10" id="vew-aR-OeR"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="XgI-li-hFF" secondAttribute="trailing" priority="999" constant="10" id="wxG-Dm-4Qf"/>
+                            <constraint firstItem="Gw8-fW-W2U" firstAttribute="top" secondItem="MZ0-TP-MPK" secondAttribute="bottom" constant="44" id="zZv-Xq-aHI"/>
+                            <constraint firstItem="QGt-on-hZf" firstAttribute="top" secondItem="Gw8-fW-W2U" secondAttribute="bottom" priority="250" constant="38" id="zz9-oX-JSO"/>
                         </constraints>
                         <connections>
                             <outlet property="delegate" destination="wwB-3Z-NWv" id="leX-0T-dzd"/>
@@ -129,24 +107,15 @@
             </constraints>
             <size key="customSize" width="320" height="455"/>
             <connections>
-                <outlet property="composerLabel" destination="1rc-zb-SJm" id="AmX-hz-twb"/>
                 <outlet property="copyrightLabel" destination="QGt-on-hZf" id="uft-qg-dGP"/>
-                <outlet property="meterButton" destination="bWO-YF-vA2" id="gju-5Y-Zeg"/>
                 <outlet property="metreLabel" destination="MZ0-TP-MPK" id="Hsg-qZ-c9C"/>
                 <outlet property="scrollView" destination="ufP-v0-4Pg" id="IId-1H-gfx"/>
                 <outlet property="titleLabel" destination="XgI-li-hFF" id="Qi0-ga-6T3"/>
-                <outlet property="tuneButton" destination="1Db-og-Blb" id="qSD-J6-1Hh"/>
+                <outlet property="topLeftLabel" destination="Gw8-fW-W2U" id="Aq4-AW-Dtd"/>
+                <outlet property="topRightLabel" destination="kLM-hL-Lyb" id="tip-WY-V0O"/>
                 <outlet property="versesLabel" destination="7N1-aB-mRJ" id="cUb-oa-PGI"/>
             </connections>
             <point key="canvasLocation" x="123" y="388"/>
         </collectionViewCell>
     </objects>
-    <resources>
-        <systemColor name="labelColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-    </resources>
 </document>

@@ -23,43 +23,34 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
                 return nil
             }()
             metreLabel?.attributedText = song?.attributedMetreText()
-            composerLabel?.text = song?.tune?.composer?.displayName
+            //composerLabel?.text = song?.tune?.composer?.displayName
             
             if
                 let meter = song?.tune?.meter,
                 let tuneWithoutMeter = song?.tune?.nameWithoutMeter
             {
-                tuneButton?.setTitle(tuneWithoutMeter.capitalized, for: .normal)
-                meterButton?.setTitle(meter.uppercased(), for: .normal)
+                //tuneButton?.setTitle(tuneWithoutMeter.capitalized, for: .normal)
+                //meterButton?.setTitle(meter.uppercased(), for: .normal)
             } else {
-                tuneButton?.setTitle(song?.tune?.name.capitalized, for: .normal)
-                meterButton?.setTitle(nil, for: .normal)
+                //tuneButton?.setTitle(song?.tune?.name.capitalized, for: .normal)
+                //meterButton?.setTitle(nil, for: .normal)
             }
             
+            if let left = song?.left {
+                topLeftLabel?.text = left.joined(separator: "\n")
+            }
+            if let right = song?.right {
+                topRightLabel?.text = right.joined(separator: "\n")
+            }
             scrollView?.contentOffset = .zero
-        }
-    }
-    @IBOutlet weak var meterButton: UIButton? {
-        didSet {
-            meterButton?.titleLabel?.font = metreLabel?.font
-        }
-    }
-    @IBOutlet weak var tuneButton: UIButton? {
-        didSet {
-            tuneButton?.titleLabel?.font = metreLabel?.font
-        }
-    }
-    @IBOutlet weak var composerLabel: UILabel? {
-        didSet {
-            composerLabel?.font = metreLabel?.font
         }
     }
     @IBOutlet weak var metreLabel: UILabel? {
         didSet {
             metreLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
-            composerLabel?.font = metreLabel?.font
-            tuneButton?.titleLabel?.font = metreLabel?.font
-            meterButton?.titleLabel?.font = metreLabel?.font
+            //composerLabel?.font = metreLabel?.font
+            //tuneButton?.titleLabel?.font = metreLabel?.font
+            //meterButton?.titleLabel?.font = metreLabel?.font
         }
     }
     @IBOutlet weak var titleLabel: UILabel? {
@@ -77,8 +68,23 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
             copyrightLabel?.font = UIFont.systemFont(ofSize: 9.0)
         }
     }
+    @IBOutlet weak var topLeftLabel: UILabel? {
+        didSet {
+            if let metreLabel = metreLabel {
+                topLeftLabel?.font = metreLabel.font.withSize(metreLabel.font.pointSize - 4)
+            }
+        }
+    }
+    @IBOutlet weak var topRightLabel: UILabel? {
+        didSet {
+            if let metreLabel = metreLabel {
+                topRightLabel?.font = metreLabel.font.withSize(metreLabel.font.pointSize - 4)
+            }
+        }
+    }
     @IBOutlet weak var scrollView: UIScrollView?
-    
+    @IBOutlet weak var metadataStackView: UIStackView?
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         

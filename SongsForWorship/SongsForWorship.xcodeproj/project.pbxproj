@@ -96,7 +96,6 @@
 		8D99C22E24CED40A005B34F2 /* MetreVC_iPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E024CED40A005B34F2 /* MetreVC_iPhone.swift */; };
 		8D99C22F24CED40A005B34F2 /* SongPreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */; };
 		8D99C23024CED40A005B34F2 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E224CED40A005B34F2 /* NavigationController.swift */; };
-		8D99C23124CED40A005B34F2 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E324CED40A005B34F2 /* TabBarController.swift */; };
 		8D99C23224CED40A005B34F2 /* HasSongsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */; };
 		8D99C23324CED40A005B34F2 /* SongsForWorshipAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E524CED40A005B34F2 /* SongsForWorshipAppDelegate.swift */; };
 		8D99C23424CED40A005B34F2 /* PlayerControlsViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */; };
@@ -211,7 +210,6 @@
 		8D99C1E024CED40A005B34F2 /* MetreVC_iPhone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetreVC_iPhone.swift; sourceTree = "<group>"; };
 		8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongPreviewViewController.xib; sourceTree = "<group>"; };
 		8D99C1E224CED40A005B34F2 /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
-		8D99C1E324CED40A005B34F2 /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasSongsManager.swift; sourceTree = "<group>"; };
 		8D99C1E524CED40A005B34F2 /* SongsForWorshipAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsForWorshipAppDelegate.swift; sourceTree = "<group>"; };
 		8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerControlsViewDelegate.swift; sourceTree = "<group>"; };
@@ -432,7 +430,6 @@
 				8D99C1DC24CED40A005B34F2 /* SongPreviewViewController.swift */,
 				8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */,
 				8D99C1D624CED40A005B34F2 /* SongsManager.swift */,
-				8D99C1E324CED40A005B34F2 /* TabBarController.swift */,
 				8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */,
 				8D99C1DD24CED40A005B34F2 /* TopicDetailTableVC.swift */,
 				8D99C1D724CED40A005B34F2 /* TopicsTableVC.swift */,
@@ -616,7 +613,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D99C21524CED40A005B34F2 /* FavoritesHeaderView.swift in Sources */,
-				8D99C23124CED40A005B34F2 /* TabBarController.swift in Sources */,
 				8D99C1F924CED40A005B34F2 /* AVMIDIPlayer.swift in Sources */,
 				8D99C22C24CED40A005B34F2 /* PlayerController.swift in Sources */,
 				8D99C22B24CED40A005B34F2 /* TopicDetailTableVC.swift in Sources */,

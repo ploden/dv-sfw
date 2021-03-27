@@ -328,11 +328,10 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             songsManager?.setcurrentSong(song, songsToDisplay: toDisplay)
             
             if UIDevice.current.userInterfaceIdiom != .pad {
-                let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
-                vc?.songsManager = songsManager
-                
-                if let vc = vc {
-                    navigationController?.pushViewController(vc, animated: true)
+                // FIXME: replace tab bar
+                if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
+                    vc.songsManager = songsManager
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
         }
@@ -629,11 +628,14 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             songsManager.setcurrentSong(song, songsToDisplay: songsManager.songsToDisplay)
         }
         
+        /*
         let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
         vc?.songsManager = songsManager
         if let vc = vc {
             navigationController?.pushViewController(vc, animated: true)
         }
+ */
+        // FIXME: replace tab bar
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
