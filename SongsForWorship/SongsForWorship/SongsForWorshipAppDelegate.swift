@@ -150,7 +150,6 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
             if let vc = vc {
                 navigationController?.show(vc, sender: nil)
             }
-            vc?.startSearching()
 
             handeled = true
         } else if (identifier == kFavoritePsalmShortcutIdentifier) {

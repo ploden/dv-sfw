@@ -141,30 +141,5 @@ open class SongCollection: NSObject {
 
     func songForNumber(_ number: String?) -> Song? {
         return songs?.first(where: { $0.number == number })
-        /*
-        if let songs = songs {
-            let index = (songs as NSArray?)?.indexOfObject(passingTest: { obj, idx, stop in
-                let song = obj as? Song
-                
-                if (song?.number == number) {
-                    return true
-                }
-                
-                return false
-            })
-            
-            var song: Song?
-            
-            if
-                let index = index,
-                index < songs.count
-            {
-                song = songs[index]
-            }
-            
-            return song
-        }
-        return nil
- */
     }
 }
