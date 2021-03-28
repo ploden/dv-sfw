@@ -32,114 +32,88 @@ class PlayerController: NSObject {
     var isPaused: Bool = false
     var state: PlayerControllerState = .tunesNotLoaded
     private var playbackRate: PFWPlaybackRate?
-    private var _currentTrack: PlayerTrack?
     var currentTrack: PlayerTrack? {
-        set(newTrack) {
-            if _currentTrack != newTrack && isPlaying() == false {
-                _currentTrack = newTrack
+        didSet {
+            if currentTrack != oldValue && isPlaying() == false {
                 delegate?.playbackStateDidChangeForPlayerController(self)
             }
         }
-        get {
-            return _currentTrack
-        }
     }
-    var collection: SongCollection?
-    private(set) var song: Song? {
-        didSet {
-            if let song = song {
-                if isPlaying() {
-                    stopPlaying()
-                }
-                
-                currentTrack = nil
-                playerTracks.removeAll()
-                state = .tunesNotLoaded
-                
-                let authStatus = MPMediaLibrary.authorizationStatus()
-                
-                switch authStatus {
-                case .denied, .restricted, .notDetermined:
-                    break
-                case .authorized:
-                    let numberPredicate = MPMediaPropertyPredicate(value: song.number, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
-                    
-                    let titlePredicate = MPMediaPropertyPredicate(value: song.title, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
-                    
-                    if
-                        let numberQueryItems = makeQuery(with: numberPredicate)?.items,
-                        let titleQueryItems = makeQuery(with: titlePredicate)?.items
-                    {
-                        let numberQueryItemsSet = Set<MPMediaItem>(numberQueryItems)
-                        let  titleQueryItemsSet = Set<MPMediaItem>(titleQueryItems)
-                        let intersection = titleQueryItemsSet.intersection(numberQueryItemsSet)
-                        
-                        let collection = MPMediaItemCollection(items: Array(intersection))
-                        
-                        for item in collection.items {
-                            let track = PlayerTrack(mediaItem: item)
-                            playerTracks[track] = item
-                        }
-                    }
-                default:
-                    break
-                }
-            }
-        }
-    }
+    var collection: SongCollection
+    private(set) var song: Song
     private var midiPlayer: AVMIDIPlayer?
     private var mp3Player: AVAudioPlayer?
     private var player: MPMusicPlayerController?
-    private var playerTracks: [PlayerTrack : Any] = [PlayerTrack : Any]()
+    private var playerTracks: [PlayerTrack:Any] = [PlayerTrack:Any]()
     
-    override init() {
-        super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(stopPlaying), name: NSNotification.Name("stop playing"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(_:)), name: .AVPlayerItemDidPlayToEndTime, object: nil)
-    }    
-    
-    required init(withSong aSong: Song, collection: SongCollection, delegate: PlayerControllerDelegate) {
-        super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(stopPlaying), name: NSNotification.Name("stop playing"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(_:)), name: .AVPlayerItemDidPlayToEndTime, object: nil)
+    required init(withSong aSong: Song, aCollection: SongCollection, delegate: PlayerControllerDelegate) {
         self.song = aSong
-        self.collection = collection
+        self.collection = aCollection
         self.delegate = delegate
+        super.init()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(stopPlaying), name: NSNotification.Name("stop playing"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(_:)), name: .AVPlayerItemDidPlayToEndTime, object: nil)
+        
+        state = .tunesNotLoaded
+        
+        let authStatus = MPMediaLibrary.authorizationStatus()
+        
+        switch authStatus {
+        case .denied, .restricted, .notDetermined:
+            break
+        case .authorized:
+            let numberPredicate = MPMediaPropertyPredicate(value: song.number, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
+            
+            let titlePredicate = MPMediaPropertyPredicate(value: song.title, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
+            
+            if
+                let numberQueryItems = makeQuery(with: numberPredicate)?.items,
+                let titleQueryItems = makeQuery(with: titlePredicate)?.items
+            {
+                let numberQueryItemsSet = Set<MPMediaItem>(numberQueryItems)
+                let  titleQueryItemsSet = Set<MPMediaItem>(titleQueryItems)
+                let intersection = titleQueryItemsSet.intersection(numberQueryItemsSet)
+                
+                let collection = MPMediaItemCollection(items: Array(intersection))
+                
+                for item in collection.items {
+                    let track = PlayerTrack(mediaItem: item)
+                    playerTracks[track] = item
+                }
+            }
+        default:
+            break
+        }
     }
     
     func loadTunes() {
-        playerTracks.removeAll()
-
-        if
-            let song = self.song,
-            let collection = self.collection
-        {
-            state = .loadingTunes
-            BaseTunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
-                if let _ = someError {
-                    OperationQueue.main.addOperation({
-                        self?.state = .loadingTunesDidFail
-                        if let self = self {
-                            self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
-                        }
-                    })
-                } else {
-                    OperationQueue.main.addOperation({
-                        self?.state = .loadingTunesDidSucceed
+        state = .loadingTunes
+        BaseTunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
+            if let _ = someError {
+                OperationQueue.main.addOperation({
+                    self?.state = .loadingTunesDidFail
+                    if let self = self {
+                        self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
+                    }
+                })
+            } else {
+                OperationQueue.main.addOperation({
+                    if let self = self {
+                        self.state = .loadingTunesDidSucceed
                         for desc in someTuneDescriptions {
                             let track = PlayerTrack(tuneDescription: desc)
-                            self?.playerTracks[track] = desc
+                            self.playerTracks[track] = desc
                         }
-                        if let self = self {
-                            self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
-                        }
-                    })
-                }
-            })
-        } else {
-            state = .tunesNotLoaded
-            delegate?.playerControllerTracksDidChange(self, tracks: tracks())
-        }
+                        let silentDelegate = self.delegate
+                        self.delegate = nil
+                        self.currentTrack = self.playerTracks.keys.first
+                        self.delegate = silentDelegate
+                        self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
+                    }
+                })
+            }
+        })
     }
     
     func makeQuery(with predicate: MPMediaPropertyPredicate?) -> MPMediaQuery? {
@@ -384,13 +358,6 @@ class PlayerController: NSObject {
     
     @objc func playerItemDidReachEnd(_ notification: Notification?) {
         tunePlayerDidFinishPlaying()
-    }
-    
-    func setCurrentTrack(_ currentTrack: PlayerTrack?) {
-        if self.currentTrack != currentTrack && isPlaying() == false {
-            self.currentTrack = currentTrack
-            delegate?.playbackStateDidChangeForPlayerController(self)
-        }
     }
 }
 

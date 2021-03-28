@@ -45,7 +45,7 @@ extension TunesVC: ExtensibleTunesVC {
     }
 }
 
-open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, PlayerControlsViewDelegate, PlayerControllerDelegate, HasSongsManager, PsalmObserver {
+open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, PlayerControlsViewDelegate, PlayerControllerDelegate, HasSongsManager {
     enum ImageNames: String {
         case pause = "pause.fill", play = "play.fill", repeatTrack = "repeat" 
     }
@@ -70,13 +70,15 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             let currentSong = songsManager.currentSong,
             let currentCollection = songsManager.currentCollection
         {
-            return PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+            return PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
         }
         return nil
     }() {
         didSet {
             playerController?.delegate = self
-            configurePlayerControlsView()
+            if isViewLoaded {
+                configurePlayerControlsView()
+            }
         }
     }
     open var tuneTracks: [PlayerTrack]?
@@ -99,7 +101,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     @IBOutlet weak var tuneProgressBar: UIProgressView?
     @IBOutlet weak var tableViewHeightConstraint: NSLayoutConstraint?
     var lastSelectedCell: IndexPath?
-    var lastLoadedPsalmNumber: String?
     
     // MARK: - UIViewController
     open override func viewDidLoad() {
@@ -109,11 +110,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             textAttributes[NSAttributedString.Key.font] = UIFont.systemFont(ofSize: 20.0)
             textAttributes[NSAttributedString.Key.foregroundColor] = UIColor.white
             navigationController?.navigationBar.titleTextAttributes = textAttributes
-        }
-        
-        if let songsManager = songsManager {
-            songsManager.addObserver(forcurrentSong: self)
-            isObservingcurrentSong = true
         }
         
         playerControlsView?.delegate = self
@@ -168,27 +164,25 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     func change(_ currentSong: Song?) {
-        if (lastLoadedPsalmNumber == currentSong?.number) {
-            // do nothing?
-        } else {
-            playerControlsView?.loopButton?.isSelected = false
-            playerControlsView?.playButton?.isSelected = false
-            tuneTracks = nil
-            recordingTracks = nil
-
-            playerController?.stopPlaying()
+        playerControlsView?.loopButton?.isSelected = false
+        playerControlsView?.playButton?.isSelected = false
+        tuneTracks = nil
+        recordingTracks = nil
+        
+        playerController?.stopPlaying()
+        
+        if playerController?.song != currentSong {
             playerController = nil
-            
+
             if
                 let currentSong = currentSong,
                 let currentCollection = songsManager?.currentCollection
             {
-                playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+                playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
             }
-                                    
-            tunesTableView?.reloadData()
-            lastLoadedPsalmNumber = currentSong?.number
         }
+        
+        tunesTableView?.reloadData()
     }
     
     func tunesDidLoad(_ aNotification: Notification?) {
@@ -201,9 +195,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     // MARK: - NSObject
     deinit {
-        if isObservingcurrentSong {
-            songsManager?.removeObserver(forcurrentSong: self)
-        }
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -560,17 +551,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         return title ?? ""
     }
     
-    func songDidChange(_ notification: Notification) {
-        if
-            let object = notification.object as? SongsManager,
-            object == songsManager
-        {
-            stopPlaying()
-            let newPsalm = object.currentSong
-            self.change(newPsalm)
-        }
-    }
-    
     // MARK: - MIDI
     func isPlaying() -> Bool {
         return playerController?.isPlaying() ?? false
@@ -653,15 +633,10 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                     newTunes.append(firstObject)
                 }
             }
-            
+             
             tuneTracks = newTunes.count > 0 ? newTunes : tunes
             
             recordingTracks = tracks?.filter { $0.trackType == .recording }
-            
-            if self.playerController?.currentTrack == nil {
-                self.playerController?.currentTrack = tuneTracks?.first
-            }
-            
             updateProgressView()
             tunesTableView?.reloadData()
             configurePlayerControlsView()

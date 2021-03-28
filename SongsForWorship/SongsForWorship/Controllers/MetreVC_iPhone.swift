@@ -32,7 +32,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
             let currentSong = songsManager.currentSong,
             let currentCollection = songsManager.currentCollection
         {
-            return PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)            
+            return PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)            
         }
         return nil
     }()
@@ -229,7 +229,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                 let currentSong = songsManager.currentSong,
                 let currentCollection = songsManager.currentCollection
             {
-                self.playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
             }
         }
         navigationItem.title = songsManager?.currentSong?.number
@@ -377,7 +377,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                 let currentSong = songsManager.currentSong,
                 let currentCollection = songsManager.currentCollection
             {
-                self.playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
             }
         }
         
@@ -407,7 +407,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                 let currentSong = songsManager.currentSong,
                 let currentCollection = songsManager.currentCollection
             {
-                self.playerController = PlayerController(withSong: currentSong, collection: currentCollection, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
             }
         }
         
@@ -465,9 +465,6 @@ extension MetreVC_iPhone: PlayerControllerDelegate {
                     let playBarButtonItem = playBarButtonItem,
                     toolbar?.items?.contains(activityIndicatorBarButtonItem) == true && toolbar?.items?.contains(playBarButtonItem) == false
                 {
-                    if playerController.currentTrack == nil {
-                        playerController.currentTrack = tracks?.first
-                    }
                     if let currentTrack = playerController.currentTrack {
                         playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: 1.0)
                     }
@@ -475,9 +472,6 @@ extension MetreVC_iPhone: PlayerControllerDelegate {
                     let showPlayerBarButtonItem = showPlayerBarButtonItem,
                     toolbar?.items?.contains(activityIndicatorBarButtonItem) == true && toolbar?.items?.contains(showPlayerBarButtonItem) == false
                 {
-                    if playerController.currentTrack == nil {
-                        playerController.currentTrack = tracks?.first
-                    }
                     showTunesVC()
                 }
             }
