@@ -26,6 +26,10 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         super.viewDidLoad()
         
         title = ""
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
+            navigationItem.titleView = navbarLogo
+        }
         navigationItem.backBarButtonItem?.tintColor = .white
 
         songIndexTableView?.rowHeight = UITableView.automaticDimension
@@ -57,14 +61,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         navigationController?.navigationBar.compactAppearance = navigationBarAppearance
         navigationController?.navigationBar.standardAppearance = navigationBarAppearance
  */
-                
-        if UIDevice.current.userInterfaceIdiom != .pad {
-            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
-            var frameRect = navbarLogo.frame
-            frameRect.origin.x = 30
-            navbarLogo.frame = frameRect
-            navigationItem.titleView = navbarLogo
-        }
         
         if
             let songsManager = songsManager,
@@ -72,7 +68,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         {
             segmentedControl = UISegmentedControl(items: songsManager.songCollections.map { $0.displayName } )
             segmentedControl?.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: .valueChanged)
-            navigationItem.titleView = segmentedControl
             let idx = 2
             
             if let segmentedControl = segmentedControl {
@@ -82,9 +77,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             toolbar?.items?.insert(UIBarButtonItem.flexibleSpace(), at: idx)
             segmentedControl?.selectedSegmentIndex = 0
         }
-        
-        let iv = UIImageView(image: UIImage(named: "heart_filled", in: Helper.songsForWorshipBundle(), with: .none))
-        iv.frame = CGRect(x: 0.0, y: 0.0, width: 20.0, height: 20.0)
                 
         firstTime = true
         songsManager?.addObserver(forcurrentSong: self)
