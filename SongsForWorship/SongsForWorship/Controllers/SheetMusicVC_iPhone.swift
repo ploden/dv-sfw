@@ -95,7 +95,7 @@ class SheetMusicVC_iPhone: UIViewController, UIScrollViewDelegate {
                 let containerView = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: containerViewHeight))
                 
                 let aView = PDFPageView()
-                aView.pdf = songsManager?.currentCollection?.pdf
+                aView.pdf = song.collection.pdf
                 
                 // Position the view differently for different pages.
                 if pageNumber % 2 == 1 {

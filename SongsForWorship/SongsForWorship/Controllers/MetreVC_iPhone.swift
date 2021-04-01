@@ -29,10 +29,9 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     lazy private var playerController: PlayerController? = {
         if
             let songsManager = songsManager,
-            let currentSong = songsManager.currentSong,
-            let currentCollection = songsManager.currentCollection
+            let currentSong = songsManager.currentSong
         {
-            return PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)            
+            return PlayerController(withSong: currentSong, delegate: self)            
         }
         return nil
     }()
@@ -53,16 +52,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     // MARK: - UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithOpaqueBackground()
-        navigationBarAppearance.backgroundColor = UIColor(named: "NavBarBackground")
-        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-        navigationController?.navigationBar.compactAppearance = navigationBarAppearance
-        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
-        
+
         navigationItem.title = songsManager?.currentSong?.number
         
         shouldScrollToStartingIndex = true
@@ -226,10 +216,9 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
             playerController = nil
             if
                 let songsManager = songsManager,
-                let currentSong = songsManager.currentSong,
-                let currentCollection = songsManager.currentCollection
+                let currentSong = songsManager.currentSong
             {
-                self.playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, delegate: self)
             }
         }
         navigationItem.title = songsManager?.currentSong?.number
@@ -374,10 +363,9 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         if playerController == nil || playerController?.song != songsManager?.currentSong {
             if
                 let songsManager = songsManager,
-                let currentSong = songsManager.currentSong,
-                let currentCollection = songsManager.currentCollection
+                let currentSong = songsManager.currentSong                
             {
-                self.playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, delegate: self)
             }
         }
         
@@ -402,12 +390,8 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     
     @IBAction func showPlayerTapped(_ sender: Any) {
         if playerController == nil || playerController?.song != songsManager?.currentSong {
-            if
-                let songsManager = songsManager,
-                let currentSong = songsManager.currentSong,
-                let currentCollection = songsManager.currentCollection
-            {
-                self.playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
+            if let currentSong = songsManager?.currentSong {
+                self.playerController = PlayerController(withSong: currentSong, delegate: self)
             }
         }
         

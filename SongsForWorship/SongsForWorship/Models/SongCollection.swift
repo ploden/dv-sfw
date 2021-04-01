@@ -40,7 +40,7 @@ open class SongCollection: NSObject {
         func loadAll(idx: Int) {
             var song = songs![idx]
             
-            BaseTunesLoader.loadTunes(forSong: song, collection: self) { [weak self] someError, someTuneDescriptions in
+            BaseTunesLoader.loadTunes(forSong: song) { [weak self] someError, someTuneDescriptions in
                 if idx+1 < songs!.count {
                     loadAll(idx: idx+1)
                 }
@@ -128,7 +128,7 @@ open class SongCollection: NSObject {
                                 isCopyrighted: isTuneCopyrighted,
                                 meter: dict["info_meter"] as? String ?? "")
                 
-                if let p = Song(fromDict: dict, index: index, tune: tune) {
+                if let p = Song(fromDict: dict, index: index, tune: tune, collection: self) {
                     songsArray.append(p)
                     index += 1
                 }

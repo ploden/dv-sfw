@@ -14,7 +14,7 @@ class SheetMusicCVCell: UICollectionViewCell {
     
     func configureWithPageNumber(_ pageNumber: Int, allSongs: [Song], songsManager: SongsManager, queue: OperationQueue) {
         let pdfPageNum = PDFPageView.pdfPageNumber(forPageNumber: pageNumber, allSongs: allSongs)
-        pdfPageView?.pdf = songsManager.currentCollection?.pdf
+        pdfPageView?.pdf = songsManager.currentSong?.collection.pdf
         pdfPageView?.configure(pdfPageNum, queue: queue)
     }
 }

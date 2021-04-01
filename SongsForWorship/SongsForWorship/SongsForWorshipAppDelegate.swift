@@ -60,7 +60,6 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
             let defaultCollection = songsManager?.songCollections.first,
             let defaultSong = defaultCollection.songs?.first
         {
-            songsManager?.selectSongCollection(withName: defaultCollection.displayName)
             songsManager?.setcurrentSong(defaultSong, songsToDisplay: defaultCollection.songs)
         }
         
@@ -154,21 +153,10 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
             handeled = true
         } else if (identifier == kFavoritePsalmShortcutIdentifier) {
             let songNumber = shortcutItem?.userInfo?[PFWFavoritesShortcutPsalmIdentifierKey] as? String
-            let song = songsManager?.currentCollection?.songForNumber(songNumber)
-
-            songsManager?.setcurrentSong(song, songsToDisplay: IndexVC.favoriteSongs(songsManager?.currentCollection?.songs))
-
-            /*
-            if !(navigationController?.visibleViewController is TabBarController) {
-                let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
-                vc?.songsManager = songsManager
-                if let vc = vc {
-                    navigationController?.show(vc, sender: nil)
-                }
+            
+            if let song = songsManager?.songForNumber(songNumber) {
+                songsManager?.setcurrentSong(song, songsToDisplay: IndexVC.favoriteSongs(song.collection.songs))
             }
- */
-            // FIXME: replace tab bar
-
 
             handeled = true
         }
@@ -198,13 +186,13 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
     }
 
     func updateFavoritesShortcuts() {
-        if let songs = songsManager?.currentCollection?.songs {
+        if let songs = songsManager?.currentSong?.collection.songs {
             UIApplication.shared.shortcutItems = FavoritesSyncronizer.favoriteShortcutItems(songs)
         }
     }
     
     func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
-        return songsManager?.currentCollection?.songs
+        return songsManager?.currentSong?.collection.songs
     }
     
     func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {

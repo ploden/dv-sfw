@@ -10,24 +10,23 @@ import Foundation
 import UIKit
 
 public class Song: NSObject {
-    public var index: Int
-    public var number: String
-    public var title: String = ""
-    public var reference: String?
-    public var verses_line_1: String = ""
-    public var verses_line_2: String?
-    //var info_composer: String = ""
-    //var info_tune: String = ""
-    //var meter: String = ""
-    //var tuneWithoutMeter: String?
-    public var stanzas: [String] = [String]()
-    public var pdfPageNumbers: [Int]
-    public var isTuneCopyrighted: Bool = false
-    public var tune: Tune?
-    public var left: [String]?
-    public var right: [String]?
+    open private(set) var index: Int
+    open private(set) var number: String
+    open private(set) var title: String = ""
+    open private(set) var reference: String?
+    open private(set) var verses_line_1: String = ""
+    open private(set) var verses_line_2: String?
+    open private(set) var stanzas: [String] = [String]()
+    open private(set) var pdfPageNumbers: [Int]
+    open private(set) var isTuneCopyrighted: Bool = false
+    open var tune: Tune?
+    open private(set) var left: [String]?
+    open private(set) var right: [String]?
+    open private(set) var collection: SongCollection
     
-    init?(fromDict dict: [AnyHashable : Any], index anIndex: Int, tune aTune: Tune) {
+    init?(fromDict dict: [AnyHashable : Any], index anIndex: Int, tune aTune: Tune, collection aCollection: SongCollection) {
+        collection = aCollection
+        
         index = anIndex
         tune = aTune
         

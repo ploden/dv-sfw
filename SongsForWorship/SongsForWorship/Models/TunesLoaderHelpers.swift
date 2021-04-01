@@ -11,5 +11,5 @@ import UIKit
 
 @objc public protocol TunesLoader {
     @objc dynamic static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
-    @objc dynamic static func loadTunes(forSong aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void)
+    @objc dynamic static func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void)
 }

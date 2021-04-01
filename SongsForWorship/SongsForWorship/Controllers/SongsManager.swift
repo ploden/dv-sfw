@@ -16,7 +16,7 @@ class SongsManager: Equatable {
     private(set) var songCollections: [SongCollection] = [SongCollection]()
     private(set) var currentSong: Song?
     private(set) var songsToDisplay: [Song]?
-    private var selectedCollection: SongCollection?
+    /*
     var currentCollection: SongCollection? {
         get {
             if let selectedCollection = selectedCollection {
@@ -26,6 +26,7 @@ class SongsManager: Equatable {
             }
         }
     }
+     */
     
     required init(appConfig: AppConfig) {
         for collection in appConfig.songCollections {
@@ -62,6 +63,7 @@ class SongsManager: Equatable {
     
     func loadSongs() {}
     
+    /*
     func selectSongCollection(withName name: String) {
         if
             let collection = songCollections.filter({ $0.displayName == name }).first,
@@ -71,6 +73,7 @@ class SongsManager: Equatable {
             NotificationCenter.default.post(name: .selectedCollectionDidChange, object: self)
         }
     }
+     */
     
     func setcurrentSong(_ currentSong: Song?, songsToDisplay: [Song]?) {
         if self.currentSong != currentSong || self.songsToDisplay != songsToDisplay {

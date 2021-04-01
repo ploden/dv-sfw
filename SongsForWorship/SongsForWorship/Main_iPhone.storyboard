@@ -215,16 +215,16 @@
             </objects>
             <point key="canvasLocation" x="2942.4000000000001" y="-926.53673163418296"/>
         </scene>
-        <!--Psalms-->
+        <!--SongIndexVC-->
         <scene sceneID="8sc-pL-jsj">
             <objects>
-                <viewController storyboardIdentifier="SongIndexVC" title="Psalms" automaticallyAdjustsScrollViewInsets="NO" id="5LM-c6-nlE" customClass="SongIndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SongIndexVC" title="Psalms" automaticallyAdjustsScrollViewInsets="NO" id="5LM-c6-nlE" userLabel="SongIndexVC" customClass="SongIndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="sKr-TP-GG9">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="7mZ-U7-gQD">
-                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="769"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="sectionIndexColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -233,23 +233,120 @@
                                     <outlet property="delegate" destination="5LM-c6-nlE" id="1JX-zY-9yW"/>
                                 </connections>
                             </tableView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bj0-Wt-TX6">
+                                <rect key="frame" x="0.0" y="813" width="414" height="49"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="O8M-i9-aRx"/>
+                                    <barButtonItem title="Item" image="magnifyingglass" catalog="system" id="0ue-1b-UdU">
+                                        <connections>
+                                            <action selector="searchTapped:" destination="5LM-c6-nlE" id="iY6-Je-fry"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="mty-0I-Nqw"/>
+                                    <barButtonItem title="Item" image="book" catalog="system" id="KSL-hR-BNe">
+                                        <connections>
+                                            <action selector="favoritesTapped:" destination="5LM-c6-nlE" id="p8T-3W-UcX"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="9oi-cy-bUi"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="qCW-F8-NjE"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="7mZ-U7-gQD" secondAttribute="bottom" id="37p-qQ-PEX"/>
+                            <constraint firstItem="Bj0-Wt-TX6" firstAttribute="trailing" secondItem="qCW-F8-NjE" secondAttribute="trailing" id="3hA-RX-oHI"/>
+                            <constraint firstItem="7mZ-U7-gQD" firstAttribute="top" secondItem="qCW-F8-NjE" secondAttribute="top" id="Jbq-rn-30y"/>
+                            <constraint firstItem="Bj0-Wt-TX6" firstAttribute="top" secondItem="7mZ-U7-gQD" secondAttribute="bottom" id="NWR-KI-iiY"/>
+                            <constraint firstItem="Bj0-Wt-TX6" firstAttribute="leading" secondItem="qCW-F8-NjE" secondAttribute="leading" id="QNj-Hs-9Yq"/>
                             <constraint firstItem="7mZ-U7-gQD" firstAttribute="leading" secondItem="sKr-TP-GG9" secondAttribute="leading" id="XE3-On-vik"/>
-                            <constraint firstItem="7mZ-U7-gQD" firstAttribute="top" secondItem="qCW-F8-NjE" secondAttribute="top" id="gJm-4I-zmI"/>
+                            <constraint firstItem="qCW-F8-NjE" firstAttribute="bottom" secondItem="Bj0-Wt-TX6" secondAttribute="bottom" id="aNS-hy-5Q9"/>
                             <constraint firstAttribute="trailing" secondItem="7mZ-U7-gQD" secondAttribute="trailing" id="jMC-Do-Oxq"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="songIndexTableView" destination="7mZ-U7-gQD" id="emW-AP-dew"/>
+                        <outlet property="toolbar" destination="Bj0-Wt-TX6" id="zJW-ez-91u"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0jV-hx-Qi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2064" y="-189.80509745127438"/>
+            <point key="canvasLocation" x="2063.768115942029" y="-190.17857142857142"/>
+        </scene>
+        <!--Search Table View Controller-->
+        <scene sceneID="cLB-ih-oyi">
+            <objects>
+                <tableViewController storyboardIdentifier="SearchTableViewController" id="f0a-bC-hl8" customClass="SearchTableViewController" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="GIO-0V-Av5">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <connections>
+                            <outlet property="dataSource" destination="f0a-bC-hl8" id="qq2-jj-50V"/>
+                            <outlet property="delegate" destination="f0a-bC-hl8" id="EyB-Rh-Q9U"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <outlet property="searchBar" destination="Qhz-Vt-BdJ" id="xw1-2W-iuO"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Z7l-bh-7Ry" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <searchBar contentMode="redraw" showsCancelButton="YES" id="Qhz-Vt-BdJ">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <string key="placeholder">Search title, verse, tune, or composer
+</string>
+                    <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
+                    <connections>
+                        <outlet property="delegate" destination="f0a-bC-hl8" id="v8h-db-BLT"/>
+                    </connections>
+                </searchBar>
+            </objects>
+            <point key="canvasLocation" x="2781" y="-190"/>
+        </scene>
+        <!--Bookmarks-->
+        <scene sceneID="A3Q-qD-ENf">
+            <objects>
+                <viewController storyboardIdentifier="FavoritesVC" title="Bookmarks" id="hBH-de-9W3" customClass="FavoritesVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="CIi-PU-9J8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xS3-BE-Z0E">
+                                <rect key="frame" x="0.0" y="813" width="414" height="49"/>
+                                <items>
+                                    <barButtonItem title="Item" id="f7R-st-cYM"/>
+                                </items>
+                            </toolbar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HlR-RK-Ueq">
+                                <rect key="frame" x="0.0" y="44" width="414" height="769"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="hBH-de-9W3" id="iuL-Kg-9pa"/>
+                                    <outlet property="delegate" destination="hBH-de-9W3" id="Qri-3u-ThR"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="sab-zP-5vd"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="xS3-BE-Z0E" secondAttribute="trailing" id="5sN-Nw-UOh"/>
+                            <constraint firstItem="sab-zP-5vd" firstAttribute="trailing" secondItem="HlR-RK-Ueq" secondAttribute="trailing" id="JXa-ur-Aqr"/>
+                            <constraint firstItem="HlR-RK-Ueq" firstAttribute="top" secondItem="sab-zP-5vd" secondAttribute="top" id="MbP-qw-3fT"/>
+                            <constraint firstItem="HlR-RK-Ueq" firstAttribute="leading" secondItem="sab-zP-5vd" secondAttribute="leading" id="PHS-BO-lD1"/>
+                            <constraint firstItem="xS3-BE-Z0E" firstAttribute="top" secondItem="HlR-RK-Ueq" secondAttribute="bottom" id="UoP-Gy-S2v"/>
+                            <constraint firstItem="sab-zP-5vd" firstAttribute="bottom" secondItem="xS3-BE-Z0E" secondAttribute="bottom" id="xuO-Ha-Lfs"/>
+                            <constraint firstItem="xS3-BE-Z0E" firstAttribute="leading" secondItem="sab-zP-5vd" secondAttribute="leading" id="zYF-Jk-Ncm"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="HlR-RK-Ueq" id="Ifg-mc-sDq"/>
+                        <outlet property="toolbar" destination="xS3-BE-Z0E" id="YyX-ot-Qpx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xez-Cp-5r2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3509" y="-190"/>
         </scene>
         <!--Settings-->
         <scene sceneID="AEH-QQ-6d5">
@@ -290,6 +387,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="book" catalog="system" width="128" height="102"/>
+        <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

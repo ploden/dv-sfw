@@ -165,7 +165,7 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
         }()
         
         for songNumber in songNumbers {
-            if let song = songsManager.currentCollection?.songForNumber(songNumber) {
+            if let song = songsManager.songForNumber(songNumber) {
                 songs.append(song)
             }
         }

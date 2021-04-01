@@ -67,10 +67,9 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     lazy var playerController: PlayerController? = {
         if
             let songsManager = songsManager,
-            let currentSong = songsManager.currentSong,
-            let currentCollection = songsManager.currentCollection
+            let currentSong = songsManager.currentSong
         {
-            return PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
+            return PlayerController(withSong: currentSong, delegate: self)
         }
         return nil
     }() {
@@ -168,17 +167,14 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         playerControlsView?.playButton?.isSelected = false
         tuneTracks = nil
         recordingTracks = nil
-        
-        playerController?.stopPlaying()
-        
+                
         if playerController?.song != currentSong {
+            playerController?.stopPlaying()
+
             playerController = nil
 
-            if
-                let currentSong = currentSong,
-                let currentCollection = songsManager?.currentCollection
-            {
-                playerController = PlayerController(withSong: currentSong, aCollection: currentCollection, delegate: self)
+            if let currentSong = currentSong {
+                playerController = PlayerController(withSong: currentSong, delegate: self)
             }
         }
         

@@ -39,16 +39,14 @@ class PlayerController: NSObject {
             }
         }
     }
-    var collection: SongCollection
     private(set) var song: Song
     private var midiPlayer: AVMIDIPlayer?
     private var mp3Player: AVAudioPlayer?
     private var player: MPMusicPlayerController?
     private var playerTracks: [PlayerTrack:Any] = [PlayerTrack:Any]()
     
-    required init(withSong aSong: Song, aCollection: SongCollection, delegate: PlayerControllerDelegate) {
+    required init(withSong aSong: Song, delegate: PlayerControllerDelegate) {
         self.song = aSong
-        self.collection = aCollection
         self.delegate = delegate
         super.init()
 
@@ -89,7 +87,7 @@ class PlayerController: NSObject {
     
     func loadTunes() {
         state = .loadingTunes
-        BaseTunesLoader.loadTunes(forSong: song, collection: collection, completion: { [weak self] someError, someTuneDescriptions in
+        BaseTunesLoader.loadTunes(forSong: song, completion: { [weak self] someError, someTuneDescriptions in
             if let _ = someError {
                 OperationQueue.main.addOperation({
                     self?.state = .loadingTunesDidFail

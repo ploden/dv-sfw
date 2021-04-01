@@ -301,34 +301,7 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
                 }
             }
         }
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if
-            let indexTableView = indexTableView,
-            indexPath.section == 1
-        {
-            NotificationCenter.default.removeObserver(indexTableView)
-            
-            indexTableView.beginUpdates()
-            
-            if indexPath.row == indexTableView.numberOfRows(inSection: indexPath.section) - 1 {
-                if indexPath.row == 0 {
-                    indexTableView.reloadData()
-                } else {
-                    indexTableView.deleteRows(at: [indexPath], with: .fade)
-                }
-            } else {
-                indexTableView.deleteRows(at: [indexPath], with: .bottom)
-            }
-            
-            if let song = IndexVC.favoritePsalmForIndexPath(indexPath, allSongs: songsManager?.currentCollection?.songs) {
-                FavoritesSyncronizer.removeFromFavorites(song)
-            }
-            
-            indexTableView.endUpdates()
-        }
-    }
+    }        
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         dismiss(animated: true)
@@ -336,7 +309,9 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
     
     // MARK: - DetailVCDelegate
     func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
-        return IndexVC.favoriteSongs(songsManager?.currentCollection?.songs)
+        //return IndexVC.favoriteSongs(songsManager?.currentCollection?.songs)
+        //MARK: #warning FIXME
+        return nil
     }
     
     func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {

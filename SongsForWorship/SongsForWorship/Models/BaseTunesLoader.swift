@@ -75,13 +75,13 @@ extension BaseTunesLoader: TunesLoader {
         return self.defaultFilename(forTuneInfo: tuneInfo, song: song)
     }
 
-    @objc public dynamic static func loadTunes(forSong aSong: Song, collection: SongCollection, completion: @escaping (Error?, [TuneDescription]) -> Void) {
+    @objc public dynamic static func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void) {
         var tuneDescriptions: [TuneDescription] = []
               
         if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
             let mainDirectory = app.appConfig.directory
             
-            for tuneInfo in collection.tuneInfos {
+            for tuneInfo in aSong.collection.tuneInfos {
                 if let filename = BaseTunesLoader.filename(forTuneInfo: tuneInfo, song: aSong) {
                     let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
                     let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.filetype, inDirectory: subDirectory)

@@ -50,7 +50,9 @@ struct SearchResult {
     var songNumber: String?
     var searchTerm: String?
     
+    /*
     func song(_ allSongs: [Song]) -> Song {
         return allSongs[songIndex]
     }
+ */
 }
