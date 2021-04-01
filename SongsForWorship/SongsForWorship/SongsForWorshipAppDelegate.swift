@@ -9,6 +9,7 @@
 import AVKit
 
 let kFavoritesDictionaryName = "favorites"
+let kFavoriteSongNumbersDictionaryName = "favoriteSongNumbers"
 let kSearchPsalmsShortcutIdentifier = "com.deovolentellc.PsalmsForWorship.searchPsalms"
 let kFavoritePsalmShortcutIdentifier = "com.deovolentellc.PsalmsForWorship.openFavoritePsalm"
 let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
@@ -154,8 +155,11 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
         } else if (identifier == kFavoritePsalmShortcutIdentifier) {
             let songNumber = shortcutItem?.userInfo?[PFWFavoritesShortcutPsalmIdentifierKey] as? String
             
-            if let song = songsManager?.songForNumber(songNumber) {
-                songsManager?.setcurrentSong(song, songsToDisplay: IndexVC.favoriteSongs(song.collection.songs))
+            if
+                let songsManager = songsManager,
+                let song = songsManager.songForNumber(songNumber)
+            {
+                songsManager.setcurrentSong(song, songsToDisplay: IndexVC.favoriteSongs(songsManager: songsManager))
             }
 
             handeled = true
@@ -186,8 +190,11 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
     }
 
     func updateFavoritesShortcuts() {
-        if let songs = songsManager?.currentSong?.collection.songs {
-            UIApplication.shared.shortcutItems = FavoritesSyncronizer.favoriteShortcutItems(songs)
+        if
+            let songsManager = songsManager,
+            let songs = songsManager.currentSong?.collection.songs
+        {
+            UIApplication.shared.shortcutItems = FavoritesSyncronizer.favoriteShortcutItems(songs, songsManager: songsManager)
         }
     }
     

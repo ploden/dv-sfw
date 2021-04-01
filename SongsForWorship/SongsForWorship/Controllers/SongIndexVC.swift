@@ -21,6 +21,7 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
     private var segmentedControl: UISegmentedControl?
     
     // MARK: - UIViewController
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -70,8 +71,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             songsManager.songCollections.count > 1
         {
             segmentedControl = UISegmentedControl(items: songsManager.songCollections.map { $0.displayName } )
-            //segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
-            //segmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
             segmentedControl?.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: .valueChanged)
             navigationItem.titleView = segmentedControl
             let idx = 2
@@ -91,12 +90,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         songsManager?.addObserver(forcurrentSong: self)
         songsManager?.addObserver(forSelectedCollection: self)
         isObservingcurrentSong = true
-        
-        /*
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(favoritesDidChange(_:)), name: NSNotification.Name.favoritesDidChange, object: nil)
-         */
         
         definesPresentationContext = true
     }
@@ -341,56 +334,12 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         if
             let tvc = tvc,
             let ip = songIndexTableView?.indexPath(for: tvc),
-            let aSong = songForIndexPath(ip)
+            let aSong = songForIndexPath(ip),
+            let songsManager = songsManager
         {
-            FavoritesSyncronizer.removeFromFavorites(aSong)
+            FavoritesSyncronizer.removeFromFavorites(aSong, songsManager: songsManager)
         }
     }
-    
-    // MARK: - UISearchControllerDelegate
-    /*
-    func updateSearchResults(for searchController: UISearchController) {
-        // do the search for nonempty string
-        if (searchController.searchBar.text?.count ?? 0) != 0 {
-            doSearch(forTerm: searchController.searchBar.text)
-        } else {
-            searchResults = nil
-            songIndexTableView?.reloadData()
-        }
-    }
-    
-    func willPresentSearchController(_ searchController: UISearchController) {
-        searchController.searchBar.searchBarStyle = .prominent
-    }
-    
-    func willDismissSearchController(_ searchController: UISearchController) {
-        searchController.searchBar.searchBarStyle = .minimal
-    }
-    
-    func didDismissSearchController(_ searchController: UISearchController) {
-        songIndexTableView?.reloadData()
-    }
-    
-    @objc func keyboardWillShow(_ notification: Notification?) {
-        let userInfo = notification?.userInfo
-        if let value = userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let endFrame = value.cgRectValue
-            let insets = UIEdgeInsets(top: 0, left: 0, bottom: endFrame.height, right: 0)
-            songIndexTableView?.contentInset = insets
-            songIndexTableView?.scrollIndicatorInsets = insets
-        }
-    }
-    
-    @objc func keyboardWillHide(_ notification: Notification?) {
-        songIndexTableView?.contentInset = .zero
-        songIndexTableView?.scrollIndicatorInsets = .zero
-    }
-    
-    @objc func favoritesDidChange(_ notification: Notification?) {
-        let set = NSIndexSet(index: 0)
-        songIndexTableView?.reloadSections(set as IndexSet, with: .none)
-    }
-    */
     
     // MARK: -
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
@@ -442,18 +391,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         }
     }
     
-    /*
-    func startSearching() {
-        loadViewIfNeeded()
-        
-        // not working without dispatch
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.3 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-            self.searchController.isActive = true
-            self.songIndexTableView?.scrollRectToVisible(self.searchController.searchBar.frame, animated: true)
-        })
-    }
-     */
-    
     // MARK: - DetailVCDelegate
     func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
         return songsManager?.currentSong?.collection.songs
@@ -498,6 +435,20 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
         if UIDevice.current.userInterfaceIdiom != .pad {
             if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
                 vc.songsManager = songsManager
+                
+                if
+                    let segmentedControl = segmentedControl,
+                    let idx = songsManager?.songCollections.firstIndex(of: song.collection)
+                {
+                    segmentedControl.selectedSegmentIndex = idx
+                    songIndexTableView?.reloadData()
+                    let ip = indexPathForIndex(song.index)
+                    
+                    if let ip = ip {
+                        songIndexTableView?.scrollToRow(at: ip, at: .middle, animated: false)
+                    }
+                }
+                
                 dismiss(animated: true)
                 self.navigationController?.pushViewController(vc, animated: true)
             }

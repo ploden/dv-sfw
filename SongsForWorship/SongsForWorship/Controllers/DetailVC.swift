@@ -111,12 +111,14 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     }
     
     @IBAction func favoriteButtonTapped(_ sender: Any) {
-        if let currentSong = songsManager?.currentSong {
-            
-            if FavoritesSyncronizer.isFavorite(currentSong) {
-                FavoritesSyncronizer.removeFromFavorites(currentSong)
+        if
+            let songsManager = songsManager,
+            let currentSong = songsManager.currentSong
+        {
+            if FavoritesSyncronizer.isFavorite(currentSong, songsManager: songsManager) {
+                FavoritesSyncronizer.removeFromFavorites(currentSong, songsManager: songsManager)
             } else {
-                FavoritesSyncronizer.addToFavorites(currentSong)
+                FavoritesSyncronizer.addToFavorites(currentSong, songsManager: songsManager)
             }
             
             configureFavoritesBarButtonItemTitle()
@@ -180,8 +182,9 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     @objc func configureFavoritesBarButtonItemTitle() {
         let img: UIImage? = {
             if
-                let currentSong = songsManager?.currentSong,
-                FavoritesSyncronizer.isFavorite(currentSong)
+                let songsManager = songsManager,
+                let currentSong = songsManager.currentSong,
+                FavoritesSyncronizer.isFavorite(currentSong, songsManager: songsManager)
             {
                 return UIImage(named: "heart_filled", in: Helper.songsForWorshipBundle(), with: .none)
             } else {

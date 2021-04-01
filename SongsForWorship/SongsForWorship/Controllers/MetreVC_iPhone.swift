@@ -256,8 +256,9 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     func configureFavoriteBarButtonItem() {
         let img: UIImage? = {
             if
-                let currentSong = songsManager?.currentSong,
-                FavoritesSyncronizer.isFavorite(currentSong)
+                let songsManager = songsManager,
+                let currentSong = songsManager.currentSong,
+                FavoritesSyncronizer.isFavorite(currentSong, songsManager: songsManager)
             {
                 return UIImage(systemName: imageNames.isFavorite.rawValue)
             } else {
@@ -347,12 +348,15 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     
     // MARK: - IBActions
     @IBAction func favoriteBarButtonItemTapped(_ sender: Any) {
-        if let currentSong = songsManager?.currentSong {
+        if
+            let songsManager = songsManager,
+            let currentSong = songsManager.currentSong
+        {
             
-            if FavoritesSyncronizer.isFavorite(currentSong) {
-                FavoritesSyncronizer.removeFromFavorites(currentSong)
+            if FavoritesSyncronizer.isFavorite(currentSong, songsManager: songsManager) {
+                FavoritesSyncronizer.removeFromFavorites(currentSong, songsManager: songsManager)
             } else {
-                FavoritesSyncronizer.addToFavorites(currentSong)
+                FavoritesSyncronizer.addToFavorites(currentSong, songsManager: songsManager)
             }
             
             configureFavoriteBarButtonItem()

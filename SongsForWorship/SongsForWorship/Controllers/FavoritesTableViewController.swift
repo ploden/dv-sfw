@@ -22,10 +22,11 @@ class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     }
     var songsManager: SongsManager? {
         didSet {
-            let favoritesForEachCollection = songsManager?.songCollections.map { IndexVC.favoriteSongs($0.songs) }
-            favorites = favoritesForEachCollection?.reduce([], { (result, element) -> [Song] in
-                return result + element
-            }) ?? [Song]()
+            if let songsManager = songsManager {
+                favorites = IndexVC.favoriteSongs(songsManager: songsManager)
+            } else {
+                favorites = [Song]()
+            }
         }
     }
     private var favorites: [Song] = [Song]()

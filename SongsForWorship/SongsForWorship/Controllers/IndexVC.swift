@@ -120,34 +120,9 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
         return nil
     }
     
-    class func favoriteSongs(_ allSongs: [Song]?) -> [Song] {
-        var songs = [Song]()
-        
-        let favs = FavoritesSyncronizer.favorites()
-        
-        for i in 0..<favs.count {
-            let songIndex = favs[i]
-            let song = SongsManager.songAtIndex(songIndex, allSongs: allSongs)
-            
-            if let song = song {
-                songs.append(song)
-            }
-        }
-
-        return songs.sorted {
-            $0.index < $1.index
-        }
-    }
-    
-    class func favoritePsalmForIndexPath(_ indexPath: IndexPath, allSongs: [Song]?) -> Song? {
-        let favoriteSongs = IndexVC.favoriteSongs(allSongs)
-        
-        let idx = indexPath.row
-        
-        if idx < favoriteSongs.count {
-            return favoriteSongs[idx]
-        }
-        return nil
+    class func favoriteSongs(songsManager: SongsManager) -> [Song] {
+        let favs = FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager).compactMap { songsManager.songForNumber($0) }
+        return favs
     }
     
     func tableView(_ tableView: UITableView?, didSelectFeedbackSectionRowWith index: Int) {

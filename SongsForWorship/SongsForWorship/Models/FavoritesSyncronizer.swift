@@ -15,45 +15,70 @@ extension Notification.Name {
 
 class FavoritesSyncronizer {
     static let shared = FavoritesSyncronizer()
-    
+        
     private init() {}
 
-    class func favorites() -> [Int] {
-        if UserDefaults.standard.object(forKey: kFavoritesDictionaryName) == nil {
-            UserDefaults.standard.set([Int](), forKey: kFavoritesDictionaryName)
-        }
+    private class func favorites() -> [Int]? {
         if let favs = UserDefaults.standard.object(forKey: kFavoritesDictionaryName) as? [Int] {
             return favs
+        }
+        return nil
+    }
+
+    class func favoriteSongNumbers(songsManager: SongsManager) -> [String] {
+        if UserDefaults.standard.object(forKey: kFavoriteSongNumbersDictionaryName) == nil {
+            UserDefaults.standard.set([String](), forKey: kFavoriteSongNumbersDictionaryName)
+        }
+        if let favs = UserDefaults.standard.object(forKey: kFavoriteSongNumbersDictionaryName) as? [String] {
+            if let oldFavorites = favorites() {
+                let oldFavoriteSongs = oldFavorites.compactMap { songIdx in
+                    songsManager.songCollections.first?.songs?.first(where: { songIdx == $0.index  })
+                }
+                let oldFavoriteNumbers = oldFavoriteSongs.map { $0.number }
+                
+                return (favs + oldFavoriteNumbers).sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }
+            } else {
+                return favs.sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }
+            }
         } else {
-            return [Int]()
+            return [String]()
+        }
+    }
+    
+    class func isFavorite(_ aSong: Song, songsManager: SongsManager) -> Bool {
+        if FavoritesSyncronizer.favorites()?.contains(aSong.index) == true {
+            return true
+        } else {
+            return FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager).contains(aSong.number)
         }
     }
 
-    class func isFavorite(_ aSong: Song) -> Bool {
-        return FavoritesSyncronizer.favorites().contains(aSong.index)
-    }
-
-    class func addToFavorites(_ aSong: Song) {
-        var currentFavs: [Int] = FavoritesSyncronizer.favorites()
-        currentFavs.append(aSong.index)
+    class func addToFavorites(_ aSong: Song, songsManager: SongsManager) {
+        var currentFavs: [String] = FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager)
+        currentFavs.append(aSong.number)
 
         currentFavs.sort(by: <)
         
-        NSUbiquitousKeyValueStore.default.set(currentFavs, forKey: kFavoritesDictionaryName)
-        
-        UserDefaults.standard.set(currentFavs, forKey: kFavoritesDictionaryName)
-        //UserDefaults.standard.set((favs as NSArray?)?.sortedArray(using: sortDescriptors), forKey: kFavoritesDictionaryName)
+        NSUbiquitousKeyValueStore.default.set(currentFavs, forKey: kFavoriteSongNumbersDictionaryName)
+        UserDefaults.standard.set(currentFavs, forKey: kFavoriteSongNumbersDictionaryName)
         NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
     }
 
-    class func removeFromFavorites(_ aSong: Song) {
-        var favs = FavoritesSyncronizer.favorites()
-
-        favs.removeAll(where: { $0 == aSong.index } )
-
-        NSUbiquitousKeyValueStore.default.set(favs, forKey: kFavoritesDictionaryName)
-
-        UserDefaults.standard.set(favs, forKey: kFavoritesDictionaryName)
+    class func removeFromFavorites(_ aSong: Song, songsManager: SongsManager) {
+        if var favs = FavoritesSyncronizer.favorites() {
+            favs.removeAll(where: { $0 == aSong.index } )
+            
+            NSUbiquitousKeyValueStore.default.set(favs, forKey: kFavoritesDictionaryName)
+            UserDefaults.standard.set(favs, forKey: kFavoritesDictionaryName)
+            NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
+        }
+        
+        var favoriteSongNumbers = FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager)
+        
+        favoriteSongNumbers.removeAll(where: { $0 == aSong.number } )
+        
+        NSUbiquitousKeyValueStore.default.set(favoriteSongNumbers, forKey: kFavoriteSongNumbersDictionaryName)
+        UserDefaults.standard.set(favoriteSongNumbers, forKey: kFavoriteSongNumbersDictionaryName)
         NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
     }
 
@@ -101,11 +126,11 @@ class FavoritesSyncronizer {
 }
 
 extension FavoritesSyncronizer {
-    static func favoriteShortcutItems(_ allSongs: [Song]) -> [UIApplicationShortcutItem] {
+    static func favoriteShortcutItems(_ allSongs: [Song], songsManager: SongsManager) -> [UIApplicationShortcutItem] {
         var shortcuts = [UIApplicationShortcutItem]()
         
-        for fav in Array(FavoritesSyncronizer.favorites().prefix(3)) {
-            if let favPsalm = SongsManager.songAtIndex(fav, allSongs: allSongs) {
+        for fav in Array(FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager).prefix(3)) {
+            if let favPsalm = songsManager.songForNumber(fav) {
                 let shortcut = UIApplicationShortcutItem(type: kFavoritePsalmShortcutIdentifier, localizedTitle: favPsalm.title, localizedSubtitle: favPsalm.number, icon: nil, userInfo: [PFWFavoritesShortcutPsalmIdentifierKey: favPsalm.number as NSString])
                 shortcuts.append(shortcut)
             }
