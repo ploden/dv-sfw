@@ -331,17 +331,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         NotificationCenter.default.removeObserver(self)
     }
     
-    @objc func songTVCellFavoriteButtonTapped(_ tvc: SongTVCell?) {
-        if
-            let tvc = tvc,
-            let ip = songIndexTableView?.indexPath(for: tvc),
-            let aSong = songForIndexPath(ip),
-            let songsManager = songsManager
-        {
-            FavoritesSyncronizer.removeFromFavorites(aSong, songsManager: songsManager)
-        }
-    }
-    
     // MARK: -
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         let newPoint = view.convert(location, to: songIndexTableView)

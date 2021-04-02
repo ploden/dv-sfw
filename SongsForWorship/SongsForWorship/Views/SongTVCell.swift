@@ -12,7 +12,6 @@ class SongTVCell: UITableViewCell {
     @IBOutlet private weak var numberLabel: UILabel?
     @IBOutlet private weak var referenceLabel: UILabel?
     @IBOutlet private weak var titleLabel: UILabel?
-    @IBOutlet private weak var favoriteButton: UIButton?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -48,11 +47,5 @@ class SongTVCell: UITableViewCell {
         }()
         
         titleLabel?.text = aSong?.title
-        
-        favoriteButton?.isHidden = !isFavorite
-    }
-    
-    @IBAction func favoriteButtonTapped(_ sender: Any) {
-        UIApplication.shared.sendAction(#selector(SongIndexVC.songTVCellFavoriteButtonTapped(_:)), to: nil, from: self, for: nil)
     }
 }
