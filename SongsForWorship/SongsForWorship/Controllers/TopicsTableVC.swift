@@ -8,13 +8,19 @@
 
 import UIKit
 
-class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
+class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSettings {
+    var settings: Settings?
+    
     private var lettersTopics: [LetterTopics]?
     var songsManager: SongsManager?
     var fileInfo: FileInfo?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            settings = app.settings
+        }
         
         if
             let fileInfo = fileInfo,
@@ -86,6 +92,7 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager {
                     
                     if UIDevice.current.userInterfaceIdiom != .pad {
                         if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
+                            vc.settings = settings
                             vc.songsManager = songsManager
                             navigationController?.pushViewController(vc, animated: true)
                         }

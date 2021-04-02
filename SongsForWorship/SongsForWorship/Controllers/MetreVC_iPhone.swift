@@ -9,7 +9,9 @@
 
 import UIKit
 
-class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsToDisplay, HasSongsManager {
+class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsToDisplay, HasSongsManager, HasSettings {
+    var settings: Settings?
+    
     enum imageNames: String {
         case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark"
     }
@@ -61,6 +63,8 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         configurePlayerBarButtonItems()
         
         collectionView?.register(UINib(nibName: "MetreCVCell", bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: "MetreCVCell")
+        
+        settings?.addObserver(forSettings: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -410,6 +414,31 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         }
     }
     
+    @IBAction func showSettingsTapped(_ sender: Any) {
+        if
+            let vc = SettingsVC.pfw_instantiateFromStoryboard() as? SettingsVC,
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate
+        {
+            vc.settings = app.settings
+            
+            vc.modalPresentationStyle = .popover
+            
+            if let sender = sender as? UIBarButtonItem {
+                vc.popoverPresentationController?.barButtonItem = sender
+            }
+            
+            if let pres = vc.presentationController {
+                pres.delegate = self
+            }
+            
+            vc.popoverPresentationController?.backgroundColor = vc.view.backgroundColor
+            
+            vc.preferredContentSize = CGSize(width: 325, height: 246)
+            
+            present(vc, animated: true, completion: nil)
+        }
+    }
+    
     func showTunesVC() {
         tunesVC.songsManager = songsManager
         tunesVC.playerController = playerController
@@ -472,4 +501,12 @@ extension MetreVC_iPhone: PlayerControllerDelegate {
         configurePlayerBarButtonItems()
     }
     
+}
+
+extension MetreVC_iPhone: SettingsObserver {
+    func settingsDidChange(_ notification: Notification) {
+        if let collectionView = collectionView {
+            collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+        }
+    }
 }

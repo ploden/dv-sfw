@@ -12,6 +12,13 @@ import UIKit
 class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
     var song: Song? {
         didSet {
+            if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+                metreLabel?.font = Helper.defaultFont(withSize: app.settings.fontSize)
+                titleLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .title3)
+                versesLabel?.font = Helper.defaultFont(withSize: 14.0, forTextStyle: .body)
+                copyrightLabel?.font = UIFont.systemFont(ofSize: 9.0)
+            }
+            
             titleLabel?.text = song?.title
             versesLabel?.text = {
                 if
@@ -45,29 +52,10 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
             scrollView?.contentOffset = .zero
         }
     }
-    @IBOutlet weak var metreLabel: UILabel? {
-        didSet {
-            metreLabel?.font = Helper.defaultFont(withSize: 18.0, forTextStyle: .body)
-            //composerLabel?.font = metreLabel?.font
-            //tuneButton?.titleLabel?.font = metreLabel?.font
-            //meterButton?.titleLabel?.font = metreLabel?.font
-        }
-    }
-    @IBOutlet weak var titleLabel: UILabel? {
-        didSet {
-            titleLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .body)
-        }
-    }
-    @IBOutlet weak var versesLabel: UILabel? {
-        didSet {
-            versesLabel?.font = Helper.defaultFont(withSize: 14.0, forTextStyle: .body)
-        }
-    }
-    @IBOutlet weak var copyrightLabel: UILabel? {
-        didSet {
-            copyrightLabel?.font = UIFont.systemFont(ofSize: 9.0)
-        }
-    }
+    @IBOutlet weak var metreLabel: UILabel?
+    @IBOutlet weak var titleLabel: UILabel?
+    @IBOutlet weak var versesLabel: UILabel?
+    @IBOutlet weak var copyrightLabel: UILabel?
     @IBOutlet weak var topLeftLabel: UILabel? {
         didSet {
             if let metreLabel = metreLabel {

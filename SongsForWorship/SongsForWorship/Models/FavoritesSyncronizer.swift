@@ -32,11 +32,12 @@ class FavoritesSyncronizer {
         if let favs = UserDefaults.standard.object(forKey: kFavoriteSongNumbersDictionaryName) as? [String] {
             if let oldFavorites = favorites() {
                 let oldFavoriteSongs = oldFavorites.compactMap { songIdx in
-                    songsManager.songCollections.first?.songs?.first(where: { songIdx == $0.index  })
+                    songsManager.songCollections.first?.songs?.first(where: { songIdx == $0.index })
                 }
                 let oldFavoriteNumbers = oldFavoriteSongs.map { $0.number }
                 
-                return (favs + oldFavoriteNumbers).sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }
+                let combined: Set<String> = Set(oldFavoriteNumbers).union(Set(favs))
+                return  combined.sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }
             } else {
                 return favs.sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }
             }
@@ -56,10 +57,9 @@ class FavoritesSyncronizer {
     class func addToFavorites(_ aSong: Song, songsManager: SongsManager) {
         var currentFavs: [String] = FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager)
         currentFavs.append(aSong.number)
-
-        currentFavs.sort(by: <)
+        let currentFavsSet = Set(currentFavs)
         
-        NSUbiquitousKeyValueStore.default.set(currentFavs, forKey: kFavoriteSongNumbersDictionaryName)
+        NSUbiquitousKeyValueStore.default.set(currentFavsSet.sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }, forKey: kFavoriteSongNumbersDictionaryName)
         UserDefaults.standard.set(currentFavs, forKey: kFavoriteSongNumbersDictionaryName)
         NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
     }

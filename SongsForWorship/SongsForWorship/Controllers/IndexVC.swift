@@ -158,7 +158,7 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
                 }
                 break
             case .settings:
-                if let vc = SettingsTableVC.pfw_instantiateFromStoryboard() {
+                if let vc = SettingsVC.pfw_instantiateFromStoryboard() {
                     navigationController?.pushViewController(vc, animated: true)
                 }
             default:

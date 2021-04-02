@@ -8,7 +8,9 @@
 
 import UIKit
 
-class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, UIViewControllerPreviewingDelegate, PsalmObserver, SongCollectionObserver {    
+class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, UIViewControllerPreviewingDelegate, PsalmObserver, SongCollectionObserver, HasSettings {
+    var settings: Settings?
+    
     private var firstTime: Bool = false
     private var isPerformingSearch = false
     private var isObservingcurrentSong = false
@@ -78,12 +80,18 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             segmentedControl?.selectedSegmentIndex = 0
         }
                 
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            settings = app.settings
+        }
+        
         firstTime = true
         songsManager?.addObserver(forcurrentSong: self)
         songsManager?.addObserver(forSelectedCollection: self)
         isObservingcurrentSong = true
         
         definesPresentationContext = true
+        
+        settings?.addObserver(forSettings: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -211,6 +219,7 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             if UIDevice.current.userInterfaceIdiom != .pad {
                 if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
                     vc.songsManager = songsManager
+                    vc.settings = settings
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
@@ -427,6 +436,7 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
         if UIDevice.current.userInterfaceIdiom != .pad {
             if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
                 vc.songsManager = songsManager
+                vc.settings = settings
                 
                 if
                     let segmentedControl = segmentedControl,
@@ -444,6 +454,17 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
                 dismiss(animated: true)
                 self.navigationController?.pushViewController(vc, animated: true)
             }
+        }
+    }
+}
+
+extension SongIndexVC: SettingsObserver {
+    func settingsDidChange(_ notification: Notification) {
+        if
+            let songIndexTableView = songIndexTableView,
+            let visibleRows = songIndexTableView.indexPathsForVisibleRows
+        {
+            songIndexTableView.reloadData()
         }
     }
 }

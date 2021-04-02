@@ -11,6 +11,7 @@ import QuartzCore
 
 extension Notification.Name {
     static let currentSongDidChange = Notification.Name("currentSongDidChange")
+    static let settingsDidChange = Notification.Name("settingsDidChange")
     static let selectedCollectionDidChange = Notification.Name("SelectedCollectionDidChange")
 }
 

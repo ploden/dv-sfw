@@ -28,11 +28,17 @@ class SongTVCell: UITableViewCell {
     }
     
     func configureWithPsalm(_ aSong: Song?, isFavorite: Bool) {
+        numberLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .title2)
+        referenceLabel?.font = Helper.defaultFont(withSize: 10.0, forTextStyle: .footnote)
+        referenceLabel?.textColor = UIColor.gray
+        referenceLabel?.highlightedTextColor = UIColor.white
+        titleLabel?.font = Helper.defaultFont(withSize: 16.0, forTextStyle: .title3)
+        
         numberLabel?.text = aSong?.number
         
         referenceLabel?.text = {
             if let ref = aSong?.reference {
-                if let _ = ref.rangeOfCharacter(from: CharacterSet(charactersIn: "-")) {
+                if ref.rangeOfCharacter(from: CharacterSet(charactersIn: "-\u{2013}")) != nil {
                     return "Ps. \(ref)"
                 } else {
                     return "Psalm \(ref)"

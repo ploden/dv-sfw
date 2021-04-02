@@ -13,12 +13,28 @@ var PlaybackRates = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
 var NumPlaybackRates: size_t = 6
 
 class Helper: NSObject {
-    class func defaultFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
+    class func defaultFont(withSize size: CGFloat) -> UIFont {
         if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
             if app.settings.shouldUseSystemFonts {
-                return UIFont.preferredFont(forTextStyle: textStyle)
+                return UIFont.systemFont(ofSize: size)
             } else if
                 let font = UIFont(name: app.appConfig.defaultFont, size: size)
+            {
+                return font
+            }
+        }
+        
+        return UIFont.systemFont(ofSize: size)
+    }
+    
+    class func defaultFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
+            
+            if app.settings.shouldUseSystemFonts {
+                return preferredFont
+            } else if
+                let font = UIFont(name: app.appConfig.defaultFont, size: preferredFont.pointSize)
             {
                 return font
             }

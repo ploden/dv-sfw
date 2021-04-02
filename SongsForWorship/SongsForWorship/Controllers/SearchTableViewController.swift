@@ -8,7 +8,9 @@
 
 import UIKit
 
-class SearchTableViewController: UITableViewController, HasSongsManager {
+class SearchTableViewController: UITableViewController, HasSongsManager, HasSettings {
+    var settings: Settings?
+    
     override class var storyboardName: String {
         get {
             return "Main_iPhone"
@@ -18,23 +20,48 @@ class SearchTableViewController: UITableViewController, HasSongsManager {
     var isPerformingSearch: Bool = false
     var searchResults: [SearchResult] = [SearchResult]()
     private var isFirstAppearance: Bool = true
+    private var defaultNavigationBarAppearance: UINavigationBarAppearance?
+    private var ourNavigationBarAppearance: UINavigationBarAppearance = {
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = nil
+
+        let buttonAppearance = UIBarButtonItemAppearance(style: .plain)
+        //buttonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+        //let normal = appearance.buttonAppearance.normal        
+        appearance.buttonAppearance = UIBarButtonItemAppearance(style: .plain)
+        
+        return appearance
+    }()
     @IBOutlet weak var searchBar: UISearchBar?
         
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            settings = app.settings
+        }
+        
         tableView?.register(UINib(nibName: "SearchResultTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SearchResultTVCell")
 
         self.navigationItem.hidesSearchBarWhenScrolling = false
         self.navigationItem.titleView = searchBar
         
-        let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = nil        
-        navigationController?.navigationBar.standardAppearance = appearance
+        defaultNavigationBarAppearance = navigationController?.navigationBar.standardAppearance
+        navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
+        searchBar?.tintColor = nil
+        searchBar?.barTintColor = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let defaultNavigationBarAppearance = defaultNavigationBarAppearance {
+            navigationController?.navigationBar.standardAppearance = defaultNavigationBarAppearance
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -81,6 +108,7 @@ class SearchTableViewController: UITableViewController, HasSongsManager {
                 
                 if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
                     vc.songsManager = songsManager
+                    vc.settings = settings
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }

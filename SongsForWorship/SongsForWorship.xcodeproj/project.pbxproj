@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D09B672259AFBBD002558A1 /* ScaleXY.swift */; };
-		8D217968250CE61500DAD788 /* SettingsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D217967250CE61500DAD788 /* SettingsTableVC.swift */; };
 		8D35567724F122A200AC6C9A /* Tune.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D35567624F122A200AC6C9A /* Tune.swift */; };
 		8D37C1E22608921F000708D7 /* SongCollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */; };
 		8D37C1E72608930C000708D7 /* SoundFontConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D37C1E62608930C000708D7 /* SoundFontConfig.swift */; };
@@ -100,6 +99,8 @@
 		8D99C23224CED40A005B34F2 /* HasSongsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */; };
 		8D99C23324CED40A005B34F2 /* SongsForWorshipAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E524CED40A005B34F2 /* SongsForWorshipAppDelegate.swift */; };
 		8D99C23424CED40A005B34F2 /* PlayerControlsViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */; };
+		8D9D5FA426161A3F00FF84FE /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9D5FA326161A3F00FF84FE /* SettingsVC.swift */; };
+		8D9D5FA92616399400FF84FE /* HasSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9D5FA82616399400FF84FE /* HasSettings.swift */; };
 		8DA2204D24DEC8020014B557 /* HasFileURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA2204C24DEC8020014B557 /* HasFileURL.swift */; };
 		8DAFAFE7260F916800A5C330 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DAFAFE6260F916800A5C330 /* SearchTableViewController.swift */; };
 		8DD2E1B524E470BF00F0DE30 /* TextViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */; };
@@ -119,7 +120,6 @@
 
 /* Begin PBXFileReference section */
 		8D09B672259AFBBD002558A1 /* ScaleXY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleXY.swift; sourceTree = "<group>"; };
-		8D217967250CE61500DAD788 /* SettingsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableVC.swift; sourceTree = "<group>"; };
 		8D35567624F122A200AC6C9A /* Tune.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tune.swift; sourceTree = "<group>"; };
 		8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCollectionConfig.swift; sourceTree = "<group>"; };
 		8D37C1E62608930C000708D7 /* SoundFontConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFontConfig.swift; sourceTree = "<group>"; };
@@ -216,6 +216,8 @@
 		8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasSongsManager.swift; sourceTree = "<group>"; };
 		8D99C1E524CED40A005B34F2 /* SongsForWorshipAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsForWorshipAppDelegate.swift; sourceTree = "<group>"; };
 		8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerControlsViewDelegate.swift; sourceTree = "<group>"; };
+		8D9D5FA326161A3F00FF84FE /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
+		8D9D5FA82616399400FF84FE /* HasSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasSettings.swift; sourceTree = "<group>"; };
 		8DA2204C24DEC8020014B557 /* HasFileURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasFileURL.swift; sourceTree = "<group>"; };
 		8DAFAFE6260F916800A5C330 /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
 		8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewVC.swift; sourceTree = "<group>"; };
@@ -417,6 +419,7 @@
 		8D99C1D024CED40A005B34F2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				8D9D5FA326161A3F00FF84FE /* SettingsVC.swift */,
 				8D99C1D324CED40A005B34F2 /* DetailVC.swift */,
 				8D99C1DA24CED40A005B34F2 /* FAQTableVC.swift */,
 				8D99C1DB24CED40A005B34F2 /* FlowLayout.swift */,
@@ -438,9 +441,9 @@
 				8D99C1DD24CED40A005B34F2 /* TopicDetailTableVC.swift */,
 				8D99C1D724CED40A005B34F2 /* TopicsTableVC.swift */,
 				8D99C1DF24CED40A005B34F2 /* TunesVC.swift */,
-				8D217967250CE61500DAD788 /* SettingsTableVC.swift */,
 				8DAFAFE6260F916800A5C330 /* SearchTableViewController.swift */,
 				8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */,
+				8D9D5FA82616399400FF84FE /* HasSettings.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -651,6 +654,7 @@
 				8D99C22324CED40A005B34F2 /* SongIndexVC.swift in Sources */,
 				8DD2E1B524E470BF00F0DE30 /* TextViewVC.swift in Sources */,
 				8D99C1FA24CED40A005B34F2 /* FAQ.swift in Sources */,
+				8D9D5FA92616399400FF84FE /* HasSettings.swift in Sources */,
 				8D99C22924CED40A005B34F2 /* FlowLayout.swift in Sources */,
 				8D99C22D24CED40A005B34F2 /* TunesVC.swift in Sources */,
 				8D99C20B24CED40A005B34F2 /* SheetMusicCVCell.swift in Sources */,
@@ -678,13 +682,13 @@
 				8D99C1F624CED40A005B34F2 /* FavoritesSyncronizer.swift in Sources */,
 				8D99C20C24CED40A005B34F2 /* FAQTVCell.swift in Sources */,
 				8D99C23424CED40A005B34F2 /* PlayerControlsViewDelegate.swift in Sources */,
+				8D9D5FA426161A3F00FF84FE /* SettingsVC.swift in Sources */,
 				8D99C22624CED40A005B34F2 /* HasSongsToDisplay.swift in Sources */,
 				8D99C20424CED40A005B34F2 /* TopicTVCell.swift in Sources */,
 				8D7DABE424EE391600FD7D91 /* SongTVCell.swift in Sources */,
 				8D99C1F524CED40A005B34F2 /* PlayerTrack.swift in Sources */,
 				8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */,
 				8D3DB3F3251325310027EC66 /* SoundFont.swift in Sources */,
-				8D217968250CE61500DAD788 /* SettingsTableVC.swift in Sources */,
 				8D35567724F122A200AC6C9A /* Tune.swift in Sources */,
 				8D3DB3F1251322950027EC66 /* Settings.swift in Sources */,
 				8D99C1FC24CED40A005B34F2 /* Topic.swift in Sources */,

@@ -52,7 +52,11 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="bgJ-7Q-iJH"/>
-                                    <barButtonItem title="Item" image="textformat.size" catalog="system" id="Btw-G3-3o9"/>
+                                    <barButtonItem title="Item" image="textformat.size" catalog="system" id="Btw-G3-3o9">
+                                        <connections>
+                                            <action selector="showSettingsTapped:" destination="uY5-iU-i06" id="Usx-76-7TA"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>
