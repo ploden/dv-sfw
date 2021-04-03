@@ -12,9 +12,9 @@ import UIKit
 class SheetMusicCVCell: UICollectionViewCell {
     @IBOutlet weak var pdfPageView: PDFPageView?
     
-    func configureWithPageNumber(_ pageNumber: Int, allSongs: [Song], songsManager: SongsManager, queue: OperationQueue) {
+    func configureWithPageNumber(_ pageNumber: Int, pdf: CGPDFDocument, allSongs: [Song], songsManager: SongsManager, queue: OperationQueue) {
         let pdfPageNum = PDFPageView.pdfPageNumber(forPageNumber: pageNumber, allSongs: allSongs)
-        pdfPageView?.pdf = songsManager.currentSong?.collection.pdf
+        pdfPageView?.pdf = pdf
         pdfPageView?.configure(pdfPageNum, queue: queue)
     }
 }

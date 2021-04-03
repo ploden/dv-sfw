@@ -14,7 +14,7 @@
             <objects>
                 <viewController storyboardIdentifier="MetreVC_iPhone" automaticallyAdjustsScrollViewInsets="NO" id="uY5-iU-i06" customClass="MetreVC_iPhone" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Rk6-GB-GoF">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="729"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" prefetchingEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="omP-EP-OkM">
@@ -32,54 +32,53 @@
                                     <outlet property="delegate" destination="uY5-iU-i06" id="L1U-W7-ene"/>
                                 </connections>
                             </collectionView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Ng-6R-C1t">
-                                <rect key="frame" x="0.0" y="729" width="375" height="49"/>
-                                <items>
-                                    <barButtonItem title="Item" image="bookmark" catalog="system" id="kqJ-Te-ksM">
-                                        <connections>
-                                            <action selector="favoriteBarButtonItemTapped:" destination="uY5-iU-i06" id="lUN-81-DNg"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="wsE-yh-4ah"/>
-                                    <barButtonItem title="Item" image="play" catalog="system" id="zFJ-8K-p8a">
-                                        <connections>
-                                            <action selector="playTapped:" destination="uY5-iU-i06" id="GkV-bK-yNt"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem title="Item" image="music.quarternote.3" catalog="system" id="eLZ-ew-mM0">
-                                        <connections>
-                                            <action selector="showPlayerTapped:" destination="uY5-iU-i06" id="hES-Ml-Dx4"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="bgJ-7Q-iJH"/>
-                                    <barButtonItem title="Item" image="textformat.size" catalog="system" id="Btw-G3-3o9">
-                                        <connections>
-                                            <action selector="showSettingsTapped:" destination="uY5-iU-i06" id="Usx-76-7TA"/>
-                                        </connections>
-                                    </barButtonItem>
-                                </items>
-                            </toolbar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="WMe-fI-pvW"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="WMe-fI-pvW" firstAttribute="trailing" secondItem="omP-EP-OkM" secondAttribute="trailing" id="4ap-mQ-iS1"/>
                             <constraint firstItem="omP-EP-OkM" firstAttribute="top" secondItem="WMe-fI-pvW" secondAttribute="top" id="67F-Pu-g4i"/>
-                            <constraint firstAttribute="trailing" secondItem="1Ng-6R-C1t" secondAttribute="trailing" id="AJ5-QG-afa"/>
-                            <constraint firstItem="1Ng-6R-C1t" firstAttribute="top" secondItem="omP-EP-OkM" secondAttribute="bottom" id="D5g-NW-iwK"/>
                             <constraint firstItem="omP-EP-OkM" firstAttribute="leading" secondItem="WMe-fI-pvW" secondAttribute="leading" id="FEy-uu-VD0"/>
-                            <constraint firstItem="1Ng-6R-C1t" firstAttribute="leading" secondItem="Rk6-GB-GoF" secondAttribute="leading" id="gyb-So-ZZe"/>
-                            <constraint firstItem="1Ng-6R-C1t" firstAttribute="bottom" secondItem="WMe-fI-pvW" secondAttribute="bottom" id="v91-R0-K3a"/>
+                            <constraint firstItem="WMe-fI-pvW" firstAttribute="bottom" secondItem="omP-EP-OkM" secondAttribute="bottom" id="wFK-Ez-ggF"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <tabBarItem key="tabBarItem" title="Metre" image="meter_icon" id="UTD-iy-ec6"/>
+                    <toolbarItems>
+                        <barButtonItem title="Item" image="bookmark" catalog="system" id="kqJ-Te-ksM">
+                            <connections>
+                                <action selector="favoriteBarButtonItemTapped:" destination="uY5-iU-i06" id="lUN-81-DNg"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="wsE-yh-4ah"/>
+                        <barButtonItem title="Item" image="play" catalog="system" id="zFJ-8K-p8a">
+                            <connections>
+                                <action selector="playTapped:" destination="uY5-iU-i06" id="GkV-bK-yNt"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem title="Item" image="arrow.up.forward.app" catalog="system" id="eLZ-ew-mM0">
+                            <connections>
+                                <action selector="showPlayerTapped:" destination="uY5-iU-i06" id="hES-Ml-Dx4"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="bgJ-7Q-iJH"/>
+                        <barButtonItem title="Item" image="music.note.list" catalog="system" id="Btw-G3-3o9">
+                            <connections>
+                                <action selector="showSheetMusicTapped:" destination="uY5-iU-i06" id="1pS-so-XmI"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem title="Item" image="textformat.size" catalog="system" id="9Go-fp-BJk">
+                            <connections>
+                                <action selector="showSettingsTapped:" destination="uY5-iU-i06" id="SOd-0x-aPu"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
                         <outlet property="collectionView" destination="omP-EP-OkM" id="7jQ-Eh-Wdp"/>
                         <outlet property="favoriteBarButtonItem" destination="kqJ-Te-ksM" id="06Z-h1-mFa"/>
                         <outlet property="playBarButtonItem" destination="zFJ-8K-p8a" id="NVf-Jb-I5W"/>
                         <outlet property="showPlayerBarButtonItem" destination="eLZ-ew-mM0" id="qkJ-q3-ctJ"/>
-                        <outlet property="toolbar" destination="1Ng-6R-C1t" id="QZq-ma-oVA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w7h-zM-0jd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -383,12 +382,13 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arrow.up.forward.app" catalog="system" width="128" height="114"/>
         <image name="backward.fill" catalog="system" width="128" height="79"/>
         <image name="bookmark" catalog="system" width="112" height="128"/>
         <image name="forward.fill" catalog="system" width="128" height="79"/>
         <image name="loop_icon_grayed" width="30" height="30"/>
         <image name="meter_icon" width="35" height="24"/>
-        <image name="music.quarternote.3" catalog="system" width="128" height="103"/>
+        <image name="music.note.list" catalog="system" width="128" height="115"/>
         <image name="pause_icon" width="20" height="27"/>
         <image name="play" catalog="system" width="120" height="128"/>
         <image name="play.fill" catalog="system" width="116" height="128"/>

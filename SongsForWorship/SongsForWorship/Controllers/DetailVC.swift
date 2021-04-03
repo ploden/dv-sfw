@@ -264,8 +264,10 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
                 return cvc!
             } else {
                 let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "SheetMusicCVCell", for: indexPath) as? SheetMusicCVCell
-                if let songsManager = songsManager {
-                    cvc?.configureWithPageNumber(indexPath.item, allSongs: songsToDisplay, songsManager: songsManager, queue: queue)
+                if
+                    let songsManager = songsManager
+                {
+                    cvc?.configureWithPageNumber(indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, songsManager: songsManager, queue: queue)
                 }
                 return cvc!
             }

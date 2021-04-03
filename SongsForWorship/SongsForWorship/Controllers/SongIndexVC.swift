@@ -18,7 +18,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
     var songsManager: SongsManager?
     @IBOutlet weak var songIndexTableView: UITableView?
     @IBOutlet private var copyrightTVCell: UITableViewCell!
-    @IBOutlet weak var toolbar: UIToolbar?
     private var previewingContext: UIViewControllerPreviewing?
     private var segmentedControl: UISegmentedControl?
     
@@ -73,10 +72,10 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             let idx = 2
             
             if let segmentedControl = segmentedControl {
-                toolbar?.items?.insert(UIBarButtonItem(customView: segmentedControl), at: idx)
+                toolbarItems?.insert(UIBarButtonItem(customView: segmentedControl), at: idx)
             }
             
-            toolbar?.items?.insert(UIBarButtonItem.flexibleSpace(), at: idx)
+            toolbarItems?.insert(UIBarButtonItem.flexibleSpace(), at: idx)
             segmentedControl?.selectedSegmentIndex = 0
         }
                 
@@ -96,6 +95,8 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        navigationController?.setToolbarHidden(false, animated: true)
         
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)

@@ -232,7 +232,9 @@ class PDFPageView: UIView {
             let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
             let dirName = targetName.lowercased() + "-resources"
             
-            if let path = Bundle.main.path(forResource: "pfw_pdf_rendering", ofType: "plist", inDirectory: dirName) {
+            let filename = "PDFPageView_rendering_\(UIDevice.current.userInterfaceIdiom == .pad ? "iPad" : "iPhone")"
+            
+            if let path = Bundle.main.path(forResource: filename, ofType: "plist", inDirectory: dirName) {
                 let plistXML = FileManager.default.contents(atPath: path)!
                 do {
                     let plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainers, format: .none) as! [[String:Any]]
@@ -244,11 +246,21 @@ class PDFPageView: UIView {
             return nil
         }()
         
-        let orientationString = orientation == .portrait ? "Portrait" : "Landscape"
+        let landscapeString: String = {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                return "Landscape"
+            } else if orientation == .landscapeLeft {
+                return "LandscapeLeft"
+            } else if orientation == .landscapeRight {
+                return "LandscapeRight"
+            }
+            return "Landscape"
+        }()
+        
+        let orientationString = orientation == .portrait ? "Portrait" : landscapeString
         let pageOrientationString = pageOrientation == .right ? "Right" : "Left"
 
-        let ipads = dicts?.filter { ($0["DeviceType"] as? String) == "iPad" &&
-            ($0["DeviceOrientation"] as? String) == orientationString &&
+        let ipads = dicts?.filter { ($0["DeviceOrientation"] as? String) == orientationString &&
             ($0["PageOrientation"] as? String) == pageOrientationString }
         
         let first = ipads?.first { $0["ScreenWidth"] as? CGFloat == rect.width || $0["ScreenHeight"] as? CGFloat == rect.height }
@@ -259,7 +271,7 @@ class PDFPageView: UIView {
             var x = first["TranslateX"] as? NSNumber,
             var y = first["TranslateY"] as? NSNumber
         {
-            if "abc".count == 0 { s = NSNumber(value: 0); x = NSNumber(value: 0); y = NSNumber(value: 0) }
+            if "abc".count == 0 { s = NSNumber(value: 0); x = NSNumber(value: 0); y = NSNumber(value: 0) } // add breakpoint here expr s=newval
             print("s: \(s) x:\(x) y:\(y)")
             return ScaleXY(scale: CGFloat(s.floatValue), x: CGFloat(x.floatValue), y: CGFloat(y.floatValue))
         } else if let ipads = ipads {

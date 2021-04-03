@@ -7,6 +7,7 @@
 //
 
 import AVKit
+import SwiftTheme
 
 let kFavoritesDictionaryName = "favorites"
 let kFavoriteSongNumbersDictionaryName = "favoriteSongNumbers"
@@ -66,9 +67,11 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
         
         updateFavoritesShortcuts()
 
+        ThemeManager.setTheme(index: 1)
+        
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.backgroundColor = UIColor(named: "NavBarBackground")
+        navBarAppearance.theme_backgroundColor = ThemeColors(light: UIColor(named: "NavBarBackground")!, dark: .black, white: .white).toHex()
         navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).standardAppearance = navBarAppearance
@@ -176,6 +179,8 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
     }
     
     public func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return .allButUpsideDown
+
         if window?.rootViewController?.presentedViewController is SheetMusicVC_iPhone {
             return .landscape
         } else if UIDevice.current.userInterfaceIdiom == .pad {

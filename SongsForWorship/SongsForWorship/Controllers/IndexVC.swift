@@ -52,6 +52,8 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
         
         indexTableView?.reloadData()
         
+        navigationController?.setToolbarHidden(true, animated: true)
+
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)
         }

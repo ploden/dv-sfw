@@ -509,7 +509,7 @@
             <objects>
                 <viewController storyboardIdentifier="SongIndexVC" title="Psalms" automaticallyAdjustsScrollViewInsets="NO" id="5LM-c6-nlE" userLabel="SongIndexVC" customClass="SongIndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="sKr-TP-GG9">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="813"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="7mZ-U7-gQD">
@@ -522,40 +522,34 @@
                                     <outlet property="delegate" destination="5LM-c6-nlE" id="1JX-zY-9yW"/>
                                 </connections>
                             </tableView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bj0-Wt-TX6">
-                                <rect key="frame" x="0.0" y="813" width="414" height="49"/>
-                                <items>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="O8M-i9-aRx"/>
-                                    <barButtonItem title="Item" image="magnifyingglass" catalog="system" id="0ue-1b-UdU">
-                                        <connections>
-                                            <action selector="searchTapped:" destination="5LM-c6-nlE" id="iY6-Je-fry"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="mty-0I-Nqw"/>
-                                    <barButtonItem title="Item" image="book" catalog="system" id="KSL-hR-BNe">
-                                        <connections>
-                                            <action selector="favoritesTapped:" destination="5LM-c6-nlE" id="p8T-3W-UcX"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="9oi-cy-bUi"/>
-                                </items>
-                            </toolbar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="qCW-F8-NjE"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Bj0-Wt-TX6" firstAttribute="trailing" secondItem="qCW-F8-NjE" secondAttribute="trailing" id="3hA-RX-oHI"/>
                             <constraint firstItem="7mZ-U7-gQD" firstAttribute="top" secondItem="qCW-F8-NjE" secondAttribute="top" id="Jbq-rn-30y"/>
-                            <constraint firstItem="Bj0-Wt-TX6" firstAttribute="top" secondItem="7mZ-U7-gQD" secondAttribute="bottom" id="NWR-KI-iiY"/>
-                            <constraint firstItem="Bj0-Wt-TX6" firstAttribute="leading" secondItem="qCW-F8-NjE" secondAttribute="leading" id="QNj-Hs-9Yq"/>
+                            <constraint firstItem="qCW-F8-NjE" firstAttribute="bottom" secondItem="7mZ-U7-gQD" secondAttribute="bottom" id="Nm4-ua-tyA"/>
                             <constraint firstItem="7mZ-U7-gQD" firstAttribute="leading" secondItem="sKr-TP-GG9" secondAttribute="leading" id="XE3-On-vik"/>
-                            <constraint firstItem="qCW-F8-NjE" firstAttribute="bottom" secondItem="Bj0-Wt-TX6" secondAttribute="bottom" id="aNS-hy-5Q9"/>
                             <constraint firstAttribute="trailing" secondItem="7mZ-U7-gQD" secondAttribute="trailing" id="jMC-Do-Oxq"/>
                         </constraints>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="O8M-i9-aRx"/>
+                        <barButtonItem title="Item" image="magnifyingglass" catalog="system" id="0ue-1b-UdU">
+                            <connections>
+                                <action selector="searchTapped:" destination="5LM-c6-nlE" id="iY6-Je-fry"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="mty-0I-Nqw"/>
+                        <barButtonItem title="Item" image="book" catalog="system" id="KSL-hR-BNe">
+                            <connections>
+                                <action selector="favoritesTapped:" destination="5LM-c6-nlE" id="p8T-3W-UcX"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="9oi-cy-bUi"/>
+                    </toolbarItems>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
                         <outlet property="songIndexTableView" destination="7mZ-U7-gQD" id="emW-AP-dew"/>
-                        <outlet property="toolbar" destination="Bj0-Wt-TX6" id="zJW-ez-91u"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0jV-hx-Qi3" userLabel="First Responder" sceneMemberID="firstResponder"/>

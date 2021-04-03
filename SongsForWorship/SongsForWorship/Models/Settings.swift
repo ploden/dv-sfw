@@ -8,6 +8,17 @@
 
 import Foundation
 import UIKit
+import SwiftTheme
+
+struct ThemeColors {
+    var light: UIColor
+    var dark: UIColor
+    var white: UIColor
+    
+    func toHex() -> ThemeColorPicker {
+        return [light.hexString(false), dark.hexString(false), white.hexString(false)]
+    }
+}
 
 enum FontSizeSetting: Int, CaseIterable {
     case smallest = 120
@@ -77,7 +88,9 @@ open class Settings {
         }
     }
     var theme: ThemeSetting = .standard
-    
+    var shouldShowSheetMusicInPortrait_iPhone: Bool = false
+    var shouldShowSheetMusicInLandscape_iPhone: Bool = true
+
     func selectedSoundFontOrDefault() -> SoundFont {
         let font: SoundFont = {
             if let selected = selectedSoundFont {
