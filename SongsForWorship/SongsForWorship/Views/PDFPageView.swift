@@ -22,6 +22,7 @@ class PDFPageView: UIView {
     var translateY: CGFloat = 0.0
     var pdfPageNumber: Int = 0
     var pdf: CGPDFDocument!
+    var pdfRenderingConfigs: [PDFRenderingConfig]!
     private var imageRef: CGImage?
     private var imageRefRect: NSValue?
     
@@ -52,7 +53,7 @@ class PDFPageView: UIView {
         // TODO: remove dependence on iPad resolutions
         if !(scale != 0.0 || translateX != 0.0 || translateY != 0.0) {
             let pageOrientation = pdfPageNumber % 2 == 1 ? PDFPageOrientation.right : PDFPageOrientation.left
-            let currentScaleXY = PDFPageView.calculateScaleXY(forRect: rect, orientation: UIDevice.current.orientation, pageOrientation: pageOrientation)
+            let currentScaleXY = PDFPageView.calculateScaleXY(forRect: rect, orientation: UIDevice.current.orientation, pageOrientation: pageOrientation, pdfRenderingConfig: self.pdfRenderingConfigs)
             currentScale = currentScaleXY.scale
             currentTranslateX = currentScaleXY.x
             currentTranslateY = currentScaleXY.y
@@ -227,58 +228,49 @@ class PDFPageView: UIView {
         return NSNotFound
     }
     
-    class func calculateScaleXY(forRect rect: CGRect, orientation: UIDeviceOrientation, pageOrientation: PDFPageOrientation) -> ScaleXY {
-        let dicts: [[String:Any]]? = {
-            let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
-            let dirName = targetName.lowercased() + "-resources"
-            
-            let filename = "PDFPageView_rendering_\(UIDevice.current.userInterfaceIdiom == .pad ? "iPad" : "iPhone")"
-            
-            if let path = Bundle.main.path(forResource: filename, ofType: "plist", inDirectory: dirName) {
-                let plistXML = FileManager.default.contents(atPath: path)!
-                do {
-                    let plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainers, format: .none) as! [[String:Any]]
-                    return plistData
-                } catch {
-                    print("Error reading plist: \(error)")
+    class func calculateScaleXY(forRect rect: CGRect, orientation: UIDeviceOrientation, pageOrientation: PDFPageOrientation, pdfRenderingConfig: [PDFRenderingConfig]) -> ScaleXY {
+        let renderingDeviceOrientation: PDFRenderingDeviceOrientation = {
+            if orientation == .portrait {
+                return .portrait
+            } else {
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    return .landscape
+                } else if orientation == .landscapeLeft {
+                    return .landscapeLeft
+                } else if orientation == .landscapeRight {
+                    return .landscapeRight
                 }
             }
-            return nil
+            return .portrait
         }()
         
-        let landscapeString: String = {
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                return "Landscape"
-            } else if orientation == .landscapeLeft {
-                return "LandscapeLeft"
-            } else if orientation == .landscapeRight {
-                return "LandscapeRight"
-            }
-            return "Landscape"
-        }()
-        
-        let orientationString = orientation == .portrait ? "Portrait" : landscapeString
-        let pageOrientationString = pageOrientation == .right ? "Right" : "Left"
+        let pageOrientation: PDFRenderingPageOrientation = pageOrientation == .right ? .right : .left
 
-        let ipads = dicts?.filter { ($0["DeviceOrientation"] as? String) == orientationString &&
-            ($0["PageOrientation"] as? String) == pageOrientationString }
+        let matchingDeviceOrientationAndPageOrientation = pdfRenderingConfig.filter { $0.deviceOrientation == renderingDeviceOrientation && $0.pageOrientation == pageOrientation }
         
-        let first = ipads?.first { $0["ScreenWidth"] as? CGFloat == rect.width || $0["ScreenHeight"] as? CGFloat == rect.height }
+        let first: PDFRenderingConfig? = {
+            if let matchingBoth = matchingDeviceOrientationAndPageOrientation.first { $0.screenWidth == rect.width && $0.screenHeight == rect.height } {
+                return matchingBoth
+            } else {
+                return matchingDeviceOrientationAndPageOrientation.first { $0.screenWidth == rect.width || $0.screenHeight == rect.height }
+            }
+        }()
         
         if
-            let first = first,
-            var s = first["Scale"] as? NSNumber,
-            var x = first["TranslateX"] as? NSNumber,
-            var y = first["TranslateY"] as? NSNumber
+            let first = first
         {
-            if "abc".count == 0 { s = NSNumber(value: 0); x = NSNumber(value: 0); y = NSNumber(value: 0) } // add breakpoint here expr s=newval
+            var s = first.scale as NSNumber
+            var x = first.translateX as NSNumber
+            var y = first.translateY as NSNumber
+            
+            if "abc".count == 0 { s = NSNumber(value: 0); x = NSNumber(value: 0); y = NSNumber(value: 0) } // add breakpoint here to modify s, x, y expr s=newval
             print("s: \(s) x:\(x) y:\(y)")
             return ScaleXY(scale: CGFloat(s.floatValue), x: CGFloat(x.floatValue), y: CGFloat(y.floatValue))
-        } else if let ipads = ipads {
-            let closest = ipads.min { a, b in
+        } else {
+            let closest = pdfRenderingConfig.min { a, b in
                 if
-                    let screenWidthA = a["ScreenWidth"] as? CGFloat,
-                    let screenWidthB = a["ScreenWidth"] as? CGFloat
+                    let screenWidthA = a.screenWidth,
+                    let screenWidthB = a.screenWidth
                 {
                     return abs(rect.width - abs(screenWidthA)) < abs(rect.width - abs(screenWidthB))
                 } else {
@@ -287,11 +279,11 @@ class PDFPageView: UIView {
             }
             
             if
-                let s = closest?["Scale"] as? NSNumber,
-                let x = closest?["TranslateX"] as? NSNumber,
-                let y = closest?["TranslateY"] as? NSNumber
+                let s = closest?.scale,
+                let x = closest?.translateX,
+                let y = closest?.translateY
             {
-                return ScaleXY(scale: CGFloat(s.floatValue), x: CGFloat(x.floatValue), y: CGFloat(y.floatValue))
+                return ScaleXY(scale: s, x: x, y: y)
             }
         }
         

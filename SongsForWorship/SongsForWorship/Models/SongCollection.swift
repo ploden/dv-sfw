@@ -34,6 +34,8 @@ open class SongCollection: NSObject {
     let displayName: String
     let pdf: CGPDFDocument
     let sections: [SongCollectionSection]
+    var pdfRenderingConfigs_iPhone: [PDFRenderingConfig] = [PDFRenderingConfig]()
+    var pdfRenderingConfigs_iPad: [PDFRenderingConfig] = [PDFRenderingConfig]()
     public let tuneInfos: [SongCollectionTuneInfo]
     private(set) lazy var songs: [Song]? = {
         let songs = readSongsFromFile(jsonFilename: jsonFilename, directory: directory)

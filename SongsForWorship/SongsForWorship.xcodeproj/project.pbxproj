@@ -109,6 +109,7 @@
 		8DD2E1B524E470BF00F0DE30 /* TextViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */; };
 		8DD2E1B724E4756000F0DE30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DD2E1B624E4755F00F0DE30 /* Assets.xcassets */; };
 		8DDE0DF324FCF0C30070154B /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = 8DDE0DF224FCF0C30070154B /* Down */; };
+		8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -227,6 +228,7 @@
 		8DBAF4EA261769F900FD3170 /* ScrollingSheetMusicCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScrollingSheetMusicCVCell.xib; sourceTree = "<group>"; };
 		8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewVC.swift; sourceTree = "<group>"; };
 		8DD2E1B624E4755F00F0DE30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -380,6 +382,7 @@
 				8D42246726065AD300F7EB99 /* AppConfig.swift */,
 				8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */,
 				8D37C1E62608930C000708D7 /* SoundFontConfig.swift */,
+				8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -673,6 +676,7 @@
 				8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */,
 				8D99C21F24CED40A005B34F2 /* SheetMusicVC_iPhone.swift in Sources */,
 				8D99C1F124CED40A005B34F2 /* SongCollectionTuneInfo.swift in Sources */,
+				8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */,
 				8D99C21C24CED40A005B34F2 /* PlayRecordingTVCell.swift in Sources */,
 				8D99C22724CED40A005B34F2 /* RootVC.swift in Sources */,
 				8D99C1FF24CED40A005B34F2 /* NoRecordingsFoundTVCell.swift in Sources */,

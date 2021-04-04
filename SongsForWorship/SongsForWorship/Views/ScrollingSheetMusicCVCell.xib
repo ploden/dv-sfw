@@ -17,7 +17,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g81-aV-JIA">
+                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g81-aV-JIA">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GYU-0Z-Idh" customClass="PDFPageView" customModule="SongsForWorship" customModuleProvider="target">

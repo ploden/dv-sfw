@@ -31,6 +31,11 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSet
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setToolbarHidden(true, animated: true)
+    }
+    
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }

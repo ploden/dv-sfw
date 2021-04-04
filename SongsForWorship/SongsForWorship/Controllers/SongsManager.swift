@@ -57,6 +57,8 @@ class SongsManager: Equatable {
              */
             
             let newCollection = SongCollection(directory: appConfig.directory, collectionConfig: collection)
+            newCollection.pdfRenderingConfigs_iPhone = appConfig.pdfRenderingConfigs_iPhone
+            newCollection.pdfRenderingConfigs_iPad = appConfig.pdfRenderingConfigs_iPad
             songCollections.append(newCollection)
         }
     }

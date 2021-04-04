@@ -12,7 +12,7 @@ class ScrollingSheetMusicCVCell: UICollectionViewCell {
     @IBOutlet weak var pdfPageView: PDFPageView?
     @IBOutlet weak var pdfPageViewHeightConstraint: NSLayoutConstraint?
     
-    func configureWithPageNumber(_ pageNumber: Int, pdf: CGPDFDocument, allSongs: [Song], songsManager: SongsManager, queue: OperationQueue, height: CGFloat) {
+    func configure(withPageNumber pageNumber: Int, pdf: CGPDFDocument, allSongs: [Song], pdfRenderingConfigs: [PDFRenderingConfig], queue: OperationQueue, height: CGFloat) {
         if
             let pdfPageViewHeightConstraint = pdfPageViewHeightConstraint,
             pdfPageViewHeightConstraint.constant != height
@@ -21,6 +21,7 @@ class ScrollingSheetMusicCVCell: UICollectionViewCell {
         }
         let pdfPageNum = PDFPageView.pdfPageNumber(forPageNumber: pageNumber, allSongs: allSongs)
         pdfPageView?.pdf = pdf
+        pdfPageView?.pdfRenderingConfigs = pdfRenderingConfigs
         pdfPageView?.configure(pdfPageNum, queue: queue)
     }
 }

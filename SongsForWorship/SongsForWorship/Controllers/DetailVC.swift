@@ -267,7 +267,8 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
                 if
                     let songsManager = songsManager
                 {
-                    cvc?.configureWithPageNumber(indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, songsManager: songsManager, queue: queue)
+                    // FIXME 
+                    //cvc?.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: sett, queue: queue)
                 }
                 return cvc!
             }

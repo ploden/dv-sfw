@@ -97,6 +97,7 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
         super.viewWillAppear(animated)
         
         navigationController?.setToolbarHidden(false, animated: true)
+        navigationController?.toolbar.isTranslucent = false
         
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)

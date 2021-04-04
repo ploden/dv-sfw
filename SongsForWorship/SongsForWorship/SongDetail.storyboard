@@ -50,6 +50,7 @@
                                 <action selector="favoriteBarButtonItemTapped:" destination="uY5-iU-i06" id="lUN-81-DNg"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem width="30" style="plain" systemItem="fixedSpace" id="fLl-T2-d4B"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="wsE-yh-4ah"/>
                         <barButtonItem title="Item" image="play" catalog="system" id="zFJ-8K-p8a">
                             <connections>
@@ -62,7 +63,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="bgJ-7Q-iJH"/>
-                        <barButtonItem title="Item" image="music.note.list" catalog="system" id="Btw-G3-3o9">
+                        <barButtonItem title="Item" image="music.note.list" catalog="system" width="30" id="Btw-G3-3o9">
                             <connections>
                                 <action selector="showSheetMusicTapped:" destination="uY5-iU-i06" id="1pS-so-XmI"/>
                             </connections>

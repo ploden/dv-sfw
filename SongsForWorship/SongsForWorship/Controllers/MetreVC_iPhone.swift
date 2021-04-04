@@ -77,6 +77,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         super.viewWillAppear(animated)
         
         navigationController?.setToolbarHidden(false, animated: true)
+        navigationController?.toolbar.isTranslucent = false
         
         if
             let isHidden = navigationController?.isNavigationBarHidden,
@@ -103,15 +104,39 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
             navigationController?.setToolbarHidden(false, animated: animated)
             navigationItem.setHidesBackButton(false, animated: animated)
         }
+        
+        if let collectionView = collectionView {
+            let i = Int(collectionView.contentOffset.x / collectionView.frame.size.width)
+            let numItems = collectionView.numberOfItems(inSection: 0)
+            
+            if numItems > 0 {
+                let indexPathBeforeTransitionToSize = IndexPath(item: min(i, numItems - 1), section: 0)
+                
+                coordinator.animate(alongsideTransition: { context in
+                    collectionView.alpha = 0.0
+                }) { context in
+                    UIView.animate(withDuration: 0.15, animations: {
+                        collectionView.alpha = 1.0
+                    })
+                    
+                    collectionView.collectionViewLayout.invalidateLayout()
+                    collectionView.reloadData()
+                    
+                    if indexPathBeforeTransitionToSize.row < collectionView.numberOfItems(inSection: indexPathBeforeTransitionToSize.section) {
+                        collectionView.scrollToItem(at: indexPathBeforeTransitionToSize, at: .left, animated: false)
+                    }
+                }
+            }
+        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if shouldScrollToStartingIndex {
-            scrollToCurrentSong()
-            shouldScrollToStartingIndex = false
-        }
+        //if shouldScrollToStartingIndex {
+            //scrollToCurrentSong()
+            //shouldScrollToStartingIndex = false
+        //}
     }
     
     func scrollToCurrentSong() {
@@ -200,7 +225,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
             if let cvc = cvc as? MetreCVCell {
                 cvc.song = song
             } else if let cvc = cvc as? SheetMusicCVCell {
-                cvc.configureWithPageNumber(indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, songsManager: songsManager, queue: queue)
+                cvc.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: song.collection.pdfRenderingConfigs_iPhone, queue: queue)
             } else if let cvc = cvc as? ScrollingSheetMusicCVCell {
                 var containerViewHeight: CGFloat
                 
@@ -219,12 +244,21 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                 } else if collectionView.frame.size.width == 926 {
                     // iPhone 12 Pro Max
                     containerViewHeight = 1246.0
+                } else if collectionView.frame.size.width == 808 {
+                    // iPhone 11 Pro Max
+                    containerViewHeight = 1296.0
+                } else if collectionView.frame.size.width == 724 {
+                  // iPhone 11 Pro
+                    containerViewHeight = 1246.0
+                } else if collectionView.frame.size.width == 800 {
+                    // iPhone 11
+                    containerViewHeight = 1246.0
                 } else {
                     // iPhone X
                     containerViewHeight = 1246.0
                 }
 
-                cvc.configureWithPageNumber(indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, songsManager: songsManager, queue: queue, height: containerViewHeight)
+                cvc.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: song.collection.pdfRenderingConfigs_iPhone, queue: queue, height: containerViewHeight)
             }
         }
         
