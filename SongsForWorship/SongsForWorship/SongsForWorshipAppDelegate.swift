@@ -67,20 +67,49 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
         
         updateFavoritesShortcuts()
 
-        ThemeManager.setTheme(index: 1)
+        //ThemeManager.setTheme(index: 1)
         
+        /*
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.theme_backgroundColor = ThemeColors(light: UIColor(named: "NavBarBackground")!, dark: .black, white: .white).toHex()
         navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).standardAppearance = navBarAppearance
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).scrollEdgeAppearance = navBarAppearance
         
         let buttonAppearance = UIBarButtonItemAppearance(style: .plain)
         buttonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navBarAppearance.buttonAppearance = buttonAppearance        
-        UINavigationBar.appearance().tintColor = .white
+        navBarAppearance.buttonAppearance = buttonAppearance
+        navBarAppearance.backButtonAppearance = buttonAppearance
+        
+        UINavigationBar.appearance().standardAppearance = navBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+
+        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).standardAppearance = navBarAppearance
+        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).scrollEdgeAppearance = navBarAppearance
+        //UINavigationBar.appearance().tintColor = .white
+ */
+        
+        // Set navigation bar tint / background colour
+        //UINavigationBar.appearance().barTintColor = UIColor.red
+        
+        // Set Navigation bar Title colour
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        // Set navigation bar ItemButton tint colour, including back chevron
+        //UIBarButtonItem.appearance().tintColor = UIColor.white
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).tintColor = nil
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).tintColor = nil
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = nil
+
+        // Set Navigation bar background image
+        //let navBgImage:UIImage = UIImage(named: "bg_blog_navbar_reduced.jpg")!
+        // Set navigation bar tint / background colour
+        UINavigationBar.appearance().barTintColor = UIColor(named: "NavBarBackground")
+        
+        //Set navigation bar Back button tint colour
+        UINavigationBar.appearance().tintColor = UIColor.white
+                    
         
         window = UIWindow()
         
@@ -100,6 +129,15 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
                         detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
                         detail.songsManager = songsManager
                         detail.delegate = self
+                    }
+                    if
+                        let nc = vc as? UINavigationController,
+                        let detail = nc.topViewController as? MetreVC_iPhone
+                    {
+                        detail.navigationItem.leftItemsSupplementBackButton = true
+                        detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
+                        detail.songsManager = songsManager
+                        detail.settings = settings
                     }
                 }
             }

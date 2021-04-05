@@ -35,8 +35,6 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
         super.viewDidLoad()
         
         title = ""
-        navigationItem.backBarButtonItem?.tintColor = .white
-        navigationController?.navigationBar.barTintColor = Helper.tintColor()
         
         indexTableView?.register(UINib(nibName: NSStringFromClass(SongTVCell.self.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: NSStringFromClass(SongTVCell.self.self))
         indexTableView?.register(UINib(nibName: "GenericTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "GenericTVCell")

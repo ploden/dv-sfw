@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import PDFKit
 
 class SheetMusicCVCell: UICollectionViewCell {
     @IBOutlet weak var pdfPageView: PDFPageView?

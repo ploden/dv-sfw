@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PDFKit
 
 class ScrollingSheetMusicCVCell: UICollectionViewCell {
     @IBOutlet weak var pdfPageView: PDFPageView?

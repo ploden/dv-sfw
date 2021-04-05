@@ -10,6 +10,7 @@ import UIKit
 import QuartzCore
 import Accelerate
 import simd
+import PDFKit
 
 enum PDFPageOrientation {
     case left, right
@@ -104,24 +105,109 @@ class PDFPageView: UIView {
                 
                 let context = CGContext(data: nil, width: Int(screenScaledWidth), height: Int(screenScaledHeight), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
                 
+                let targetSize = rect.size
+                
                 if let context = context {
-                    context.translateBy(x: 0.0, y: screenScaledHeight)
+                    //context.translateBy(x: 0.0, y: screenScaledHeight)
                     
+                    //context.scaleBy(x: 1.0, y: -1.0)
+                    
+                    // Invert y axis (CoreGraphics and UIKit axes are differents)
+                    //CGContextTranslateCTM(context, 0, targetSize.height);
+                    //context.translateBy(x: 0, y: screenScaledHeight)
+                    //context.scaleBy(x: 1.0, y: -1.0)
+
+                    //context.saveGState()
+                    
+                    //context.scaleBy(x: currentScale * screenScale, y: currentScale * screenScale)
+                    
+                    //let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
+                    
+                    //let translateTransform = drawingTransform.translatedBy(x: currentTranslateX, y: currentTranslateY)
+                    
+                    //context.concatenate(translateTransform)
+                    
+                    //context.drawPDFPage(pageRef)
+                    
+                    /*
+                    let cropbox = pageRef.getBoxRect(.cropBox)
+                    
+                    var transform = pageRef.getDrawingTransform(.cropBox, rect: CGRect(origin: CGPoint.zero, size: rect.size), rotate: 0, preserveAspectRatio: true)
+                    
+                    // We change the context scale to fill completely the destination size
+                    let contextScale = (targetSize.width / cropbox.width) * screenScale
+                    
+                    if cropbox.width < targetSize.width {
+                        transform = transform.scaledBy(x: contextScale, y: contextScale)
+
+                        let tx = -(cropbox.origin.x * transform.a + cropbox.origin.y * transform.b)
+                        transform.tx = tx
+                        let ty = -(cropbox.origin.x * transform.c + cropbox.origin.y * transform.d)
+                        transform.ty = ty
+                        //transform.ty = 20
+                                                
+                        let rotation = 0
+                        
+                        // Rotation handling
+                        if rotation == 180 || rotation == 270 {
+                            transform.tx += targetSize.width
+                        }
+                        if rotation == 90 || rotation == 180 {
+                            transform.ty += targetSize.height
+                        }
+                    }
+ 
+
+                    //context.scaleBy(x: contextScale * screenScale, y: contextScale * screenScale)
+                    context.concatenate(transform)
+
+                    context.translateBy(x: 0.0, y: targetSize.height)
                     context.scaleBy(x: 1.0, y: -1.0)
+
+                    context.drawPDFPage(pageRef)
+
+                    //pageRef.draw(with: .cropBox, to: context)
                     
-                    context.saveGState()
+                    image = context.makeImage()
                     
-                    context.scaleBy(x: currentScale * screenScale, y: currentScale * screenScale)
+                     */
                     
-                    let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
+                    let drawSize = rect.size
                     
-                    let translateTransform = drawingTransform.translatedBy(x: currentTranslateX, y: currentTranslateY)
+                    // Flip coordinates
+                    _ = context.ctm
                     
-                    context.concatenate(translateTransform)
+                    let scale = UIScreen.main.scale
+                    context.scaleBy(x: scale, y: -scale);
+                    
+                    //context.translateBy(x: 0, y: -drawSize.height);
+                    
+                    // get the rectangle of the cropped inside
+                    let mediaRect = pageRef.getBoxRect(CGPDFBox.cropBox);
+                    
+                    context.translateBy(x: 0, y: -drawSize.height);
+
+                    let xScale = drawSize.width / mediaRect.size.width
+
+                    let scaleToApply: CGFloat = {
+                        let yScale = drawSize.height / mediaRect.size.height
+                        return xScale < yScale ? xScale : yScale
+                        //return drawSize.height / mediaRect.size.height
+                    }()
+                    
+                    context.scaleBy(x: scaleToApply, y: scaleToApply)
+                    
+                    //context.translateBy(x: -mediaRect.origin.x, y: -mediaRect.origin.y)
+                    let x = (drawSize.width - (scaleToApply * mediaRect.size.width))
+                    context.translateBy(x: (x / 2.0) / scaleToApply, y: 0)
                     
                     context.drawPDFPage(pageRef)
                     
                     image = context.makeImage()
+                    
+                    context.endPDFPage()
+                    
+                    //image = resultingImage?.cgImage
                     
                     if darkMode {
                         // Create a `CIImage` from the input image.
@@ -283,7 +369,8 @@ class PDFPageView: UIView {
                 let x = closest?.translateX,
                 let y = closest?.translateY
             {
-                return ScaleXY(scale: s, x: x, y: y)
+                //return ScaleXY(scale: s, x: x, y: y)
+                return ScaleXY(scale: 2.0, x: 0, y: 0)
             }
         }
         

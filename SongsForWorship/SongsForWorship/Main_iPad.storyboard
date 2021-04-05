@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="8vK-aN-gDQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="8vK-aN-gDQ">
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,11 +15,11 @@
                         <viewControllerLayoutGuide type="bottom" id="D7n-I4-GkR"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="u4k-wE-fUd">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="974"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="2Jh-d5-xon">
-                                <rect key="frame" x="0.0" y="0.0" width="768" height="974"/>
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewLayout key="collectionViewLayout" id="UQb-mf-lvq" customClass="FlowLayout" customModule="SongsForWorship" customModuleProvider="target"/>
                                 <cells/>
@@ -61,53 +61,36 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9wo-aC-dqr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1233.59375" y="379.6875"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="jWQ-lo-r3X">
-            <objects>
-                <navigationController id="4Ka-Fo-HbN" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="vRB-SI-E8F">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.031372549020000001" green="0.1450980392" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </navigationBar>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Bl0-cf-AUD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="468" y="-284"/>
+            <point key="canvasLocation" x="468" y="438"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="A3c-eg-ACd">
             <objects>
-                <splitViewController id="8vK-aN-gDQ" sceneMemberID="viewController">
+                <splitViewController allowDoubleColumnStyle="YES" behavior="overlay" id="8vK-aN-gDQ" sceneMemberID="viewController">
                     <connections>
-                        <segue destination="4Ka-Fo-HbN" kind="relationship" relationship="masterViewController" id="uJR-tQ-row"/>
-                        <segue destination="9nJ-hv-MMN" kind="relationship" relationship="detailViewController" id="yGK-WG-Rg6"/>
+                        <segue destination="Qe3-o8-OEX" kind="relationship" relationship="masterViewController" id="7Ma-6O-VM8"/>
+                        <segue destination="dDb-g3-Tfg" kind="relationship" relationship="detailViewController" id="ugR-8C-GRl"/>
                     </connections>
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JpU-Xu-MSx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-304" y="-41"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="Nsd-1X-jSS">
+        <!--IndexVC-->
+        <scene sceneID="JaT-Jo-VNk">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="9nJ-hv-MMN" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="a7B-8a-omV">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.031372549020000001" green="0.1450980392" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="OW7-fj-Z6I" kind="relationship" relationship="rootViewController" id="hUx-bq-3qs"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bD6-Uy-PvN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <viewControllerPlaceholder storyboardIdentifier="Main_iPhone" storyboardName="Main_iPhone" referencedIdentifier="IndexVC" id="Qe3-o8-OEX" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xh8-Ic-fOU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="467.96875" y="379.6875"/>
+            <point key="canvasLocation" x="386" y="-343"/>
+        </scene>
+        <!--MetreVC_iPhone-->
+        <scene sceneID="vSO-o1-acn">
+            <objects>
+                <viewControllerPlaceholder storyboardName="SongDetail" referencedIdentifier="MetreVC_iPhone" id="dDb-g3-Tfg" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sGY-XT-vhb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="416" y="-152"/>
         </scene>
     </scenes>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

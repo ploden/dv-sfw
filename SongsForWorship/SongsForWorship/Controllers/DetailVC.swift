@@ -65,6 +65,14 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
         collectionView?.layoutMargins = .zero
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.hidesBarsOnTap = true
+        navigationController?.setToolbarHidden(false, animated: true)
+        navigationController?.toolbar.isTranslucent = false
+    }
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
                 
@@ -199,7 +207,7 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
         
     }
-    
+        
     // MARK: - Rotation support
     func shouldAutorotate() -> Bool {
         return true
@@ -254,27 +262,32 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cellID: String = {
+            if
+                let songsToDisplay = songsToDisplay(),
+                let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay)
+            {
+                if (song.isTuneCopyrighted) {
+                    return String(describing: MetreCVCell.self)
+                }
+            }
+            return String(describing: SheetMusicCVCell.self)
+        }()
+        
+        let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath)
+        
         if
             let songsToDisplay = songsToDisplay(),
             let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay)
         {
-            if (song.isTuneCopyrighted) {
-                let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "MetreCVCell", for: indexPath) as? MetreCVCell
-                cvc?.song = song
-                return cvc!
-            } else {
-                let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: "SheetMusicCVCell", for: indexPath) as? SheetMusicCVCell
-                if
-                    let songsManager = songsManager
-                {
-                    // FIXME 
-                    //cvc?.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: sett, queue: queue)
-                }
-                return cvc!
+            if let cvc = cvc as? MetreCVCell {
+                cvc.song = song
+            } else if let cvc = cvc as? SheetMusicCVCell {
+                cvc.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: song.collection.pdfRenderingConfigs_iPad, queue: queue)
             }
         }
         
-        return UICollectionViewCell()
+        return cvc
     }
     
     // MARK: - UICollectionViewDelegateFlowLayout

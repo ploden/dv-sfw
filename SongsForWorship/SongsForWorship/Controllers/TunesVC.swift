@@ -105,12 +105,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     open override func viewDidLoad() {
         super.viewDidLoad()
         
-        if var textAttributes = navigationController?.navigationBar.titleTextAttributes {
-            textAttributes[NSAttributedString.Key.font] = UIFont.systemFont(ofSize: 20.0)
-            textAttributes[NSAttributedString.Key.foregroundColor] = UIColor.white
-            navigationController?.navigationBar.titleTextAttributes = textAttributes
-        }
-        
         playerControlsView?.delegate = self
         
         volumeControl?.showsRouteButton = false

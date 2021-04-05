@@ -31,7 +31,6 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
             navigationItem.titleView = navbarLogo
         }
-        navigationItem.backBarButtonItem?.tintColor = .white
 
         songIndexTableView?.rowHeight = UITableView.automaticDimension
         songIndexTableView?.estimatedRowHeight = 50.0

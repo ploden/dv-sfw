@@ -90,7 +90,8 @@ open class Settings {
     var theme: ThemeSetting = .standard
     var shouldShowSheetMusicInPortrait_iPhone: Bool = false
     var shouldShowSheetMusicInLandscape_iPhone: Bool = true
-
+    var shouldShowSheetMusic_iPad: Bool = true
+    
     func selectedSoundFontOrDefault() -> SoundFont {
         let font: SoundFont = {
             if let selected = selectedSoundFont {

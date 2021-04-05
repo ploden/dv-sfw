@@ -27,8 +27,11 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
 
         let buttonAppearance = UIBarButtonItemAppearance(style: .plain)
         //buttonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-        //let normal = appearance.buttonAppearance.normal        
-        appearance.buttonAppearance = UIBarButtonItemAppearance(style: .plain)
+        //let normal = appearance.buttonAppearance.normal
+        //appearance.buttonAppearance =
+        //appearance.buttonAppearance.configureWithDefault(for: .plain)
+        //appearance.buttonAppearance.configureWithDefault(for: .done)
+        // Set navigation bar ItemButton tint colour
         
         return appearance
     }()
@@ -46,21 +49,28 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
         self.navigationItem.hidesSearchBarWhenScrolling = false
         self.navigationItem.titleView = searchBar
         
-        defaultNavigationBarAppearance = navigationController?.navigationBar.standardAppearance
-        navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
-        searchBar?.tintColor = nil
-        searchBar?.barTintColor = nil
+        UINavigationBar.appearance().barTintColor = nil
+
+        //defaultNavigationBarAppearance = navigationController?.navigationBar.standardAppearance
+        //navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
+        //searchBar?.tintColor = nil
+        //searchBar?.barTintColor = nil
+        //UIBarButtonItem.appearance().tintColor = nil
+        //UINavigationBar.appearance().backgroundColor = nil
+        // Set navigation bar ItemButton tint colour, including back chevron
+        //UIBarButtonItem.appearance().tintColor = .black
+        //UINavigationBar.appearance().tintColor = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
+        //navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if let defaultNavigationBarAppearance = defaultNavigationBarAppearance {
-            navigationController?.navigationBar.standardAppearance = defaultNavigationBarAppearance
+            //navigationController?.navigationBar.standardAppearance = defaultNavigationBarAppearance
         }
     }
     

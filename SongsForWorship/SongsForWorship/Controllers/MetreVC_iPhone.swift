@@ -9,8 +9,19 @@
 
 import UIKit
 
-class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsToDisplay, HasSongsManager, HasSettings {
-    var settings: Settings?
+class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsToDisplay, HasSongsManager, HasSettings, PsalmObserver {
+    @objc func songDidChange(_ notification: Notification) {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            scrollToCurrentSong()
+        }
+    }
+    
+    var settings: Settings? {
+        didSet {
+            oldValue?.removeObserver(forSettings: self)
+            settings?.addObserver(forSettings: self)
+        }
+    }
     
     enum imageNames: String {
         case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark"
@@ -21,7 +32,12 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         }
     }
     var songsToDisplay: [Song]?
-    var songsManager: SongsManager?
+    var songsManager: SongsManager? {
+        didSet {
+            oldValue?.removeObserver(forcurrentSong: self)
+            songsManager?.addObserver(forcurrentSong: self)
+        }
+    }
     var newWindow: UIWindow?
     lazy var tunesVC: TunesVC = {
         return TunesVC.pfw_instantiateFromStoryboard() as! TunesVC
@@ -69,8 +85,6 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
         collectionView?.register(UINib(nibName: String(describing: MetreCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: MetreCVCell.self))
         collectionView?.register(UINib(nibName: String(describing: SheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: SheetMusicCVCell.self))
         collectionView?.register(UINib(nibName: String(describing: ScrollingSheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: ScrollingSheetMusicCVCell.self))
-
-        settings?.addObserver(forSettings: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -204,12 +218,18 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cellID: String = {
             if let settings = settings {
-                if collectionView.frame.size.width > collectionView.frame.size.height {
-                    // landscape
-                    return String(describing: settings.shouldShowSheetMusicInLandscape_iPhone ? ScrollingSheetMusicCVCell.self : MetreCVCell.self)
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    // iPad
+                    return String(describing: settings.shouldShowSheetMusic_iPad ? SheetMusicCVCell.self : MetreCVCell.self)
                 } else {
-                    // portrait
-                    return String(describing: settings.shouldShowSheetMusicInPortrait_iPhone ? SheetMusicCVCell.self : MetreCVCell.self)
+                    // iPhone
+                    if collectionView.frame.size.width > collectionView.frame.size.height {
+                        // landscape
+                        return String(describing: settings.shouldShowSheetMusicInLandscape_iPhone ? ScrollingSheetMusicCVCell.self : MetreCVCell.self)
+                    } else {
+                        // portrait
+                        return String(describing: settings.shouldShowSheetMusicInPortrait_iPhone ? SheetMusicCVCell.self : MetreCVCell.self)
+                    }
                 }
             }
             return String(describing: MetreCVCell.self)
@@ -492,10 +512,14 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     
     @IBAction func showSheetMusicTapped(_ sender: Any) {
         if let settings = settings {
-            if isLandscape() {
-                settings.shouldShowSheetMusicInLandscape_iPhone = !settings.shouldShowSheetMusicInLandscape_iPhone
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                settings.shouldShowSheetMusic_iPad = !settings.shouldShowSheetMusic_iPad
             } else {
-                settings.shouldShowSheetMusicInPortrait_iPhone = !settings.shouldShowSheetMusicInPortrait_iPhone
+                if isLandscape() {
+                    settings.shouldShowSheetMusicInLandscape_iPhone = !settings.shouldShowSheetMusicInLandscape_iPhone
+                } else {
+                    settings.shouldShowSheetMusicInPortrait_iPhone = !settings.shouldShowSheetMusicInPortrait_iPhone
+                }
             }
             
             collectionView?.reloadData()

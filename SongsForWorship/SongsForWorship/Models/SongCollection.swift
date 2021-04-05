@@ -8,6 +8,7 @@
 
 import Foundation
 import QuartzCore
+import PDFKit
 
 extension Notification.Name {
     static let currentSongDidChange = Notification.Name("currentSongDidChange")
