@@ -23,7 +23,11 @@ struct SongDetailItem {
     let displayMode: DisplayMode
 }
 
-class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, HasSettings, PsalmObserver {
+class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, HasSettings, PsalmObserver {    
+    enum imageNames: String {
+        case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark"
+    }
+    
     weak var delegate: SongDetailVCDelegate?
     @objc func songDidChange(_ notification: Notification) {
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -41,30 +45,23 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             scrollToCurrentSong()
         }
     }
-    
     var appConfig: AppConfig {
         get {
             let app = UIApplication.shared.delegate as! PsalterAppDelegate
             return app.appConfig
         }
     }
-    
     var settings: Settings? {
         didSet {
             oldValue?.removeObserver(forSettings: self)
             settings?.addObserver(forSettings: self)
         }
     }
-    
-    enum imageNames: String {
-        case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark"
-    }
     override class var storyboardName: String {
         get {
             return "SongDetail"
         }
     }
-    //var songsToDisplay: [Song]?
     var songsManager: SongsManager? {
         didSet {
             oldValue?.removeObserver(forcurrentSong: self)
@@ -102,7 +99,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             }
         }
     }
-    
     private var indexPathOfLastDisplayedCell: IndexPath?
     lazy private var activityIndicatorBarButtonItem: UIBarButtonItem = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -181,11 +177,10 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         }
         
         if let collectionView = collectionView {
-            let i = Int(collectionView.contentOffset.x / collectionView.frame.size.width)
             let numItems = collectionView.numberOfItems(inSection: 0)
             
             if numItems > 0 {
-                let indexPathBeforeTransitionToSize = IndexPath(item: min(i, numItems - 1), section: 0)
+                //let indexPathBeforeTransitionToSize = IndexPath(item: min(i, numItems - 1), section: 0)
                 
                 coordinator.animate(alongsideTransition: { context in
                     collectionView.alpha = 0.0
@@ -222,29 +217,10 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         if
             let collectionView = collectionView,
             let current = songsManager?.currentSong,
-            let songsToDisplay = songsManager?.songsToDisplay,
             let item = songDetailItems.first(where: { $0.songs.contains(current) })
         {
             collectionView.layoutIfNeeded()
             collectionView.scrollToItem(at: item.indexPath, at: .centeredHorizontally, animated: false)
-            
-            /*
-            if shouldShowPDF() {
-                //let pageNum = PDFPageView.pageNumberForPsalm(current, allSongs: songsToDisplay, idx: nil)
-                let pageNum = PDFPageView.pageNumberForPsalm(current, allSongs: songsToDisplay, displayMode: displayMode(forSize: view.frame.size))
-                
-                if pageNum < collectionView.numberOfItems(inSection: 0) {
-                    print("pageNum: \(pageNum)")
-                    let item = IndexPath(item: pageNum, section: 0)
-                    collectionView.layoutIfNeeded()
-                    collectionView.scrollToItem(at: item, at: .centeredHorizontally, animated: false)
-                }
-            } else {
-                if idx < collectionView.numberOfItems(inSection: 0) {
-                    collectionView.scrollToItem(at: IndexPath(item: idx, section: 0), at: [], animated: false)
-                }
-            }
- */
         }
     }
     
@@ -275,79 +251,10 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        /*
-        if shouldShowPDF() {
-            if let songsToDisplay = songsManager?.songsToDisplay {
-                let numberOfPages = PDFPageView.numberOfPages(songsToDisplay, displayMode: displayMode())
-                return numberOfPages
-            }
-        }
-        return songsManager?.songsToDisplay?.count ?? 0
-         */
         return songDetailItems.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        /*
-        let cellID: String = {
-            if let settings = settings {
-                if UIDevice.current.userInterfaceIdiom == .pad {
-                    // iPad
-                    return String(describing: settings.shouldShowSheetMusic_iPad ? SheetMusicCVCell.self : MetreCVCell.self)
-                } else {
-                    // iPhone
-                    if collectionView.frame.size.width > collectionView.frame.size.height {
-                        // landscape
-                        return String(describing: settings.shouldShowSheetMusicInLandscape_iPhone ? ScrollingSheetMusicCVCell.self : MetreCVCell.self)
-                    } else {
-                        // portrait
-                        return String(describing: settings.shouldShowSheetMusicInPortrait_iPhone ? SheetMusicCVCell.self : MetreCVCell.self)
-                    }
-                }
-            }
-            return String(describing: MetreCVCell.self)
-        }()
-        
-        let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath)
-            
-        if
-            let songsManager = songsManager,
-            let songsToDisplay = songsManager.songsToDisplay,
-            let song = self.song(forIndexPath: indexPath, songsToDisplay: songsToDisplay)
-        {
-            if let cvc = cvc as? MetreCVCell {
-                cvc.song = song
-            } else if let cvc = cvc as? SheetMusicCVCell {
-                let pageNumbers: PageNumbers = {
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        if
-                            isLandscape(forSize: view.frame.size),
-                            displayMode() == .doublePageAsNeededPDF,
-                            song.pdfPageNumbers.count > 1
-                        {
-                            return PageNumbers(firstPage: song.pdfPageNumbers[0], secondPage: song.pdfPageNumbers[1])
-                        } else {
-                            if song.pdfPageNumbers.count > 1 {
-                                let pdfPageNumber = PDFPageView.pdfPageNumber(forPageNumber: indexPath.item, allSongs: songsToDisplay)
-                                return PageNumbers(firstPage: pdfPageNumber, secondPage: nil)
-                            } else {
-                                return PageNumbers(firstPage: song.pdfPageNumbers[0], secondPage: nil)
-                            }
-                        }
-                    } else {
-                        return PageNumbers(firstPage: song.pdfPageNumbers[0], secondPage: nil)
-                    }
-                }()
-                print("cellForItemAt: song: \(song.number)")
-                cvc.configure(withPDFPageNumbers: pageNumbers, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: song.collection.pdfRenderingConfigs_iPhone, queue: queue)
-            } else if let cvc = cvc as? ScrollingSheetMusicCVCell {
-                cvc.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: nil, queue: queue)
-            }
-        }
-        
-        return cvc
-         */
-        
         let songDetailItem = songDetailItems[indexPath.item]
         
         let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: songDetailItem.cellID, for: indexPath)
@@ -427,8 +334,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         // single page metre
         // single page pdf with possible metre
         // double page as needed with possible metre
-        
-        
         switch displayMode {
         case .singlePageMetre:
             // single page metre
@@ -553,33 +458,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             
             return items
         }
-        /*
-        for song in songs {
-            let cellID: String = {
-                if let settings = settings {
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        // iPad
-                        return String(describing: settings.shouldShowSheetMusic_iPad ? SheetMusicCVCell.self : MetreCVCell.self)
-                    } else {
-                        // iPhone
-                        if isLandscape(forSize: view.frame.size) {
-                            // landscape
-                            return String(describing: settings.shouldShowSheetMusicInLandscape_iPhone ? ScrollingSheetMusicCVCell.self : MetreCVCell.self)
-                        } else {
-                            // portrait
-                            return String(describing: settings.shouldShowSheetMusicInPortrait_iPhone ? SheetMusicCVCell.self : MetreCVCell.self)
-                        }
-                    }
-                }
-                return String(describing: MetreCVCell.self)
-            }()
-            
-            let indexPath = IndexPath(item: items.count, section: 0)
-            let displayMode = self.displayMode()
-            
-            
-        }
- */
         
     }
     
@@ -913,7 +791,6 @@ extension SongDetailVC: PlayerControllerDelegate {
     func playbackStateDidChangeForPlayerController(_ playerController: PlayerController) {
         configurePlayerBarButtonItems()
     }
-    
 }
 
 extension SongDetailVC: SettingsObserver {

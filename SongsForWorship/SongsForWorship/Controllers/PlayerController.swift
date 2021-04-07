@@ -347,7 +347,7 @@ class PlayerController: NSObject {
                     }
                 })
             } else {
-                print(error)
+                print(error as Any)
             }
         })
         

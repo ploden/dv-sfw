@@ -450,10 +450,7 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
 
 extension SongIndexVC: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
-        if
-            let songIndexTableView = songIndexTableView,
-            let visibleRows = songIndexTableView.indexPathsForVisibleRows
-        {
+        if let songIndexTableView = songIndexTableView {
             songIndexTableView.reloadData()
         }
     }

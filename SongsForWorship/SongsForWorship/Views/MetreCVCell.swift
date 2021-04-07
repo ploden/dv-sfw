@@ -30,18 +30,6 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
                 return nil
             }()
             metreLabel?.attributedText = song?.attributedMetreText()
-            //composerLabel?.text = song?.tune?.composer?.displayName
-            
-            if
-                let meter = song?.tune?.meter,
-                let tuneWithoutMeter = song?.tune?.nameWithoutMeter
-            {
-                //tuneButton?.setTitle(tuneWithoutMeter.capitalized, for: .normal)
-                //meterButton?.setTitle(meter.uppercased(), for: .normal)
-            } else {
-                //tuneButton?.setTitle(song?.tune?.name.capitalized, for: .normal)
-                //meterButton?.setTitle(nil, for: .normal)
-            }
             
             if let left = song?.left {
                 topLeftLabel?.text = left.joined(separator: "\n")

@@ -218,14 +218,6 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
     
     public func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return .allButUpsideDown
-
-        if window?.rootViewController?.presentedViewController is SheetMusicVC_iPhone {
-            return .landscape
-        } else if UIDevice.current.userInterfaceIdiom == .pad {
-            return .allButUpsideDown
-        } else {
-            return .portrait
-        }
     }
 
     @objc func favoritesChanged(_ notification: Notification?) {

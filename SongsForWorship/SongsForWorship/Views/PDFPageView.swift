@@ -291,7 +291,7 @@ class PDFPageView: UIView {
         let matchingDeviceOrientationAndPageOrientation = pdfRenderingConfig.filter { $0.deviceOrientation == renderingDeviceOrientation && $0.pageOrientation == pageOrientation }
         
         let first: PDFRenderingConfig? = {
-            if let matchingBoth = matchingDeviceOrientationAndPageOrientation.first { $0.screenWidth == rect.width && $0.screenHeight == rect.height } {
+            if let matchingBoth = matchingDeviceOrientationAndPageOrientation.first(where: { $0.screenWidth == rect.width && $0.screenHeight == rect.height }) {
                 return matchingBoth
             } else {
                 return matchingDeviceOrientationAndPageOrientation.first { $0.screenWidth == rect.width || $0.screenHeight == rect.height }
