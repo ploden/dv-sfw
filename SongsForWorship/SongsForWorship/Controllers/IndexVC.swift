@@ -17,7 +17,7 @@ extension Bundle {
 
 import MessageUI
 
-class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
+class IndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
     var songsManager: SongsManager?
     var sections: [IndexSection]!
     
@@ -106,12 +106,12 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
         }
     }
     
-    func detailVC() -> DetailVC? {
+    func detailVC() -> SongDetailVC? {
         if let vcs = splitViewController?.viewControllers {
             for vc in vcs {
                 if
                     let nc = vc as? UINavigationController,
-                    let detail = nc.topViewController as? DetailVC
+                    let detail = nc.topViewController as? SongDetailVC
                 {
                     return detail
                 }
@@ -267,7 +267,7 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
                         vc.sections = index
                     }
                     
-                    if let vc = vc as? DetailVCDelegate {
+                    if let vc = vc as? SongDetailVCDelegate {
                         detailVC()?.delegate = vc
                     }
                     
@@ -283,13 +283,13 @@ class IndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewD
     }
     
     // MARK: - DetailVCDelegate
-    func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
+    func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
         //return IndexVC.favoriteSongs(songsManager?.currentCollection?.songs)
         //MARK: #warning FIXME
         return nil
     }
     
-    func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {
+    func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
     }
 }

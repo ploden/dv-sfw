@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableViewDelegate, UITableViewDataSource, UIViewControllerPreviewingDelegate, PsalmObserver, SongCollectionObserver, HasSettings {
+class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, UIViewControllerPreviewingDelegate, PsalmObserver, SongCollectionObserver, HasSettings {
     var settings: Settings?
     
     private var firstTime: Bool = false
@@ -218,7 +218,7 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
             songsManager?.setcurrentSong(song, songsToDisplay: song?.collection.songs)
             
             if UIDevice.current.userInterfaceIdiom != .pad {
-                if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
+                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                     vc.songsManager = songsManager
                     vc.settings = settings
                     self.navigationController?.pushViewController(vc, animated: true)
@@ -383,11 +383,11 @@ class SongIndexVC: UIViewController, HasSongsManager, DetailVCDelegate, UITableV
     }
     
     // MARK: - DetailVCDelegate
-    func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
+    func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
         return songsManager?.currentSong?.collection.songs
     }
     
-    func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {
+    func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
     }
     
@@ -424,7 +424,7 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
         songsManager?.setcurrentSong(song, songsToDisplay: song.collection.songs)
         
         if UIDevice.current.userInterfaceIdiom != .pad {
-            if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
+            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                 vc.songsManager = songsManager
                 vc.settings = settings
                 

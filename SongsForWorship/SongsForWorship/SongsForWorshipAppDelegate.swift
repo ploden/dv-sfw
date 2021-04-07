@@ -19,7 +19,7 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 // MARK: Application lifecycle
 
 @UIApplicationMain
-open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDelegate {
+open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
     private var songsManager: SongsManager?
     lazy public var appConfig: AppConfig = {
         let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
@@ -123,7 +123,7 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
                 for vc in split.viewControllers {
                     if
                         let nc = vc as? UINavigationController,
-                        let detail = nc.topViewController as? DetailVC
+                        let detail = nc.topViewController as? SongDetailVC
                     {
                         detail.navigationItem.leftItemsSupplementBackButton = true
                         detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
@@ -132,7 +132,7 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
                     }
                     if
                         let nc = vc as? UINavigationController,
-                        let detail = nc.topViewController as? MetreVC_iPhone
+                        let detail = nc.topViewController as? SongDetailVC
                     {
                         detail.navigationItem.leftItemsSupplementBackButton = true
                         detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
@@ -241,11 +241,11 @@ open class PsalterAppDelegate: UIResponder, DetailVCDelegate, UIApplicationDeleg
         }
     }
     
-    func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
+    func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
         return songsManager?.currentSong?.collection.songs
     }
     
-    func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {
+    func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
     }
 }

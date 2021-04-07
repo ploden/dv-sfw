@@ -84,10 +84,10 @@
             </objects>
             <point key="canvasLocation" x="386" y="-343"/>
         </scene>
-        <!--MetreVC_iPhone-->
+        <!--SongDetailVC-->
         <scene sceneID="vSO-o1-acn">
             <objects>
-                <viewControllerPlaceholder storyboardName="SongDetail" referencedIdentifier="MetreVC_iPhone" id="dDb-g3-Tfg" sceneMemberID="viewController"/>
+                <viewControllerPlaceholder storyboardName="SongDetail" referencedIdentifier="SongDetailVC" id="dDb-g3-Tfg" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sGY-XT-vhb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="416" y="-152"/>

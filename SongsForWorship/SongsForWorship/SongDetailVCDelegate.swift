@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol DetailVCDelegate: class {
-    func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]?
-    func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool
+protocol SongDetailVCDelegate: class {
+    func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]?
+    func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool
 }

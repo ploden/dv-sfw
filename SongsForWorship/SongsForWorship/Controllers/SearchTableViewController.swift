@@ -116,7 +116,7 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
 
                 songsManager?.setcurrentSong(song, songsToDisplay: songsToDisplay)
                 
-                if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
+                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                     vc.songsManager = songsManager
                     vc.settings = settings
                     self.navigationController?.pushViewController(vc, animated: true)

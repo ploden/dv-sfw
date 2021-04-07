@@ -47,7 +47,7 @@
 		8D99C1FA24CED40A005B34F2 /* FAQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AA24CED40A005B34F2 /* FAQ.swift */; };
 		8D99C1FB24CED40A005B34F2 /* BaseTunesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */; };
 		8D99C1FC24CED40A005B34F2 /* Topic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AC24CED40A005B34F2 /* Topic.swift */; };
-		8D99C1FE24CED40A005B34F2 /* DetailVCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AE24CED40A005B34F2 /* DetailVCDelegate.swift */; };
+		8D99C1FE24CED40A005B34F2 /* SongDetailVCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AE24CED40A005B34F2 /* SongDetailVCDelegate.swift */; };
 		8D99C1FF24CED40A005B34F2 /* NoRecordingsFoundTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1B024CED40A005B34F2 /* NoRecordingsFoundTVCell.swift */; };
 		8D99C20024CED40A005B34F2 /* LogoCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1B124CED40A005B34F2 /* LogoCVCell.swift */; };
 		8D99C20124CED40A005B34F2 /* PlayTrackTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1B224CED40A005B34F2 /* PlayTrackTVCell.swift */; };
@@ -80,7 +80,6 @@
 		8D99C21E24CED40A005B34F2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1CF24CED40A005B34F2 /* Helper.swift */; };
 		8D99C21F24CED40A005B34F2 /* SheetMusicVC_iPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D124CED40A005B34F2 /* SheetMusicVC_iPhone.swift */; };
 		8D99C22024CED40A005B34F2 /* HasStoryboardName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D224CED40A005B34F2 /* HasStoryboardName.swift */; };
-		8D99C22124CED40A005B34F2 /* DetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D324CED40A005B34F2 /* DetailVC.swift */; };
 		8D99C22224CED40A005B34F2 /* IndexVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D424CED40A005B34F2 /* IndexVC.swift */; };
 		8D99C22324CED40A005B34F2 /* SongIndexVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D524CED40A005B34F2 /* SongIndexVC.swift */; };
 		8D99C22424CED40A005B34F2 /* SongsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D624CED40A005B34F2 /* SongsManager.swift */; };
@@ -93,7 +92,7 @@
 		8D99C22B24CED40A005B34F2 /* TopicDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1DD24CED40A005B34F2 /* TopicDetailTableVC.swift */; };
 		8D99C22C24CED40A005B34F2 /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1DE24CED40A005B34F2 /* PlayerController.swift */; };
 		8D99C22D24CED40A005B34F2 /* TunesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1DF24CED40A005B34F2 /* TunesVC.swift */; };
-		8D99C22E24CED40A005B34F2 /* MetreVC_iPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E024CED40A005B34F2 /* MetreVC_iPhone.swift */; };
+		8D99C22E24CED40A005B34F2 /* SongDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E024CED40A005B34F2 /* SongDetailVC.swift */; };
 		8D99C22F24CED40A005B34F2 /* SongPreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */; };
 		8D99C23024CED40A005B34F2 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E224CED40A005B34F2 /* NavigationController.swift */; };
 		8D99C23224CED40A005B34F2 /* HasSongsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */; };
@@ -170,7 +169,7 @@
 		8D99C1AA24CED40A005B34F2 /* FAQ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FAQ.swift; sourceTree = "<group>"; };
 		8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTunesLoader.swift; sourceTree = "<group>"; };
 		8D99C1AC24CED40A005B34F2 /* Topic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Topic.swift; sourceTree = "<group>"; };
-		8D99C1AE24CED40A005B34F2 /* DetailVCDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailVCDelegate.swift; sourceTree = "<group>"; };
+		8D99C1AE24CED40A005B34F2 /* SongDetailVCDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDetailVCDelegate.swift; sourceTree = "<group>"; };
 		8D99C1B024CED40A005B34F2 /* NoRecordingsFoundTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoRecordingsFoundTVCell.swift; sourceTree = "<group>"; };
 		8D99C1B124CED40A005B34F2 /* LogoCVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogoCVCell.swift; sourceTree = "<group>"; };
 		8D99C1B224CED40A005B34F2 /* PlayTrackTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayTrackTVCell.swift; sourceTree = "<group>"; };
@@ -203,7 +202,6 @@
 		8D99C1CF24CED40A005B34F2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		8D99C1D124CED40A005B34F2 /* SheetMusicVC_iPhone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SheetMusicVC_iPhone.swift; sourceTree = "<group>"; };
 		8D99C1D224CED40A005B34F2 /* HasStoryboardName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasStoryboardName.swift; sourceTree = "<group>"; };
-		8D99C1D324CED40A005B34F2 /* DetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailVC.swift; sourceTree = "<group>"; };
 		8D99C1D424CED40A005B34F2 /* IndexVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexVC.swift; sourceTree = "<group>"; };
 		8D99C1D524CED40A005B34F2 /* SongIndexVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongIndexVC.swift; sourceTree = "<group>"; };
 		8D99C1D624CED40A005B34F2 /* SongsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsManager.swift; sourceTree = "<group>"; };
@@ -216,7 +214,7 @@
 		8D99C1DD24CED40A005B34F2 /* TopicDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopicDetailTableVC.swift; sourceTree = "<group>"; };
 		8D99C1DE24CED40A005B34F2 /* PlayerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
 		8D99C1DF24CED40A005B34F2 /* TunesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TunesVC.swift; sourceTree = "<group>"; };
-		8D99C1E024CED40A005B34F2 /* MetreVC_iPhone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetreVC_iPhone.swift; sourceTree = "<group>"; };
+		8D99C1E024CED40A005B34F2 /* SongDetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDetailVC.swift; sourceTree = "<group>"; };
 		8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongPreviewViewController.xib; sourceTree = "<group>"; };
 		8D99C1E224CED40A005B34F2 /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasSongsManager.swift; sourceTree = "<group>"; };
@@ -298,7 +296,7 @@
 				8DD2E1B624E4755F00F0DE30 /* Assets.xcassets */,
 				8D99C19B24CED40A005B34F2 /* Base.lproj */,
 				8D99C1D024CED40A005B34F2 /* Controllers */,
-				8D99C1AE24CED40A005B34F2 /* DetailVCDelegate.swift */,
+				8D99C1AE24CED40A005B34F2 /* SongDetailVCDelegate.swift */,
 				8D99C1CF24CED40A005B34F2 /* Helper.swift */,
 				8D99C19924CED40A005B34F2 /* Main_iPad.storyboard */,
 				8D99C19124CED40A005B34F2 /* Main_iPhone.storyboard */,
@@ -437,7 +435,6 @@
 			isa = PBXGroup;
 			children = (
 				8D9D5FA326161A3F00FF84FE /* SettingsVC.swift */,
-				8D99C1D324CED40A005B34F2 /* DetailVC.swift */,
 				8D99C1DA24CED40A005B34F2 /* FAQTableVC.swift */,
 				8D99C1DB24CED40A005B34F2 /* FlowLayout.swift */,
 				8DA2204C24DEC8020014B557 /* HasFileURL.swift */,
@@ -445,7 +442,7 @@
 				8D99C1D824CED40A005B34F2 /* HasSongsToDisplay.swift */,
 				8D99C1D224CED40A005B34F2 /* HasStoryboardName.swift */,
 				8D99C1D424CED40A005B34F2 /* IndexVC.swift */,
-				8D99C1E024CED40A005B34F2 /* MetreVC_iPhone.swift */,
+				8D99C1E024CED40A005B34F2 /* SongDetailVC.swift */,
 				8D99C1E224CED40A005B34F2 /* NavigationController.swift */,
 				8D99C1DE24CED40A005B34F2 /* PlayerController.swift */,
 				8D99C1D924CED40A005B34F2 /* RootVC.swift */,
@@ -662,13 +659,12 @@
 				8D99C1F024CED40A005B34F2 /* Song.swift in Sources */,
 				8DAFAFE7260F916800A5C330 /* SearchTableViewController.swift in Sources */,
 				8D99C1F424CED40A005B34F2 /* TuneDescription.swift in Sources */,
-				8D99C1FE24CED40A005B34F2 /* DetailVCDelegate.swift in Sources */,
+				8D99C1FE24CED40A005B34F2 /* SongDetailVCDelegate.swift in Sources */,
 				8D99C1F324CED40A005B34F2 /* SearchResult.swift in Sources */,
 				8D99C22A24CED40A005B34F2 /* SongPreviewViewController.swift in Sources */,
 				8D99C21824CED40A005B34F2 /* PlayerControlsView.swift in Sources */,
 				8D99C21924CED40A005B34F2 /* TunesHeaderView.swift in Sources */,
 				8D99C1F224CED40A005B34F2 /* SongCollectionSection.swift in Sources */,
-				8D99C22124CED40A005B34F2 /* DetailVC.swift in Sources */,
 				8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */,
 				8D99C23024CED40A005B34F2 /* NavigationController.swift in Sources */,
 				8D99C21424CED40A005B34F2 /* EnableRecordingsTVCell.swift in Sources */,
@@ -688,7 +684,7 @@
 				8D99C22724CED40A005B34F2 /* RootVC.swift in Sources */,
 				8D99C1FF24CED40A005B34F2 /* NoRecordingsFoundTVCell.swift in Sources */,
 				8D99C20E24CED40A005B34F2 /* SearchResultTVCell.swift in Sources */,
-				8D99C22E24CED40A005B34F2 /* MetreVC_iPhone.swift in Sources */,
+				8D99C22E24CED40A005B34F2 /* SongDetailVC.swift in Sources */,
 				8D99C23324CED40A005B34F2 /* SongsForWorshipAppDelegate.swift in Sources */,
 				8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */,
 				8DA2204D24DEC8020014B557 /* HasFileURL.swift in Sources */,

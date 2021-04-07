@@ -23,7 +23,8 @@ struct SongDetailItem {
     let displayMode: DisplayMode
 }
 
-class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, HasSettings, PsalmObserver {
+class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, HasSettings, PsalmObserver {
+    weak var delegate: SongDetailVCDelegate?
     @objc func songDidChange(_ notification: Notification) {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if
@@ -33,7 +34,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                 let settings = settings
             {
                 if old.collection != new.collection {
-                    songDetailItems = MetreVC_iPhone.calculateItems(forSongs: songsManager.songsToDisplay ?? [Song](), appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
+                    songDetailItems = SongDetailVC.calculateItems(forSongs: songsManager.songsToDisplay ?? [Song](), appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
                     collectionView?.reloadData()
                 }
             }
@@ -153,7 +154,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                 let settings = settings,
                 songDetailItems.count == 0
             {
-                songDetailItems = MetreVC_iPhone.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
+                songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
                 collectionView?.reloadData()
             }
             scrollToCurrentSong()
@@ -200,7 +201,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
                         let settings = self.settings,
                         self.songDetailItems.count == 0
                     {
-                        self.songDetailItems = MetreVC_iPhone.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: self.displayMode(forSize: self.view.frame.size), isLandscape: self.isLandscape(forSize: self.view.frame.size))
+                        self.songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: self.displayMode(forSize: self.view.frame.size), isLandscape: self.isLandscape(forSize: self.view.frame.size))
                     }
 
                     collectionView.collectionViewLayout.invalidateLayout()
@@ -819,7 +820,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
             }
             
             if let songsToDisplay = songsManager?.songsToDisplay {
-                songDetailItems = MetreVC_iPhone.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
+                songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
                 collectionView?.reloadData()
                 scrollToCurrentSong()
             }
@@ -872,7 +873,7 @@ class MetreVC_iPhone: UIViewController, UIScrollViewDelegate, UICollectionViewDa
     // MARK: - Custom getters
 }
 
-extension MetreVC_iPhone: UIPopoverPresentationControllerDelegate {
+extension SongDetailVC: UIPopoverPresentationControllerDelegate {
     public func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         return .none
     }
@@ -885,7 +886,7 @@ extension MetreVC_iPhone: UIPopoverPresentationControllerDelegate {
     }
 }
 
-extension MetreVC_iPhone: PlayerControllerDelegate {
+extension SongDetailVC: PlayerControllerDelegate {
     func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?) {
         
         if playerController.song == songsManager?.currentSong {
@@ -915,7 +916,7 @@ extension MetreVC_iPhone: PlayerControllerDelegate {
     
 }
 
-extension MetreVC_iPhone: SettingsObserver {
+extension SongDetailVC: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
         if let collectionView = collectionView {
             collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)

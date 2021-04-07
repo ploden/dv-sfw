@@ -96,7 +96,7 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSet
                     songsManager?.setcurrentSong(song, songsToDisplay: [song])
                     
                     if UIDevice.current.userInterfaceIdiom != .pad {
-                        if let vc = MetreVC_iPhone.pfw_instantiateFromStoryboard() as? MetreVC_iPhone {
+                        if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                             vc.settings = settings
                             vc.songsManager = songsManager
                             navigationController?.pushViewController(vc, animated: true)

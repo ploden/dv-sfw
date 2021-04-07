@@ -12,7 +12,7 @@
         <!--Metre-->
         <scene sceneID="ZrH-mC-h6v">
             <objects>
-                <viewController storyboardIdentifier="MetreVC_iPhone" automaticallyAdjustsScrollViewInsets="NO" id="uY5-iU-i06" customClass="MetreVC_iPhone" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SongDetailVC" automaticallyAdjustsScrollViewInsets="NO" id="uY5-iU-i06" customClass="SongDetailVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Rk6-GB-GoF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="729"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -263,13 +263,13 @@
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XDH-zC-O41">
-                                                    <rect key="frame" x="20" y="9" width="28.666666666666671" height="14.333333333333336"/>
+                                                    <rect key="frame" x="20" y="9" width="29" height="14.666666666666664"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                     <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n8w-Og-3C4">
-                                                    <rect key="frame" x="326.33333333333331" y="9" width="28.666666666666686" height="14.333333333333336"/>
+                                                    <rect key="frame" x="326" y="9" width="29" height="14.666666666666664"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                     <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>

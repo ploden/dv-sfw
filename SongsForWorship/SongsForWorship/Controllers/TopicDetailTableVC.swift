@@ -9,7 +9,7 @@
 
 import UIKit
 
-class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
+class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
     var topic: Topic!
     var redirects: [Topic] = [Topic]()
     var songsManager: SongsManager!
@@ -136,12 +136,12 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
         return false
     }
     
-    func detailVC() -> DetailVC? {
+    func detailVC() -> SongDetailVC? {
         if let vcs = splitViewController?.viewControllers {
             for vc in vcs {
                 if
                     let nc = vc as? UINavigationController,
-                    let detail = nc.topViewController as? DetailVC
+                    let detail = nc.topViewController as? SongDetailVC
                 {
                     return detail
                 }
@@ -192,7 +192,7 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
     }
     
     // MARK: - DetailVCDelegate
-    func songsToDisplayForDetailVC(_ detailVC: DetailVC?) -> [Song]? {
+    func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
         let selected = tableView.indexPathForSelectedRow
         
         if selected != nil {
@@ -202,7 +202,7 @@ class TopicDetailTableVC: UITableViewController, DetailVCDelegate {
         }
     }
     
-    func isSearchingForDetailVC(_ detailVC: DetailVC?) -> Bool {
+    func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
     }
 }
