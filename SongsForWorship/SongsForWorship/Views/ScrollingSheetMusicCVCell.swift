@@ -11,18 +11,23 @@ import PDFKit
 
 class ScrollingSheetMusicCVCell: UICollectionViewCell {
     @IBOutlet weak var pdfPageView: PDFPageView?
-    @IBOutlet weak var pdfPageViewHeightConstraint: NSLayoutConstraint?
+    @IBOutlet weak var scrollView: UIScrollView?
     
-    func configure(withPageNumber pageNumber: Int, pdf: CGPDFDocument, allSongs: [Song], pdfRenderingConfigs: [PDFRenderingConfig], queue: OperationQueue, height: CGFloat) {
-        if
-            let pdfPageViewHeightConstraint = pdfPageViewHeightConstraint,
-            pdfPageViewHeightConstraint.constant != height
-        {
-            pdfPageViewHeightConstraint.constant = height
-        }
-        let pdfPageNum = PDFPageView.pdfPageNumber(forPageNumber: pageNumber, allSongs: allSongs)
+    func configure(withPageNumber pageNumber: Int?, pdf: CGPDFDocument, allSongs: [Song], pdfRenderingConfigs: [PDFRenderingConfig]?, queue: OperationQueue) {
+        //let pdfPageNum = PDFPageView.pdfPageNumber(forPageNumber: pageNumber, allSongs: allSongs)
         pdfPageView?.pdf = pdf
         pdfPageView?.pdfRenderingConfigs = pdfRenderingConfigs
-        pdfPageView?.configure(pdfPageNum, queue: queue)
+        
+        if let pageNumber = pageNumber {
+            pdfPageView?.isHidden = false
+            pdfPageView?.configure(pageNumber, queue: queue)
+        } else {
+            pdfPageView?.isHidden = true
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.scrollView?.contentOffset = .zero
     }
 }

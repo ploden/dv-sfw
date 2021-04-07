@@ -23,7 +23,7 @@ class PDFPageView: UIView {
     var translateY: CGFloat = 0.0
     var pdfPageNumber: Int = 0
     var pdf: CGPDFDocument!
-    var pdfRenderingConfigs: [PDFRenderingConfig]!
+    var pdfRenderingConfigs: [PDFRenderingConfig]?
     private var imageRef: CGImage?
     private var imageRefRect: NSValue?
     
@@ -46,23 +46,23 @@ class PDFPageView: UIView {
     
     override func draw(_ rect: CGRect) {
         super.draw(rect)
-        
-        var currentScale: CGFloat
-        var currentTranslateX: CGFloat
-        var currentTranslateY: CGFloat
-        
-        // TODO: remove dependence on iPad resolutions
-        if !(scale != 0.0 || translateX != 0.0 || translateY != 0.0) {
-            let pageOrientation = pdfPageNumber % 2 == 1 ? PDFPageOrientation.right : PDFPageOrientation.left
-            let currentScaleXY = PDFPageView.calculateScaleXY(forRect: rect, orientation: UIDevice.current.orientation, pageOrientation: pageOrientation, pdfRenderingConfig: self.pdfRenderingConfigs)
-            currentScale = currentScaleXY.scale
-            currentTranslateX = currentScaleXY.x
-            currentTranslateY = currentScaleXY.y
-        } else {
-            currentScale = scale
-            currentTranslateX = translateX
-            currentTranslateY = translateY
-        }
+
+        let currentScaleXY: ScaleXY? = {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                // draw based on size of the view
+                return nil
+            } else if let pdfRenderingConfigs = self.pdfRenderingConfigs {
+                let pageOrientation = pdfPageNumber % 2 == 1 ? PDFPageOrientation.right : PDFPageOrientation.left
+                return PDFPageView.calculateScaleXY(forRect: rect,
+                                                    orientation: UIDevice.current.orientation,
+                                                    pageOrientation: pageOrientation,
+                                                    pdfRenderingConfig: pdfRenderingConfigs,
+                                                    returnClosest: false)
+            } else {
+                // draw based on size of the view
+                return nil
+            }
+        }()
         
         if
             let imageRef = imageRef,
@@ -78,7 +78,7 @@ class PDFPageView: UIView {
             let darkMode = self.traitCollection.userInterfaceStyle == .dark
 
             queue?.addOperation {
-                let drawnImage = PDFPageView.drawPage(withRect: drawnRect, currentScale: currentScale, currentTranslateX: currentTranslateX, currentTranslateY: currentTranslateY, pdf: self.pdf, pdfPageNumber: self.pdfPageNumber, darkMode: darkMode)
+                let drawnImage = PDFPageView.drawPage(withRect: drawnRect, currentScaleXY: currentScaleXY, pdf: self.pdf, pdfPageNumber: self.pdfPageNumber, darkMode: darkMode)
                 
                 OperationQueue.main.addOperation { [weak self] in
                     if let self = self {
@@ -91,7 +91,7 @@ class PDFPageView: UIView {
         }
     }
     
-    class func drawPage(withRect rect: CGRect, currentScale: CGFloat, currentTranslateX: CGFloat, currentTranslateY: CGFloat, pdf: CGPDFDocument, pdfPageNumber: Int, darkMode: Bool) -> CGImage? {
+    class func drawPage(withRect rect: CGRect, currentScaleXY: ScaleXY?, pdf: CGPDFDocument, pdfPageNumber: Int, darkMode: Bool) -> CGImage? {
         var image: CGImage?
         
         autoreleasepool {
@@ -104,111 +104,52 @@ class PDFPageView: UIView {
                 let screenScaledHeight: CGFloat = rect.size.height * screenScale
                 
                 let context = CGContext(data: nil, width: Int(screenScaledWidth), height: Int(screenScaledHeight), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
-                
-                let targetSize = rect.size
-                
+                                
                 if let context = context {
-                    //context.translateBy(x: 0.0, y: screenScaledHeight)
-                    
-                    //context.scaleBy(x: 1.0, y: -1.0)
-                    
-                    // Invert y axis (CoreGraphics and UIKit axes are differents)
-                    //CGContextTranslateCTM(context, 0, targetSize.height);
-                    //context.translateBy(x: 0, y: screenScaledHeight)
-                    //context.scaleBy(x: 1.0, y: -1.0)
-
-                    //context.saveGState()
-                    
-                    //context.scaleBy(x: currentScale * screenScale, y: currentScale * screenScale)
-                    
-                    //let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
-                    
-                    //let translateTransform = drawingTransform.translatedBy(x: currentTranslateX, y: currentTranslateY)
-                    
-                    //context.concatenate(translateTransform)
-                    
-                    //context.drawPDFPage(pageRef)
-                    
-                    /*
-                    let cropbox = pageRef.getBoxRect(.cropBox)
-                    
-                    var transform = pageRef.getDrawingTransform(.cropBox, rect: CGRect(origin: CGPoint.zero, size: rect.size), rotate: 0, preserveAspectRatio: true)
-                    
-                    // We change the context scale to fill completely the destination size
-                    let contextScale = (targetSize.width / cropbox.width) * screenScale
-                    
-                    if cropbox.width < targetSize.width {
-                        transform = transform.scaledBy(x: contextScale, y: contextScale)
-
-                        let tx = -(cropbox.origin.x * transform.a + cropbox.origin.y * transform.b)
-                        transform.tx = tx
-                        let ty = -(cropbox.origin.x * transform.c + cropbox.origin.y * transform.d)
-                        transform.ty = ty
-                        //transform.ty = 20
-                                                
-                        let rotation = 0
+                    if let currentScaleXY = currentScaleXY {
+                        context.translateBy(x: 0.0, y: screenScaledHeight)
                         
-                        // Rotation handling
-                        if rotation == 180 || rotation == 270 {
-                            transform.tx += targetSize.width
-                        }
-                        if rotation == 90 || rotation == 180 {
-                            transform.ty += targetSize.height
-                        }
+                        context.scaleBy(x: 1.0, y: -1.0)
+                        
+                        context.saveGState()
+                        
+                        context.scaleBy(x: currentScaleXY.scale * screenScale, y: currentScaleXY.scale * screenScale)
+                        
+                        let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
+                        
+                        let translateTransform = drawingTransform.translatedBy(x: currentScaleXY.x, y: currentScaleXY.y)
+                        
+                        context.concatenate(translateTransform)
+                        
+                        context.drawPDFPage(pageRef)
+                    } else {
+                        let drawSize = rect.size
+                        
+                        let scale = UIScreen.main.scale
+                        context.scaleBy(x: scale, y: -scale);
+                        
+                        // get the rectangle of the cropped inside
+                        let mediaRect = pageRef.getBoxRect(CGPDFBox.trimBox);
+                        
+                        context.translateBy(x: 0, y: -drawSize.height);
+                        
+                        let xScale = drawSize.width / mediaRect.size.width
+                        
+                        let scaleToApply: CGFloat = {
+                            let yScale = drawSize.height / mediaRect.size.height
+                            return xScale < yScale ? xScale : yScale
+                        }()
+                        
+                        context.scaleBy(x: scaleToApply, y: scaleToApply)
+                        
+                        let x = (drawSize.width - (scaleToApply * mediaRect.size.width))
+                        context.translateBy(x: (x / 2.0) / scaleToApply, y: 0)
+                        
+                        context.drawPDFPage(pageRef)
                     }
- 
 
-                    //context.scaleBy(x: contextScale * screenScale, y: contextScale * screenScale)
-                    context.concatenate(transform)
-
-                    context.translateBy(x: 0.0, y: targetSize.height)
-                    context.scaleBy(x: 1.0, y: -1.0)
-
-                    context.drawPDFPage(pageRef)
-
-                    //pageRef.draw(with: .cropBox, to: context)
-                    
                     image = context.makeImage()
-                    
-                     */
-                    
-                    let drawSize = rect.size
-                    
-                    // Flip coordinates
-                    _ = context.ctm
-                    
-                    let scale = UIScreen.main.scale
-                    context.scaleBy(x: scale, y: -scale);
-                    
-                    //context.translateBy(x: 0, y: -drawSize.height);
-                    
-                    // get the rectangle of the cropped inside
-                    let mediaRect = pageRef.getBoxRect(CGPDFBox.cropBox);
-                    
-                    context.translateBy(x: 0, y: -drawSize.height);
-
-                    let xScale = drawSize.width / mediaRect.size.width
-
-                    let scaleToApply: CGFloat = {
-                        let yScale = drawSize.height / mediaRect.size.height
-                        return xScale < yScale ? xScale : yScale
-                        //return drawSize.height / mediaRect.size.height
-                    }()
-                    
-                    context.scaleBy(x: scaleToApply, y: scaleToApply)
-                    
-                    //context.translateBy(x: -mediaRect.origin.x, y: -mediaRect.origin.y)
-                    let x = (drawSize.width - (scaleToApply * mediaRect.size.width))
-                    context.translateBy(x: (x / 2.0) / scaleToApply, y: 0)
-                    
-                    context.drawPDFPage(pageRef)
-                    
-                    image = context.makeImage()
-                    
-                    context.endPDFPage()
-                    
-                    //image = resultingImage?.cgImage
-                    
+                                                            
                     if darkMode {
                         // Create a `CIImage` from the input image.
                         let inputImage = CIImage(cgImage: image!)
@@ -244,51 +185,66 @@ class PDFPageView: UIView {
         return nil
     }
 
-    class func pageNumberForPsalm(_ aSong: Song, allSongs: [Song], idx: NSNumber?) -> Int {
-        var count = 0
-
-        for i in 0..<allSongs.count {
-            let song = allSongs[i]
-
-            if aSong == song {
-                if idx != nil {
-                    if i == idx?.intValue ?? 0 {
-                        return count
-                    }
-                } else {
+    class func pageNumberForPsalm(_ aSong: Song, allSongs: [Song], displayMode: DisplayMode) -> Int {
+        if displayMode == .singlePageMetre {
+            /*
+            var count = 0
+            
+            for i in 0..<allSongs.count {
+                let song = allSongs[i]
+                
+                if aSong == song {
                     return count
+                } else {
+                    count += (song.isTuneCopyrighted) ? 1 : song.pdfPageNumbers.count
                 }
-            } else {
-                count += (song.isTuneCopyrighted) ? 1 : song.pdfPageNumbers.count
             }
+             */
+            if let firstPDFPage = aSong.pdfPageNumbers.first {
+                return firstPDFPage - 1
+            }
+        } else if displayMode == .doublePageAsNeededPDF {
+            return aSong.index
         }
 
         return 0
     }
 
-    class func numberOfPages(_ allSongs: [AnyHashable]?) -> Int {
-        var count = 0
-
-        for song in allSongs ?? [] {
-            guard let song = song as? Song else {
-                continue
+    class func numberOfPages(_ allSongs: [Song]?, displayMode: DisplayMode) -> Int {
+        if let allSongs = allSongs {
+            if displayMode == .singlePageMetre {
+                var tuneCopyrightedCount = 0
+                var aSet = Set<Int>()
+                for song in allSongs {
+                    if song.isTuneCopyrighted {
+                        tuneCopyrightedCount += 1
+                    } else {
+                        song.pdfPageNumbers.forEach { aSet.insert($0) }
+                    }
+                }
+                return aSet.count + tuneCopyrightedCount
+            } else if displayMode == .doublePageAsNeededPDF {
+                return allSongs.map { ($0.isTuneCopyrighted) ? 1 : Int(ceil(Double($0.pdfPageNumbers.count) / 2.0)) }.reduce(0, +)
             }
-            count += (song.isTuneCopyrighted) ? 1 : song.pdfPageNumbers.count
         }
-
-        return count
+        return 0
     }
 
-    class func songForPageNumber(_ pageNumber: Int, allSongs: [Song]) -> Song? {
-        var count = 0
-
-        for psalm in allSongs {
-            count += (psalm.isTuneCopyrighted) ? 1 : psalm.pdfPageNumbers.count
-            if count > pageNumber {
-                return psalm
+    class func songForPageNumber(_ pageNumber: Int, allSongs: [Song], displayMode: DisplayMode) -> Song? {
+        if displayMode == .singlePageMetre {
+            let adjustedPageNumber = pageNumber + 1
+            return allSongs.first { $0.pdfPageNumbers.contains(adjustedPageNumber) }
+        } else if displayMode == .doublePageAsNeededPDF {
+            var count = 0
+            
+            for song in allSongs {
+                count += (song.isTuneCopyrighted) ? 1 : Int(ceil(Double(song.pdfPageNumbers.count) / 2.0))
+                if count > pageNumber {
+                    return song
+                }
             }
         }
-
+        
         return nil
     }
 
@@ -314,7 +270,7 @@ class PDFPageView: UIView {
         return NSNotFound
     }
     
-    class func calculateScaleXY(forRect rect: CGRect, orientation: UIDeviceOrientation, pageOrientation: PDFPageOrientation, pdfRenderingConfig: [PDFRenderingConfig]) -> ScaleXY {
+    class func calculateScaleXY(forRect rect: CGRect, orientation: UIDeviceOrientation, pageOrientation: PDFPageOrientation, pdfRenderingConfig: [PDFRenderingConfig], returnClosest: Bool) -> ScaleXY? {
         let renderingDeviceOrientation: PDFRenderingDeviceOrientation = {
             if orientation == .portrait {
                 return .portrait
@@ -342,9 +298,7 @@ class PDFPageView: UIView {
             }
         }()
         
-        if
-            let first = first
-        {
+        if let first = first {
             var s = first.scale as NSNumber
             var x = first.translateX as NSNumber
             var y = first.translateY as NSNumber
@@ -352,7 +306,7 @@ class PDFPageView: UIView {
             if "abc".count == 0 { s = NSNumber(value: 0); x = NSNumber(value: 0); y = NSNumber(value: 0) } // add breakpoint here to modify s, x, y expr s=newval
             print("s: \(s) x:\(x) y:\(y)")
             return ScaleXY(scale: CGFloat(s.floatValue), x: CGFloat(x.floatValue), y: CGFloat(y.floatValue))
-        } else {
+        } else if returnClosest {
             let closest = pdfRenderingConfig.min { a, b in
                 if
                     let screenWidthA = a.screenWidth,
@@ -369,12 +323,13 @@ class PDFPageView: UIView {
                 let x = closest?.translateX,
                 let y = closest?.translateY
             {
-                //return ScaleXY(scale: s, x: x, y: y)
-                return ScaleXY(scale: 2.0, x: 0, y: 0)
+                return ScaleXY(scale: s, x: x, y: y)
             }
+            
+            return ScaleXY(scale: 0.0, x: 0.0, y: 0.0)
+        } else {
+            return nil
         }
-        
-        return ScaleXY(scale: 0.0, x: 0.0, y: 0.0)
     }
     
 }

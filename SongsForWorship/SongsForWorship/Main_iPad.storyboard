@@ -66,7 +66,7 @@
         <!--Split View Controller-->
         <scene sceneID="A3c-eg-ACd">
             <objects>
-                <splitViewController allowDoubleColumnStyle="YES" behavior="overlay" id="8vK-aN-gDQ" sceneMemberID="viewController">
+                <splitViewController allowDoubleColumnStyle="YES" id="8vK-aN-gDQ" sceneMemberID="viewController">
                     <connections>
                         <segue destination="Qe3-o8-OEX" kind="relationship" relationship="masterViewController" id="7Ma-6O-VM8"/>
                         <segue destination="dDb-g3-Tfg" kind="relationship" relationship="detailViewController" id="ugR-8C-GRl"/>

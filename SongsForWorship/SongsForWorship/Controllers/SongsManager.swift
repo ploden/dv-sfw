@@ -79,9 +79,11 @@ class SongsManager: Equatable {
     
     func setcurrentSong(_ currentSong: Song?, songsToDisplay: [Song]?) {
         if self.currentSong != currentSong || self.songsToDisplay != songsToDisplay {
+            let previousSong = self.currentSong
             self.currentSong = currentSong
             self.songsToDisplay = songsToDisplay
-            NotificationCenter.default.post(name: .currentSongDidChange, object: self)
+            let userInfo = [NotificationUserInfoKeys.oldValue: previousSong, NotificationUserInfoKeys.newValue: self.currentSong]
+            NotificationCenter.default.post(name: .currentSongDidChange, object: self, userInfo: userInfo as [AnyHashable:Any])
         }
     }
 

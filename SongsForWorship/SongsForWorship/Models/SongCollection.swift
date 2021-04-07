@@ -16,6 +16,11 @@ extension Notification.Name {
     static let selectedCollectionDidChange = Notification.Name("SelectedCollectionDidChange")
 }
 
+enum NotificationUserInfoKeys: String {
+    case oldValue = "oldValue"
+    case newValue = "newValue"
+}
+
 @objc protocol PsalmObserver {
     @objc func songDidChange(_ notification: Notification)
 }

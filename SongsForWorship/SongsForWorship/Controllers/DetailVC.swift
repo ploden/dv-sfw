@@ -156,7 +156,7 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
             let collectionView = collectionView,
             let songsToDisplay = songsToDisplay()
         {
-            pageNum = PDFPageView.pageNumberForPsalm(current, allSongs: songsToDisplay, idx: nil)
+            pageNum = PDFPageView.pageNumberForPsalm(current, allSongs: songsToDisplay, displayMode: .singlePageMetre)
             
             //if collectionView.numberOfItems(inSection: 0) == 1 || songsToDisplay.count != collectionView.numberOfItems(inSection: 0) {
             if collectionView.numberOfItems(inSection: 0) == 1 {
@@ -239,7 +239,7 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
                 let songsToDisplay = songsToDisplay(),
                 let currentSong = songsManager?.currentSong
             {
-                let song = PDFPageView.songForPageNumber(pageNumber, allSongs: songsToDisplay)
+                let song = PDFPageView.songForPageNumber(pageNumber, allSongs: songsToDisplay, displayMode: .singlePageMetre)
                 
                 if song != currentSong {
                     songsManager?.removeObserver(forcurrentSong: self)
@@ -255,7 +255,7 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
     // MARK: - collection view
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if let _ = songsManager?.currentSong {
-            let numberOfPages = PDFPageView.numberOfPages(songsToDisplay())            
+            let numberOfPages = PDFPageView.numberOfPages(songsToDisplay(), displayMode: .singlePageMetre)
             return numberOfPages
         }
         return 0
@@ -265,7 +265,7 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
         let cellID: String = {
             if
                 let songsToDisplay = songsToDisplay(),
-                let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay)
+                let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay, displayMode: .singlePageMetre)
             {
                 if (song.isTuneCopyrighted) {
                     return String(describing: MetreCVCell.self)
@@ -278,12 +278,13 @@ class DetailVC: UIViewController, UIPopoverControllerDelegate, UISplitViewContro
         
         if
             let songsToDisplay = songsToDisplay(),
-            let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay)
+            let song = PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay, displayMode: .singlePageMetre)
         {
             if let cvc = cvc as? MetreCVCell {
                 cvc.song = song
             } else if let cvc = cvc as? SheetMusicCVCell {
-                cvc.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: song.collection.pdfRenderingConfigs_iPad, queue: queue)
+                // FIXME
+                //cvc.configure(withPageNumber: indexPath.item, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: song.collection.pdfRenderingConfigs_iPad, queue: queue)
             }
         }
         

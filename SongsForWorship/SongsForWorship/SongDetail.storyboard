@@ -57,7 +57,7 @@
                                 <action selector="playTapped:" destination="uY5-iU-i06" id="GkV-bK-yNt"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Item" image="arrow.up.forward.app" catalog="system" id="eLZ-ew-mM0">
+                        <barButtonItem title="Item" image="arrow.up.square" catalog="system" id="eLZ-ew-mM0">
                             <connections>
                                 <action selector="showPlayerTapped:" destination="uY5-iU-i06" id="hES-Ml-Dx4"/>
                             </connections>
@@ -383,7 +383,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="arrow.up.forward.app" catalog="system" width="128" height="114"/>
+        <image name="arrow.up.square" catalog="system" width="128" height="114"/>
         <image name="backward.fill" catalog="system" width="128" height="79"/>
         <image name="bookmark" catalog="system" width="112" height="128"/>
         <image name="forward.fill" catalog="system" width="128" height="79"/>

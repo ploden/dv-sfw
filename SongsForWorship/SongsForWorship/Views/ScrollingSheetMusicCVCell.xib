@@ -21,10 +21,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GYU-0Z-Idh" customClass="PDFPageView" customModule="SongsForWorship" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="588"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="3zV-63-xFw"/>
+                                    <constraint firstAttribute="width" secondItem="GYU-0Z-Idh" secondAttribute="height" multiplier="441:648" id="IqG-x5-ytW"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -47,7 +47,7 @@
             </constraints>
             <connections>
                 <outlet property="pdfPageView" destination="GYU-0Z-Idh" id="Xbu-6M-50B"/>
-                <outlet property="pdfPageViewHeightConstraint" destination="3zV-63-xFw" id="UkM-r6-91d"/>
+                <outlet property="scrollView" destination="g81-aV-JIA" id="Nrj-LH-g1n"/>
             </connections>
             <point key="canvasLocation" x="132" y="131"/>
         </collectionViewCell>

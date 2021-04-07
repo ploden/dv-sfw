@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SheetMusicCVCell" id="9Ae-f1-ezG" customClass="SheetMusicCVCell" customModule="PsalmsForWorship" customModuleProvider="target">
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SheetMusicCVCell" id="9Ae-f1-ezG" customClass="SheetMusicCVCell" customModule="SongsForWorship" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="768" height="960"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                 <rect key="frame" x="0.0" y="0.0" width="768" height="960"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bhx-cM-niP" customClass="PDFPageView" customModule="PsalmsForWorship" customModuleProvider="target">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bhx-cM-niP" customClass="PDFPageView" customModule="SongsForWorship" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="960"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
+                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="y0p-Pb-3tn">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="960"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Uk-XN-syn" customClass="PDFPageView" customModule="SongsForWorship" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="384" height="960"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eda-3C-1fH" customClass="PDFPageView" customModule="SongsForWorship" customModuleProvider="target">
+                                <rect key="frame" x="384" y="0.0" width="384" height="960"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                    </stackView>
                 </subviews>
             </view>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="Bhx-cM-niP" firstAttribute="top" secondItem="9Ae-f1-ezG" secondAttribute="top" id="7ge-Qy-Dxj"/>
+                <constraint firstAttribute="bottom" secondItem="y0p-Pb-3tn" secondAttribute="bottom" id="IyG-mQ-ZNK"/>
                 <constraint firstAttribute="trailing" secondItem="Bhx-cM-niP" secondAttribute="trailing" id="YxE-90-mwg"/>
+                <constraint firstAttribute="trailing" secondItem="y0p-Pb-3tn" secondAttribute="trailing" id="Z0l-vU-wjX"/>
+                <constraint firstItem="y0p-Pb-3tn" firstAttribute="leading" secondItem="9Ae-f1-ezG" secondAttribute="leading" id="ZU5-oK-3cL"/>
+                <constraint firstItem="y0p-Pb-3tn" firstAttribute="top" secondItem="9Ae-f1-ezG" secondAttribute="top" id="btL-dW-voS"/>
                 <constraint firstItem="Bhx-cM-niP" firstAttribute="leading" secondItem="9Ae-f1-ezG" secondAttribute="leading" id="kYg-ku-3G6"/>
                 <constraint firstAttribute="bottom" secondItem="Bhx-cM-niP" secondAttribute="bottom" id="m3Y-pD-afE"/>
             </constraints>
             <connections>
-                <outlet property="pdfPageView" destination="Bhx-cM-niP" id="Hhk-Wc-pSz"/>
+                <outlet property="firstPDFPageView" destination="2Uk-XN-syn" id="ozS-N6-nvi"/>
+                <outlet property="secondPDFPageView" destination="Eda-3C-1fH" id="UMX-lD-mTD"/>
+                <outlet property="singlePDFPageView" destination="Bhx-cM-niP" id="Z0y-G1-AZj"/>
             </connections>
             <point key="canvasLocation" x="34" y="54"/>
         </collectionViewCell>

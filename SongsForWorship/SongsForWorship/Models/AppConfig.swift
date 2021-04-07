@@ -20,4 +20,5 @@ public struct AppConfig: Decodable {
     let shouldShowAdditionalTunes: Bool
     let pdfRenderingConfigs_iPhone: [PDFRenderingConfig]
     let pdfRenderingConfigs_iPad: [PDFRenderingConfig]
+    let shouldHideSheetMusicForCopyrightedTunes: Bool
 }

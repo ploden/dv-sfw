@@ -87,4 +87,8 @@ public class Song: NSObject {
         
         return attrString
     }
+    
+    public override var description: String {
+        return "\(type(of: self)): \(number)"
+    }
 }
