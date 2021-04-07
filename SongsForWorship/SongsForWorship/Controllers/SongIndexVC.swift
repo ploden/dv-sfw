@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, UIViewControllerPreviewingDelegate, PsalmObserver, SongCollectionObserver, HasSettings {
+class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver, HasSettings {
     var settings: Settings?
     
     private var firstTime: Bool = false
@@ -30,6 +30,9 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         if UIDevice.current.userInterfaceIdiom != .pad {
             let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
             navigationItem.titleView = navbarLogo
+            
+            let interaction = UIContextMenuInteraction(delegate: self)
+            songIndexTableView?.addInteraction(interaction)
         }
 
         songIndexTableView?.rowHeight = UITableView.automaticDimension
@@ -137,10 +140,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
                 }
             }
         }
-        
-        if isForceTouchAvailable() {
-            previewingContext = registerForPreviewing(with: self, sourceView: view)
-        }
     }
     
     // MARK: - Rotation Methods
@@ -238,9 +237,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     
     func isCopyrightTVCell(_ indexPath: IndexPath?) -> Bool {
         return false
-        if indexPath?.section == 16 && indexPath?.row == 25 {
-            return true
-        }
     }
     
     func indexForIndexPath(_ indexPath: IndexPath) -> Int {
@@ -332,56 +328,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         NotificationCenter.default.removeObserver(self)
     }
     
-    // MARK: -
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        let newPoint = view.convert(location, to: songIndexTableView)
-        let index = songIndexTableView?.indexPathForRow(at: newPoint)
-        if index == nil || (index?.section == 16 && index?.row == 27) {
-            return nil
-        }
-        
-        var sourceRect: CGRect? = nil
-        if let index = index {
-            sourceRect = songIndexTableView?.rectForRow(at: index)
-        }
-        previewingContext.sourceRect = view.convert(sourceRect ?? CGRect.zero, from: songIndexTableView)
-        
-        if
-            let index = index,
-            let song = SongsManager.songAtIndex(self.indexForIndexPath(index), allSongs: songsManager?.currentSong?.collection.songs)
-        {
-            return SongPreviewViewController(withPsalm: song)
-        }
-        
-        return nil
-    }
-    
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if !(viewControllerToCommit is SongPreviewViewController) {
-            return
-        }
-        
-        let previewController = viewControllerToCommit as? SongPreviewViewController
-        let song = previewController?.song
-        
-        if let songsManager = songsManager {
-            songsManager.setcurrentSong(song, songsToDisplay: songsManager.songsToDisplay)
-        }
-    }
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        if isForceTouchAvailable() {
-            if previewingContext == nil {
-                previewingContext = registerForPreviewing(with: self, sourceView: view)
-            }
-        } else {
-            if let previewingContext = previewingContext {
-                unregisterForPreviewing(withContext: previewingContext)
-            }
-        }
-    }
-    
     // MARK: - DetailVCDelegate
     func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
         return songsManager?.currentSong?.collection.songs
@@ -453,5 +399,31 @@ extension SongIndexVC: SettingsObserver {
         if let songIndexTableView = songIndexTableView {
             songIndexTableView.reloadData()
         }
+    }
+}
+
+extension SongIndexVC: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        let configuration = UIContextMenuConfiguration(
+            identifier: "SongPreviewIdentifier" as NSCopying,
+            previewProvider: {
+                let newPoint = self.view.convert(location, to: self.songIndexTableView)
+                let index = self.songIndexTableView?.indexPathForRow(at: newPoint)
+ 
+                if
+                    let index = index,
+                    let song = self.songForIndexPath(index)
+                {
+                    return SongPreviewViewController(withPsalm: song)
+                }
+                return nil
+            },
+            actionProvider: { suggestedActions in
+                // Return a UIMenu or nil
+                return nil
+            }
+        )
+        
+        return configuration
     }
 }
