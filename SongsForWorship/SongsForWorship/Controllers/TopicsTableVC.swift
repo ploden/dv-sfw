@@ -18,10 +18,6 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSet
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-            settings = app.settings
-        }
-        
         if
             let fileInfo = fileInfo,
             let path = Bundle.main.path(forResource: fileInfo.0, ofType: fileInfo.1, inDirectory: fileInfo.2)

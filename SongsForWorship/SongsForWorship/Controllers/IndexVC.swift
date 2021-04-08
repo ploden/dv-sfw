@@ -57,6 +57,8 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)
         }
+        
+        //configureNavBar()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -266,6 +268,10 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                     
                     if var hasSongs = vc as? HasSongsManager {
                         hasSongs.songsManager = songsManager
+                    }
+                    
+                    if let hasSettings = vc as? HasSettings {
+                        hasSettings.settings = settings
                     }
                     
                     if

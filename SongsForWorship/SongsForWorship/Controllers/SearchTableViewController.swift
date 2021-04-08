@@ -39,10 +39,6 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
         
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-            settings = app.settings
-        }
         
         tableView?.register(UINib(nibName: "SearchResultTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SearchResultTVCell")
 

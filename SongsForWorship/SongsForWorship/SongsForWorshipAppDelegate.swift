@@ -161,6 +161,7 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             let index = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "IndexVC") as? IndexVC
             index?.sections = appConfig.index
             index?.songsManager = songsManager
+            index?.settings = settings
 
             nav?.viewControllers = [index].compactMap { $0 }
             mainController = split
@@ -173,6 +174,7 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
                 navigationController = nv
                 let index = navigationController?.viewControllers[0] as? IndexVC
                 index?.songsManager = songsManager
+                index?.settings = settings
                 index?.sections = appConfig.index
                 mainController = navigationController
             }
@@ -180,7 +182,6 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         
         window?.rootViewController = mainController
         window?.makeKeyAndVisible()
-        settings = Settings()
         
         return true
     }

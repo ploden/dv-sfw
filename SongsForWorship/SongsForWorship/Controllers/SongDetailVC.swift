@@ -703,6 +703,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
                 collectionView?.reloadData()
                 scrollToCurrentSong()
+                navigationItem.title = songsManager?.currentSong?.number
             }
             
             configureShowSheetMusicBarButtonItem(forSize: view.frame.size)

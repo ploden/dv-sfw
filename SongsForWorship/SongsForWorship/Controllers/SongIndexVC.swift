@@ -84,10 +84,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             toolbarItems?.insert(UIBarButtonItem.flexibleSpace(), at: idx)
             segmentedControl?.selectedSegmentIndex = 0
         }
-                
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-            settings = app.settings
-        }
         
         firstTime = true
         songsManager?.addObserver(forcurrentSong: self)
@@ -131,6 +127,8 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             songIndexTableView?.selectRow(at: currentSongIndexPath, animated: false, scrollPosition: .middle)
             songIndexTableView?.scrollToNearestSelectedRow(at: .middle, animated: false)
         }
+        
+        //configureNavBar()
     }
     
     override func viewDidAppear(_ animated: Bool) {
