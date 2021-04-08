@@ -349,38 +349,6 @@
             </objects>
             <point key="canvasLocation" x="3664.8000000000002" y="-180.29556650246306"/>
         </scene>
-        <!--Sheet MusicVC i Phone-->
-        <scene sceneID="8HS-i2-83N">
-            <objects>
-                <viewController storyboardIdentifier="SheetMusicVC_iPhone" id="O0L-Mc-wyj" customClass="SheetMusicVC_iPhone" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="x7f-kF-QZq">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cVX-z3-w4e">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                                <connections>
-                                    <outlet property="delegate" destination="O0L-Mc-wyj" id="1XS-6q-smz"/>
-                                </connections>
-                            </scrollView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="SH7-Uj-e7e"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="cVX-z3-w4e" firstAttribute="leading" secondItem="x7f-kF-QZq" secondAttribute="leading" id="5Qf-2S-GxG"/>
-                            <constraint firstAttribute="top" secondItem="cVX-z3-w4e" secondAttribute="top" id="5ty-tG-Y13"/>
-                            <constraint firstAttribute="bottom" secondItem="cVX-z3-w4e" secondAttribute="bottom" id="aQC-VU-RUh"/>
-                            <constraint firstAttribute="trailing" secondItem="cVX-z3-w4e" secondAttribute="trailing" id="iCo-cv-DGK"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="scrollView" destination="cVX-z3-w4e" id="N0d-Xw-Bko"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ijB-Lr-pWV" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4383.9901477832518" y="-191.19999999999999"/>
-        </scene>
     </scenes>
     <resources>
         <image name="arrow.up.square" catalog="system" width="128" height="114"/>

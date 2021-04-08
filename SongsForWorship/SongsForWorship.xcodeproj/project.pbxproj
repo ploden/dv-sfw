@@ -78,7 +78,6 @@
 		8D99C21C24CED40A005B34F2 /* PlayRecordingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1CD24CED40A005B34F2 /* PlayRecordingTVCell.swift */; };
 		8D99C21D24CED40A005B34F2 /* LogoCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C1CE24CED40A005B34F2 /* LogoCVCell.xib */; };
 		8D99C21E24CED40A005B34F2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1CF24CED40A005B34F2 /* Helper.swift */; };
-		8D99C21F24CED40A005B34F2 /* SheetMusicVC_iPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D124CED40A005B34F2 /* SheetMusicVC_iPhone.swift */; };
 		8D99C22024CED40A005B34F2 /* HasStoryboardName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D224CED40A005B34F2 /* HasStoryboardName.swift */; };
 		8D99C22224CED40A005B34F2 /* IndexVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D424CED40A005B34F2 /* IndexVC.swift */; };
 		8D99C22324CED40A005B34F2 /* SongIndexVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1D524CED40A005B34F2 /* SongIndexVC.swift */; };
@@ -199,7 +198,6 @@
 		8D99C1CD24CED40A005B34F2 /* PlayRecordingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayRecordingTVCell.swift; sourceTree = "<group>"; };
 		8D99C1CE24CED40A005B34F2 /* LogoCVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LogoCVCell.xib; sourceTree = "<group>"; };
 		8D99C1CF24CED40A005B34F2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
-		8D99C1D124CED40A005B34F2 /* SheetMusicVC_iPhone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SheetMusicVC_iPhone.swift; sourceTree = "<group>"; };
 		8D99C1D224CED40A005B34F2 /* HasStoryboardName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasStoryboardName.swift; sourceTree = "<group>"; };
 		8D99C1D424CED40A005B34F2 /* IndexVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexVC.swift; sourceTree = "<group>"; };
 		8D99C1D524CED40A005B34F2 /* SongIndexVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongIndexVC.swift; sourceTree = "<group>"; };
@@ -443,7 +441,6 @@
 				8D99C1E024CED40A005B34F2 /* SongDetailVC.swift */,
 				8D99C1E224CED40A005B34F2 /* NavigationController.swift */,
 				8D99C1DE24CED40A005B34F2 /* PlayerController.swift */,
-				8D99C1D124CED40A005B34F2 /* SheetMusicVC_iPhone.swift */,
 				8D99C1D524CED40A005B34F2 /* SongIndexVC.swift */,
 				8D99C1DC24CED40A005B34F2 /* SongPreviewViewController.swift */,
 				8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */,
@@ -674,7 +671,6 @@
 				8D99C20B24CED40A005B34F2 /* SheetMusicCVCell.swift in Sources */,
 				8D99C20324CED40A005B34F2 /* RecordingsDisabledTVCell.swift in Sources */,
 				8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */,
-				8D99C21F24CED40A005B34F2 /* SheetMusicVC_iPhone.swift in Sources */,
 				8D99C1F124CED40A005B34F2 /* SongCollectionTuneInfo.swift in Sources */,
 				8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */,
 				8D99C21C24CED40A005B34F2 /* PlayRecordingTVCell.swift in Sources */,
