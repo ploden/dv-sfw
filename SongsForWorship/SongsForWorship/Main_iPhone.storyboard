@@ -657,14 +657,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xS3-BE-Z0E">
-                                <rect key="frame" x="0.0" y="813" width="414" height="49"/>
-                                <items>
-                                    <barButtonItem title="Item" id="f7R-st-cYM"/>
-                                </items>
-                            </toolbar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HlR-RK-Ueq">
-                                <rect key="frame" x="0.0" y="44" width="414" height="769"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="hBH-de-9W3" id="iuL-Kg-9pa"/>
@@ -675,18 +669,14 @@
                         <viewLayoutGuide key="safeArea" id="sab-zP-5vd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="xS3-BE-Z0E" secondAttribute="trailing" id="5sN-Nw-UOh"/>
                             <constraint firstItem="sab-zP-5vd" firstAttribute="trailing" secondItem="HlR-RK-Ueq" secondAttribute="trailing" id="JXa-ur-Aqr"/>
                             <constraint firstItem="HlR-RK-Ueq" firstAttribute="top" secondItem="sab-zP-5vd" secondAttribute="top" id="MbP-qw-3fT"/>
                             <constraint firstItem="HlR-RK-Ueq" firstAttribute="leading" secondItem="sab-zP-5vd" secondAttribute="leading" id="PHS-BO-lD1"/>
-                            <constraint firstItem="xS3-BE-Z0E" firstAttribute="top" secondItem="HlR-RK-Ueq" secondAttribute="bottom" id="UoP-Gy-S2v"/>
-                            <constraint firstItem="sab-zP-5vd" firstAttribute="bottom" secondItem="xS3-BE-Z0E" secondAttribute="bottom" id="xuO-Ha-Lfs"/>
-                            <constraint firstItem="xS3-BE-Z0E" firstAttribute="leading" secondItem="sab-zP-5vd" secondAttribute="leading" id="zYF-Jk-Ncm"/>
+                            <constraint firstItem="sab-zP-5vd" firstAttribute="bottom" secondItem="HlR-RK-Ueq" secondAttribute="bottom" id="dr2-K0-5zK"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="tableView" destination="HlR-RK-Ueq" id="Ifg-mc-sDq"/>
-                        <outlet property="toolbar" destination="xS3-BE-Z0E" id="YyX-ot-Qpx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Xez-Cp-5r2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
