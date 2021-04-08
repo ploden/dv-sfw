@@ -11,12 +11,12 @@ import UIKit
 import SwiftTheme
 
 struct ThemeColors {
-    var light: UIColor
-    var dark: UIColor
+    var defaultLight: UIColor
     var white: UIColor
+    var night: UIColor
     
     func toHex() -> ThemeColorPicker {
-        return [light.hexString(false), dark.hexString(false), white.hexString(false)]
+        return [defaultLight.hexString(false), white.hexString(false), night.hexString(false)]
     }
 }
 
@@ -58,9 +58,10 @@ enum FontSizeSetting: Int, CaseIterable {
     }
 }
 
-enum ThemeSetting: String, CaseIterable {
-    case standard = "standard"
-    case night = "night"
+enum ThemeSetting: Int, CaseIterable {
+    case defaultLight = 0
+    case white = 1
+    case night = 2
 }
 
 @objc protocol SettingsObserver {
@@ -87,7 +88,21 @@ open class Settings {
             return CGFloat(fontSizeSetting.rawValue) / 10.0
         }
     }
-    var theme: ThemeSetting = .standard
+    var theme: ThemeSetting = .defaultLight {
+        didSet {
+            if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+                if theme == .defaultLight || theme == .white {
+                    app.window?.overrideUserInterfaceStyle = .light
+                    ThemeManager.setTheme(index: theme.rawValue)
+                    NotificationCenter.default.post(name: .settingsDidChange, object: self)
+                } else if theme == .night {
+                    app.window?.overrideUserInterfaceStyle = .dark
+                    ThemeManager.setTheme(index: theme.rawValue)
+                    NotificationCenter.default.post(name: .settingsDidChange, object: self)
+                }
+            }
+        }
+    }
     var shouldShowSheetMusicInPortrait_iPhone: Bool = false
     var shouldShowSheetMusicInLandscape_iPhone: Bool = true
     var shouldShowSheetMusic_iPad: Bool = true

@@ -17,7 +17,13 @@ extension Bundle {
 
 import MessageUI
 
-class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
+class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate, HasSettings {
+    var settings: Settings? {
+        didSet {
+            oldValue?.removeObserver(forSettings: self)
+            settings?.addObserver(forSettings: self)
+        }
+    }
     var songsManager: SongsManager?
     var sections: [IndexSection]!
     
@@ -35,14 +41,10 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         
         title = ""
+        configureNavBar()
         
         indexTableView?.register(UINib(nibName: NSStringFromClass(SongTVCell.self.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: NSStringFromClass(SongTVCell.self.self))
         indexTableView?.register(UINib(nibName: "GenericTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "GenericTVCell")
-        
-        if UIDevice.current.userInterfaceIdiom != .pad {
-            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
-            navigationItem.titleView = navbarLogo
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -79,6 +81,25 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     }
     
     // MARK: - Helper methods
+    
+    func configureNavBar() {
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            if settings?.theme == .defaultLight {
+                let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
+                navigationItem.titleView = navbarLogo
+            } else if settings?.theme == .white {
+                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
+                navigationItem.titleView = navbarLogo
+            }  else if settings?.theme == .night {
+                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = .white
+                navigationItem.titleView = navbarLogo
+            }
+        }
+    }
     
     private func createEmailUrl(to: String, subject: String, body: String) -> URL? {
         let subjectEncoded = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
@@ -278,4 +299,10 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         dismiss(animated: true)
     }
     
+}
+
+extension IndexVC: SettingsObserver {
+    func settingsDidChange(_ notification: Notification) {
+        configureNavBar()
+    }
 }

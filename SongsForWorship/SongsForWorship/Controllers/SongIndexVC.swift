@@ -9,7 +9,12 @@
 import UIKit
 
 class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver, HasSettings {
-    var settings: Settings?
+    var settings: Settings? {
+        didSet {
+            oldValue?.removeObserver(forSettings: self)
+            settings?.addObserver(forSettings: self)
+        }
+    }
     
     private var firstTime: Bool = false
     private var isPerformingSearch = false
@@ -27,10 +32,9 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         super.viewDidLoad()
         
         title = ""
+        configureNavBar()
+        
         if UIDevice.current.userInterfaceIdiom != .pad {
-            let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
-            navigationItem.titleView = navbarLogo
-            
             let interaction = UIContextMenuInteraction(delegate: self)
             songIndexTableView?.addInteraction(interaction)
         }
@@ -228,6 +232,25 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     
     // MARK: - helper methods
     
+    func configureNavBar() {
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            if settings?.theme == .defaultLight {
+                let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
+                navigationItem.titleView = navbarLogo
+            } else if settings?.theme == .white {
+                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
+                navigationItem.titleView = navbarLogo
+            }  else if settings?.theme == .night {
+                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = .white
+                navigationItem.titleView = navbarLogo
+            }
+        }
+    }
+    
     func selectedSongCollection() -> SongCollection? {
         if let segmentedControl = segmentedControl {
             return songsManager?.songCollections[segmentedControl.selectedSegmentIndex]
@@ -399,6 +422,7 @@ extension SongIndexVC: SettingsObserver {
         if let songIndexTableView = songIndexTableView {
             songIndexTableView.reloadData()
         }
+        configureNavBar()
     }
 }
 

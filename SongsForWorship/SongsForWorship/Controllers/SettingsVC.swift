@@ -21,12 +21,7 @@ class SettingsVC: UIViewController, HasSettings {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewsToMakeCircles?.forEach {
-            $0.layer.cornerRadius = $0.frame.width / 2.0
-            $0.clipsToBounds = true
-            $0.layer.borderColor = UIColor.gray.cgColor
-            $0.layer.borderWidth = 1.0
-        }
+        configureThemeViews()
         
         if let settings = settings {
             customFontCheckMarkImageView?.isHidden = settings.shouldUseSystemFonts
@@ -34,6 +29,24 @@ class SettingsVC: UIViewController, HasSettings {
             
             increaseFontSizeButton?.isEnabled = settings.canIncreaseFontSize()
             decreaseFontSizeButton?.isEnabled = settings.canDecreaseFontSize()
+        }
+    }
+    
+    func configureThemeViews() {
+        viewsToMakeCircles?.forEach {
+            $0.layer.cornerRadius = $0.frame.width / 2.0
+            $0.clipsToBounds = true
+            $0.layer.borderColor = UIColor.lightGray.cgColor
+            $0.layer.borderWidth = 0.5
+        }
+        
+        if
+            let settings = settings,
+            let viewsToMakeCircles = viewsToMakeCircles,
+            settings.theme.rawValue < viewsToMakeCircles.count
+        {
+            let sorted = viewsToMakeCircles.sorted { $0.superview!.frame.origin.x < $1.superview!.frame.origin.x }
+            sorted[settings.theme.rawValue].layer.borderWidth = 2.0
         }
     }
     
@@ -84,6 +97,27 @@ class SettingsVC: UIViewController, HasSettings {
             settings.decreaseFontSize()
             increaseFontSizeButton?.isEnabled = settings.canIncreaseFontSize()
             decreaseFontSizeButton?.isEnabled = settings.canDecreaseFontSize()
+        }
+    }
+
+    @IBAction func lightThemeTapped(_ sender: Any) {
+        if let settings = settings {
+            settings.theme = .defaultLight
+            configureThemeViews()
+        }
+    }
+
+    @IBAction func whiteThemeTapped(_ sender: Any) {
+        if let settings = settings {
+            settings.theme = .white
+            configureThemeViews()
+        }
+    }
+    
+    @IBAction func darkThemeTapped(_ sender: Any) {
+        if let settings = settings {
+            settings.theme = .night
+            configureThemeViews()
         }
     }
     

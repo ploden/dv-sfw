@@ -93,25 +93,41 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         //UINavigationBar.appearance().barTintColor = UIColor.red
         
         // Set Navigation bar Title colour
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+        //UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+        UINavigationBar.appearance().theme_titleTextAttributes = ThemeStringAttributesPicker([.foregroundColor: UIColor.white], [.foregroundColor: UIColor(named: "NavBarBackground")!])
         
         // Set navigation bar ItemButton tint colour, including back chevron
         //UIBarButtonItem.appearance().tintColor = UIColor.white
 
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).tintColor = nil
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).tintColor = nil
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = nil
-
         // Set Navigation bar background image
         //let navBgImage:UIImage = UIImage(named: "bg_blog_navbar_reduced.jpg")!
         // Set navigation bar tint / background colour
-        UINavigationBar.appearance().barTintColor = UIColor(named: "NavBarBackground")
+        //UINavigationBar.appearance().barTintColor = UIColor(named: "NavBarBackground")
+        
         
         //Set navigation bar Back button tint colour
-        UINavigationBar.appearance().tintColor = UIColor.white
-                    
+        UINavigationBar.appearance().theme_tintColor = ThemeColors(
+            defaultLight: .white,
+            white: UIColor(named: "NavBarBackground")!,
+            night: .white
+        ).toHex()
+        
+        ThemeManager.setTheme(index: settings.theme.rawValue)
         
         window = UIWindow()
+        
+        
+        UINavigationBar.appearance().theme_barTintColor = ThemeColors(defaultLight: UIColor(named: "NavBarBackground")!, white: .systemBackground, night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))).toHex()
+        
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).theme_tintColor = ThemeColors(
+            defaultLight: UIView().tintColor!,
+            white: UIColor(named: "NavBarBackground")!,
+            night: .white
+        ).toHex()
+        
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).tintColor = nil
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = nil
+        
         
         var mainController: UIViewController?
 

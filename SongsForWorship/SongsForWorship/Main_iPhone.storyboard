@@ -235,7 +235,7 @@
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mvX-uv-Smh">
                                                         <rect key="frame" x="0.0" y="0.0" width="207" height="44"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <state key="normal" image="character" catalog="system">
                                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                         </state>
@@ -245,7 +245,7 @@
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VYR-Ff-8D5">
                                                         <rect key="frame" x="207.5" y="0.0" width="206.5" height="44"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <state key="normal" image="character" catalog="system">
                                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="semibold"/>
                                                         </state>
@@ -365,7 +365,7 @@
                                                         <rect key="frame" x="0.0" y="1" width="414" height="57.5"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="44" translatesAutoresizingMaskIntoConstraints="NO" id="a1Q-Cd-bZ8">
-                                                                <rect key="frame" x="127.5" y="0.0" width="159" height="57.5"/>
+                                                                <rect key="frame" x="77" y="0.0" width="260.5" height="57.5"/>
                                                                 <subviews>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dip-a5-H0H">
                                                                         <rect key="frame" x="0.0" y="0.0" width="57.5" height="57.5"/>
@@ -381,12 +381,16 @@
                                                                                         </constraints>
                                                                                     </view>
                                                                                 </subviews>
-                                                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                                <gestureRecognizers/>
                                                                                 <constraints>
                                                                                     <constraint firstItem="KqV-au-RHK" firstAttribute="top" secondItem="7zc-Cc-YSf" secondAttribute="top" id="1Wa-CP-MpL"/>
                                                                                     <constraint firstAttribute="trailing" secondItem="KqV-au-RHK" secondAttribute="trailing" id="Ovm-lI-2QE"/>
                                                                                     <constraint firstItem="KqV-au-RHK" firstAttribute="leading" secondItem="7zc-Cc-YSf" secondAttribute="leading" id="VIK-iQ-gba"/>
                                                                                 </constraints>
+                                                                                <connections>
+                                                                                    <outletCollection property="gestureRecognizers" destination="Y7P-38-Tba" appends="YES" id="zDz-UJ-0Fz"/>
+                                                                                </connections>
                                                                             </view>
                                                                         </subviews>
                                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -398,12 +402,51 @@
                                                                             <constraint firstAttribute="bottom" secondItem="7zc-Cc-YSf" secondAttribute="bottom" constant="10" id="qqT-le-sBI"/>
                                                                         </constraints>
                                                                     </view>
-                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5uC-K9-hAA">
+                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dOy-MH-Gg4">
                                                                         <rect key="frame" x="101.5" y="0.0" width="57.5" height="57.5"/>
+                                                                        <subviews>
+                                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YyF-OC-Fj6">
+                                                                                <rect key="frame" x="10" y="10" width="37.5" height="37.5"/>
+                                                                                <subviews>
+                                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g71-je-7jC">
+                                                                                        <rect key="frame" x="0.0" y="0.0" width="37.5" height="10"/>
+                                                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                                        <constraints>
+                                                                                            <constraint firstAttribute="height" constant="10" id="mNv-9z-zcK"/>
+                                                                                        </constraints>
+                                                                                    </view>
+                                                                                </subviews>
+                                                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                                <gestureRecognizers/>
+                                                                                <constraints>
+                                                                                    <constraint firstItem="g71-je-7jC" firstAttribute="top" secondItem="YyF-OC-Fj6" secondAttribute="top" id="az9-ii-zEz"/>
+                                                                                    <constraint firstAttribute="trailing" secondItem="g71-je-7jC" secondAttribute="trailing" id="n5D-M0-Z9n"/>
+                                                                                    <constraint firstItem="g71-je-7jC" firstAttribute="leading" secondItem="YyF-OC-Fj6" secondAttribute="leading" id="nfp-9D-VBl"/>
+                                                                                </constraints>
+                                                                                <connections>
+                                                                                    <outletCollection property="gestureRecognizers" destination="0la-sg-qPV" appends="YES" id="MOe-f2-wBV"/>
+                                                                                </connections>
+                                                                            </view>
+                                                                        </subviews>
+                                                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" secondItem="dOy-MH-Gg4" secondAttribute="height" multiplier="1:1" id="8LC-b6-gfp"/>
+                                                                            <constraint firstItem="YyF-OC-Fj6" firstAttribute="leading" secondItem="dOy-MH-Gg4" secondAttribute="leading" constant="10" id="FZC-C9-N42"/>
+                                                                            <constraint firstAttribute="trailing" secondItem="YyF-OC-Fj6" secondAttribute="trailing" constant="10" id="oby-EF-h9F"/>
+                                                                            <constraint firstAttribute="bottom" secondItem="YyF-OC-Fj6" secondAttribute="bottom" constant="10" id="rWA-BJ-rAz"/>
+                                                                            <constraint firstItem="YyF-OC-Fj6" firstAttribute="top" secondItem="dOy-MH-Gg4" secondAttribute="top" constant="10" id="w7O-lg-lPg"/>
+                                                                        </constraints>
+                                                                    </view>
+                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5uC-K9-hAA">
+                                                                        <rect key="frame" x="203" y="0.0" width="57.5" height="57.5"/>
                                                                         <subviews>
                                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="00Q-xO-oYi">
                                                                                 <rect key="frame" x="10" y="10" width="37.5" height="37.5"/>
                                                                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                                <gestureRecognizers/>
+                                                                                <connections>
+                                                                                    <outletCollection property="gestureRecognizers" destination="UR4-bP-28W" appends="YES" id="LFL-Nt-VK3"/>
+                                                                                </connections>
                                                                             </view>
                                                                         </subviews>
                                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -415,6 +458,9 @@
                                                                         </constraints>
                                                                     </view>
                                                                 </subviews>
+                                                                <constraints>
+                                                                    <constraint firstItem="dOy-MH-Gg4" firstAttribute="width" secondItem="dOy-MH-Gg4" secondAttribute="height" multiplier="1:1" id="5iE-uu-B8h"/>
+                                                                </constraints>
                                                             </stackView>
                                                         </subviews>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -488,6 +534,7 @@
                         <outlet property="systemFontCheckMarkImageView" destination="O5F-4C-cgd" id="DEy-T9-xsQ"/>
                         <outletCollection property="viewsToMakeCircles" destination="7zc-Cc-YSf" collectionClass="NSMutableArray" id="Suu-7k-pYa"/>
                         <outletCollection property="viewsToMakeCircles" destination="00Q-xO-oYi" collectionClass="NSMutableArray" id="QBj-wG-Kmi"/>
+                        <outletCollection property="viewsToMakeCircles" destination="YyF-OC-Fj6" collectionClass="NSMutableArray" id="QXH-MG-bjj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="33b-sr-hLv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -499,6 +546,21 @@
                 <tapGestureRecognizer id="09c-BV-1Yp">
                     <connections>
                         <action selector="systemFontViewTapped:" destination="peQ-jw-03k" id="NHB-6u-1hU"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="Y7P-38-Tba">
+                    <connections>
+                        <action selector="lightThemeTapped:" destination="peQ-jw-03k" id="CIp-hm-7ht"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="UR4-bP-28W">
+                    <connections>
+                        <action selector="darkThemeTapped:" destination="peQ-jw-03k" id="xvP-2D-YK6"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="0la-sg-qPV">
+                    <connections>
+                        <action selector="whiteThemeTapped:" destination="peQ-jw-03k" id="fVH-xk-ZXI"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
