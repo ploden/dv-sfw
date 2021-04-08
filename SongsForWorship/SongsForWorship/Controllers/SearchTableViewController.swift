@@ -41,7 +41,8 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
         super.viewDidLoad()
         
         tableView?.register(UINib(nibName: "SearchResultTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SearchResultTVCell")
-
+        tableView?.rowHeight = UITableView.automaticDimension
+        
         self.navigationItem.hidesSearchBarWhenScrolling = false
         self.navigationItem.titleView = searchBar
         

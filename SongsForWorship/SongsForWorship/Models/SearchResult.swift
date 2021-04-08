@@ -10,7 +10,7 @@ struct SearchResult {
     static let maxTitleLength = 90
     lazy var title: String? = {
         if
-            let sourceText = sourceText,
+            let sourceText = sourceText?.replacingOccurrences(of: "\n", with: " "),
             let searchTerm = searchTerm,
             let first = sourceText.range(of: searchTerm, options: .caseInsensitive)
         {
@@ -49,10 +49,4 @@ struct SearchResult {
     var songIndex: Int
     var songNumber: String?
     var searchTerm: String?
-    
-    /*
-    func song(_ allSongs: [Song]) -> Song {
-        return allSongs[songIndex]
-    }
- */
 }

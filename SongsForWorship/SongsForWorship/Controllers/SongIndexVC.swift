@@ -372,6 +372,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     @IBAction func searchTapped(_ sender: Any) {
         if let vc = SearchTableViewController.pfw_instantiateFromStoryboard() as? SearchTableViewController {
             vc.songsManager = songsManager
+            vc.settings = settings
             present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
         }
     }
