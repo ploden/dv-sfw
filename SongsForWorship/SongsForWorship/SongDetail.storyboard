@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Metre-->
+        <!--Song DetailVC-->
         <scene sceneID="ZrH-mC-h6v">
             <objects>
                 <viewController storyboardIdentifier="SongDetailVC" automaticallyAdjustsScrollViewInsets="NO" id="uY5-iU-i06" customClass="SongDetailVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
@@ -43,7 +43,6 @@
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <tabBarItem key="tabBarItem" title="Metre" image="meter_icon" id="UTD-iy-ec6"/>
                     <toolbarItems>
                         <barButtonItem title="Item" image="bookmark" catalog="system" id="kqJ-Te-ksM">
                             <connections>
@@ -80,6 +79,7 @@
                         <outlet property="favoriteBarButtonItem" destination="kqJ-Te-ksM" id="06Z-h1-mFa"/>
                         <outlet property="playBarButtonItem" destination="zFJ-8K-p8a" id="NVf-Jb-I5W"/>
                         <outlet property="showPlayerBarButtonItem" destination="eLZ-ew-mM0" id="qkJ-q3-ctJ"/>
+                        <outlet property="showSheetMusicBarButtonItem" destination="Btw-G3-3o9" id="CZy-UH-7aM"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w7h-zM-0jd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -356,7 +356,6 @@
         <image name="bookmark" catalog="system" width="112" height="128"/>
         <image name="forward.fill" catalog="system" width="128" height="79"/>
         <image name="loop_icon_grayed" width="30" height="30"/>
-        <image name="meter_icon" width="35" height="24"/>
         <image name="music.note.list" catalog="system" width="128" height="115"/>
         <image name="pause_icon" width="20" height="27"/>
         <image name="play" catalog="system" width="120" height="128"/>

@@ -25,7 +25,7 @@ struct SongDetailItem {
 
 class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, HasSettings, PsalmObserver {    
     enum imageNames: String {
-        case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark"
+        case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark", showSheetMusic = "music.note.list", showMetre = "text.alignleft"
     }
     
     weak var delegate: SongDetailVCDelegate?
@@ -91,6 +91,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     @IBOutlet private var favoriteBarButtonItem: UIBarButtonItem?
     @IBOutlet private var playBarButtonItem: UIBarButtonItem?
     @IBOutlet private var showPlayerBarButtonItem: UIBarButtonItem?
+    @IBOutlet private var showSheetMusicBarButtonItem: UIBarButtonItem?
     @IBOutlet weak var collectionView: UICollectionView? {
         didSet {
             if UIDevice.current.userInterfaceIdiom == .pad {
@@ -117,6 +118,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         
         configureFavoriteBarButtonItem()
         configurePlayerBarButtonItems()
+        configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
         
         collectionView?.register(UINib(nibName: String(describing: MetreCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: MetreCVCell.self))
         collectionView?.register(UINib(nibName: String(describing: SheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: SheetMusicCVCell.self))
@@ -201,13 +203,9 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
 
                     collectionView.collectionViewLayout.invalidateLayout()
                     collectionView.reloadData()
-                    
-                    /*
-                    if indexPathBeforeTransitionToSize.row < collectionView.numberOfItems(inSection: indexPathBeforeTransitionToSize.section) {
-                        collectionView.scrollToItem(at: indexPathBeforeTransitionToSize, at: .left, animated: false)
-                    }
- */
+
                     self.scrollToCurrentSong()
+                    self.configureShowSheetMusicBarButtonItem(forSize: size)
                 }
             }
         }
@@ -512,6 +510,18 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         favoriteBarButtonItem?.image = img        
     }
     
+    func configureShowSheetMusicBarButtonItem(forSize size: CGSize) {
+        let img: UIImage? = {
+            if shouldShowPDF(forSize: size) {
+                return UIImage(systemName: imageNames.showMetre.rawValue)
+            } else {
+                return UIImage(systemName: imageNames.showSheetMusic.rawValue)
+            }
+        }()
+        
+        showSheetMusicBarButtonItem?.image = img
+    }
+    
     func showActivityIndicatorBarButtonItem(replacing item: UIBarButtonItem?) {
         if
             let item = item,
@@ -694,6 +704,8 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 collectionView?.reloadData()
                 scrollToCurrentSong()
             }
+            
+            configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
         }
     }
     
