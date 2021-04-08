@@ -318,15 +318,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         navigationItem.title = songsManager?.currentSong?.number
         configurePlayerBarButtonItems()
         configureFavoriteBarButtonItem()
-    }
-    
-    func song(forIndexPath indexPath: IndexPath, songsToDisplay: [Song]) -> Song? {
-        if shouldShowPDF(forSize: view.frame.size) {
-            return PDFPageView.songForPageNumber(indexPath.item, allSongs: songsToDisplay, displayMode: displayMode(forSize: view.frame.size))
-        } else {
-            return SongsManager.songAtIndex(indexPath.row, allSongs: songsToDisplay)
-        }
-    }
+    } 
     
     // MARK: - Helpers
     

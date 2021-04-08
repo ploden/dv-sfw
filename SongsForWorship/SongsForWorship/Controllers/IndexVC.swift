@@ -17,7 +17,7 @@ extension Bundle {
 
 import MessageUI
 
-class IndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
+class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
     var songsManager: SongsManager?
     var sections: [IndexSection]!
     
@@ -54,10 +54,6 @@ class IndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableV
 
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)
-        }
-        
-        if let detail = detailVC() {
-            detail.delegate = self
         }
     }
     
@@ -282,14 +278,4 @@ class IndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableV
         dismiss(animated: true)
     }
     
-    // MARK: - DetailVCDelegate
-    func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
-        //return IndexVC.favoriteSongs(songsManager?.currentCollection?.songs)
-        //MARK: #warning FIXME
-        return nil
-    }
-    
-    func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
-        return false
-    }
 }
