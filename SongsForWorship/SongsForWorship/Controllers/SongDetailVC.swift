@@ -222,6 +222,14 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         }
     }
     
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return action == #selector(playTapped(_:))
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    
     // MARK: - rotation
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .allButUpsideDown
@@ -319,6 +327,21 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     } 
     
     // MARK: - Helpers
+    
+    func currentlyVisibleSongs() -> [Song] {
+        if let collectionView = collectionView {
+            let center = collectionView.convert(collectionView.center, from: collectionView.superview)
+            let ip = collectionView.indexPathForItem(at: center)
+            
+            if
+                let ip = ip,
+                ip.item < songDetailItems.count
+            {
+                return songDetailItems[ip.item].songs
+            }
+        }
+        return [Song]()
+    }
     
     class func calculateItems(forSongs songs: [Song], appConfig: AppConfig, settings: Settings, displayMode: DisplayMode, isLandscape: Bool) -> [SongDetailItem] {
         // single page metre
@@ -640,36 +663,70 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         }
     }
     
-    @IBAction func playTapped(_ sender: Any) {
-        if playerController == nil || playerController?.song != songsManager?.currentSong {
-            if
-                let songsManager = songsManager,
-                let currentSong = songsManager.currentSong                
-            {
+    func playCurrentSong() {
+        if
+            let songsManager = songsManager,
+            let currentSong = songsManager.currentSong
+        {
+            if playerController == nil || playerController?.song != currentSong {
                 self.playerController = PlayerController(withSong: currentSong, delegate: self)
             }
-        }
-        
-        if let playerController = playerController {
-            if playerController.isPlaying() {
-                playerController.pause()
-            } else if playerController.isPaused {
-                playerController.resume()
-            } else if playerController.state == .tunesNotLoaded {
-                showActivityIndicatorBarButtonItem(replacing: playBarButtonItem)
-                showPlayerBarButtonItem?.isEnabled = false
-                playerController.loadTunes()
-            } else if playerController.state == .loadingTunesDidSucceed {
-                if let currentTrack = playerController.currentTrack {
-                    playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: 1.0)
+            
+            if let playerController = playerController {
+                if playerController.isPlaying() {
+                    playerController.pause()
+                } else if playerController.isPaused {
+                    playerController.resume()
+                } else if playerController.state == .tunesNotLoaded {
+                    showActivityIndicatorBarButtonItem(replacing: playBarButtonItem)
+                    showPlayerBarButtonItem?.isEnabled = false
+                    playerController.loadTunes()
+                } else if playerController.state == .loadingTunesDidSucceed {
+                    if let currentTrack = playerController.currentTrack {
+                        playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: 1.0)
+                    }
                 }
             }
+            
+            configurePlayerBarButtonItems()
         }
-        
-        configurePlayerBarButtonItems()
     }
     
-    @IBAction func showPlayerTapped(_ sender: Any) {
+    @IBAction func playTapped(_ sender: Any) {
+        let currentlyVisible = currentlyVisibleSongs()
+        
+        if currentlyVisible.count > 1 {
+            if let playerController = playerController {
+                if playerController.isPlaying() {
+                    playerController.pause()
+                } else if playerController.isPaused {
+                    playerController.resume()
+                } else {
+                    showSelectSongVC(withSongs: currentlyVisible)
+                }
+            }
+        } else {
+            playCurrentSong()
+        }
+    }
+    
+    func showSelectSongVC(withSongs songs: [Song]) {
+        if let vc = SelectSongMenuVC.pfw_instantiateFromStoryboard() as? SelectSongMenuVC {
+            vc.songs = songs
+            vc.delegate = self
+            vc.modalPresentationStyle = .popover
+            vc.popoverPresentationController?.barButtonItem = playBarButtonItem
+            if let pres = vc.presentationController {
+                pres.delegate = self
+            }
+            vc.popoverPresentationController?.backgroundColor = vc.view.backgroundColor
+            let buttonHeight = 30.0
+            vc.preferredContentSize = CGSize(width: Double(songs.count) * buttonHeight * 2, height: buttonHeight)
+            present(vc, animated: true, completion: nil)
+        }
+    }
+    
+    func showPlayerForCurrentSong() {
         if playerController == nil || playerController?.song != songsManager?.currentSong {
             if let currentSong = songsManager?.currentSong {
                 self.playerController = PlayerController(withSong: currentSong, delegate: self)
@@ -684,6 +741,23 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 playBarButtonItem?.isEnabled = false
                 playerController.loadTunes()
             }
+        }
+    }
+    
+    @IBAction func showPlayerTapped(_ sender: Any) {
+        let currentlyVisible = currentlyVisibleSongs()
+        
+        if currentlyVisible.count > 1 {
+            if
+                let playerController = playerController,
+                playerController.isPlaying()
+            {
+                showPlayerForCurrentSong()
+            } else {
+                showSelectSongVC(withSongs: currentlyVisible)
+            }
+        } else {
+            showPlayerForCurrentSong()
         }
     }
     
@@ -803,5 +877,28 @@ extension SongDetailVC: SettingsObserver {
         if let collectionView = collectionView {
             collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
         }
+    }
+}
+
+extension SongDetailVC: SelectSongMenuVCDelegate {
+    func selectSongMenuVC(selectSongMenuVC: SelectSongMenuVC?, didSelectSong selectedSong: Song) {
+        
+        if
+            let presentingItem = selectSongMenuVC?.popoverPresentationController?.barButtonItem,
+            let songsManager = songsManager
+        {
+            if presentingItem == self.playBarButtonItem {
+                songsManager.removeObserver(forcurrentSong: self)
+                songsManager.setcurrentSong(selectedSong, songsToDisplay: songsManager.songsToDisplay)
+                songsManager.addObserver(forcurrentSong: self)
+                playCurrentSong()
+            } else if presentingItem == self.showPlayerBarButtonItem {
+                songsManager.removeObserver(forcurrentSong: self)
+                songsManager.setcurrentSong(selectedSong, songsToDisplay: songsManager.songsToDisplay)
+                songsManager.addObserver(forcurrentSong: self)
+                showPlayerForCurrentSong()
+            }
+        }
+        selectSongMenuVC?.dismiss(animated: true, completion: nil)
     }
 }
