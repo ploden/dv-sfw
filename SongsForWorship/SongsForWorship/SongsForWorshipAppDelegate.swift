@@ -67,43 +67,7 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         
         updateFavoritesShortcuts()
 
-        //ThemeManager.setTheme(index: 1)
-        
-        /*
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.theme_backgroundColor = ThemeColors(light: UIColor(named: "NavBarBackground")!, dark: .black, white: .white).toHex()
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        
-        let buttonAppearance = UIBarButtonItemAppearance(style: .plain)
-        buttonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navBarAppearance.buttonAppearance = buttonAppearance
-        navBarAppearance.backButtonAppearance = buttonAppearance
-        
-        UINavigationBar.appearance().standardAppearance = navBarAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
-
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).standardAppearance = navBarAppearance
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UINavigationController.self]).scrollEdgeAppearance = navBarAppearance
-        //UINavigationBar.appearance().tintColor = .white
- */
-        
-        // Set navigation bar tint / background colour
-        //UINavigationBar.appearance().barTintColor = UIColor.red
-        
-        // Set Navigation bar Title colour
-        //UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
-        UINavigationBar.appearance().theme_titleTextAttributes = ThemeStringAttributesPicker([.foregroundColor: UIColor.white], [.foregroundColor: UIColor(named: "NavBarBackground")!])
-        
-        // Set navigation bar ItemButton tint colour, including back chevron
-        //UIBarButtonItem.appearance().tintColor = UIColor.white
-
-        // Set Navigation bar background image
-        //let navBgImage:UIImage = UIImage(named: "bg_blog_navbar_reduced.jpg")!
-        // Set navigation bar tint / background colour
-        //UINavigationBar.appearance().barTintColor = UIColor(named: "NavBarBackground")
-        
+        UINavigationBar.appearance().theme_titleTextAttributes = ThemeStringAttributesPicker([.foregroundColor: UIColor.white], [.foregroundColor: UIColor(named: "NavBarBackground")!])        
         
         //Set navigation bar Back button tint colour
         UINavigationBar.appearance().theme_tintColor = ThemeColors(
@@ -116,19 +80,24 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         
         window = UIWindow()
         
-        
-        UINavigationBar.appearance().theme_barTintColor = ThemeColors(defaultLight: UIColor(named: "NavBarBackground")!, white: .systemBackground, night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))).toHex()
+        UINavigationBar.appearance().theme_barTintColor = ThemeColors(
+            defaultLight: UIColor(named: "NavBarBackground")!,
+            white: .systemBackground,
+            night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+        ).toHex()
         
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).theme_tintColor = ThemeColors(
             defaultLight: UIView().tintColor!,
             white: UIColor(named: "NavBarBackground")!,
             night: .white
         ).toHex()
-        
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).tintColor = nil
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = nil
-        
-        
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).theme_tintColor = ThemeColors(
+            defaultLight: UIView().tintColor!,
+            white: UIColor(named: "NavBarBackground")!,
+            night: .white
+        ).toHex()
+
         var mainController: UIViewController?
 
         if UIDevice.current.userInterfaceIdiom == .pad {

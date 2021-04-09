@@ -9,6 +9,7 @@
 import Foundation
 
 import UIKit
+import SwiftTheme
 
 protocol FavoritesTableViewControllerDelegate: class {
     func favoritesTableViewController(didSelectFavorite song: Song)
@@ -30,6 +31,7 @@ class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
         }
     }
     private var favorites: [Song] = [Song]()
+    var barTintColorsToRestore: ThemeColorPicker?
     @IBOutlet weak var tableView: UITableView?
     @IBOutlet weak var toolbar: UIToolbar?
     weak var delegate: FavoritesTableViewControllerDelegate?
@@ -38,13 +40,32 @@ class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
         super.viewDidLoad()
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped(_:)))
-        navigationItem.title = "Bookmarks"
+        navigationItem.rightBarButtonItem?.theme_tintColor = ThemeColors(
+            defaultLight: UIView().tintColor!,
+            white: UIColor(named: "NavBarBackground")!,
+            night: .white
+        ).toHex()
         
         tableView?.register(UINib(nibName: "SongTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SongTVCell")
+
+        navigationItem.title = "Bookmarks"
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.navigationBar.theme_titleTextAttributes = ThemeStringAttributesPicker([.foregroundColor: UIColor.black], [.foregroundColor: UIColor.black], [.foregroundColor: UIColor.white])
         
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.backgroundColor = nil
-        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        barTintColorsToRestore = navigationController?.navigationBar.theme_barTintColor
+        navigationController?.navigationBar.theme_barTintColor = ThemeColors(defaultLight: .systemBackground, white: .systemBackground, night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))).toHex()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if let barTintColorsToRestore = barTintColorsToRestore {
+            navigationController?.navigationBar.theme_barTintColor = barTintColorsToRestore
+        }
     }
     
     // MARK: - Table view data source

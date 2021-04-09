@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 class SearchTableViewController: UITableViewController, HasSongsManager, HasSettings {
     var settings: Settings?
@@ -20,21 +21,7 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
     var isPerformingSearch: Bool = false
     var searchResults: [SearchResult] = [SearchResult]()
     private var isFirstAppearance: Bool = true
-    private var defaultNavigationBarAppearance: UINavigationBarAppearance?
-    private var ourNavigationBarAppearance: UINavigationBarAppearance = {
-        let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = nil
-
-        let buttonAppearance = UIBarButtonItemAppearance(style: .plain)
-        //buttonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-        //let normal = appearance.buttonAppearance.normal
-        //appearance.buttonAppearance =
-        //appearance.buttonAppearance.configureWithDefault(for: .plain)
-        //appearance.buttonAppearance.configureWithDefault(for: .done)
-        // Set navigation bar ItemButton tint colour
-        
-        return appearance
-    }()
+    var barTintColorsToRestore: ThemeColorPicker?
     @IBOutlet weak var searchBar: UISearchBar?
         
     override func viewDidLoad() {
@@ -45,29 +32,20 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
         
         self.navigationItem.hidesSearchBarWhenScrolling = false
         self.navigationItem.titleView = searchBar
-        
-        UINavigationBar.appearance().barTintColor = nil
-
-        //defaultNavigationBarAppearance = navigationController?.navigationBar.standardAppearance
-        //navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
-        //searchBar?.tintColor = nil
-        //searchBar?.barTintColor = nil
-        //UIBarButtonItem.appearance().tintColor = nil
-        //UINavigationBar.appearance().backgroundColor = nil
-        // Set navigation bar ItemButton tint colour, including back chevron
-        //UIBarButtonItem.appearance().tintColor = .black
-        //UINavigationBar.appearance().tintColor = nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //navigationController?.navigationBar.standardAppearance = ourNavigationBarAppearance
+        
+        barTintColorsToRestore = navigationController?.navigationBar.theme_barTintColor
+        navigationController?.navigationBar.theme_barTintColor = ThemeColors(defaultLight: .systemBackground, white: .systemBackground, night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))).toHex()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let defaultNavigationBarAppearance = defaultNavigationBarAppearance {
-            //navigationController?.navigationBar.standardAppearance = defaultNavigationBarAppearance
+        
+        if let barTintColorsToRestore = barTintColorsToRestore {
+            navigationController?.navigationBar.theme_barTintColor = barTintColorsToRestore
         }
     }
     
