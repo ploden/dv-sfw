@@ -35,6 +35,12 @@ class SelectSongMenuVC: UIViewController {
                 let button = UIButton(type: .system)
                 button.setTitle(song.number, for: .normal)
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
+                button.titleLabel?.theme_tintColor = ThemeColors(
+                    defaultLight: UIView().tintColor!,
+                    white: UIColor(named: "NavBarBackground")!,
+                    night: .white
+                ).toHex()
+                button.theme_backgroundColor = ThemeColors(defaultLight: .systemBackground, white: .systemBackground, night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))).toHex()
                 button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
                 
                 stackView.insertArrangedSubview(button, at: stackView.arrangedSubviews.count)
