@@ -822,7 +822,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         
         tunesVC.popoverPresentationController?.backgroundColor = tunesVC.view.backgroundColor
         
-        tunesVC.preferredContentSize = CGSize(width: 375, height: 155)
+        tunesVC.preferredContentSize = CGSize(width: 375, height: 172)
         
         present(tunesVC, animated: true, completion: nil)
     }
