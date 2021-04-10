@@ -37,24 +37,25 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             print("There was an error reading app config! \(error)")
         }
         
+        
+        let soundFonts: [SoundFont]? = result?.soundFonts.compactMap {
+            return SoundFont(filename: $0.filename, fileExtension: $0.filetype, isDefault: $0.isDefault, title: $0.title)
+        }
+        
+        let settings = Settings(fromUserDefaults: .standard) ?? Settings()
+            
+        _ = settings.new(withSoundFonts: soundFonts ?? []).save(toUserDefaults: .standard)
+        
         return result!
     }()
     public var window: UIWindow?
-    public var settings: Settings = Settings() {
-        didSet {
-            let soundFonts: [SoundFont] = appConfig.soundFonts.compactMap {
-                return SoundFont(filename: $0.filename, fileExtension: $0.filetype, isDefault: $0.isDefault, title: $0.title)                    
-            }
-            settings.soundFonts = soundFonts
-        }
-    }
     weak var navigationController: UINavigationController?
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let syncInstance = FavoritesSyncronizer.shared
         syncInstance.synciCloud()
-        NotificationCenter.default.addObserver(self, selector: #selector(favoritesChanged(_:)), name: NSNotification.Name.favoritesDidChange, object: nil)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(favoritesChanged(_:)), name: NSNotification.Name.favoritesDidChange, object: nil)        
+        
         songsManager = SongsManager(appConfig: appConfig)
         songsManager?.loadSongs()
         
@@ -76,8 +77,11 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             night: .white
         ).toHex()
         
-        ThemeManager.setTheme(index: settings.theme.rawValue)
-        
+        let settings = Settings(fromUserDefaults: .standard) ?? Settings()
+        //ThemeManager.setTheme(index: settings.theme.rawValue)
+        _ = settings.save(toUserDefaults: .standard)
+        Settings.addObserver(forSettings: self)
+
         window = UIWindow()
         
         UINavigationBar.appearance().theme_barTintColor = ThemeColors(
@@ -122,7 +126,6 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
                         detail.navigationItem.leftItemsSupplementBackButton = true
                         detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
                         detail.songsManager = songsManager
-                        detail.settings = settings
                     }
                 }
             }
@@ -130,7 +133,6 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             let index = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "IndexVC") as? IndexVC
             index?.sections = appConfig.index
             index?.songsManager = songsManager
-            index?.settings = settings
 
             nav?.viewControllers = [index].compactMap { $0 }
             mainController = split
@@ -143,7 +145,6 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
                 navigationController = nv
                 let index = navigationController?.viewControllers[0] as? IndexVC
                 index?.songsManager = songsManager
-                index?.settings = settings
                 index?.sections = appConfig.index
                 mainController = navigationController
             }
@@ -225,5 +226,22 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
     
     func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
+    }
+}
+
+extension PsalterAppDelegate: SettingsObserver {
+    func settingsDidChange(_ notification: Notification) {
+        if
+            let settings = Settings(fromUserDefaults: .standard),
+            settings.theme.rawValue != ThemeManager.currentThemeIndex
+        {
+            if settings.theme == .defaultLight || settings.theme == .white {
+                window?.overrideUserInterfaceStyle = .light
+                ThemeManager.setTheme(index: settings.theme.rawValue)
+            } else if settings.theme == .night {
+                window?.overrideUserInterfaceStyle = .dark
+                ThemeManager.setTheme(index: settings.theme.rawValue)
+            }
+        }
     }
 }

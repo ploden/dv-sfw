@@ -8,13 +8,7 @@
 
 import UIKit
 
-class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver, HasSettings {
-    var settings: Settings? {
-        didSet {
-            oldValue?.removeObserver(forSettings: self)
-            settings?.addObserver(forSettings: self)
-        }
-    }
+class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver {
     
     private var firstTime: Bool = false
     private var isPerformingSearch = false
@@ -33,6 +27,9 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         
         title = ""
         configureNavBar()
+        
+        let settings = Settings(fromUserDefaults: .standard)
+        print("\(settings)")
         
         if UIDevice.current.userInterfaceIdiom != .pad {
             let interaction = UIContextMenuInteraction(delegate: self)
@@ -92,7 +89,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         
         definesPresentationContext = true
         
-        settings?.addObserver(forSettings: self)
+        Settings.addObserver(forSettings: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -221,7 +218,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             if UIDevice.current.userInterfaceIdiom != .pad {
                 if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                     vc.songsManager = songsManager
-                    vc.settings = settings
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
@@ -231,20 +227,22 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     // MARK: - helper methods
     
     func configureNavBar() {
-        if UIDevice.current.userInterfaceIdiom != .pad {
-            if settings?.theme == .defaultLight {
-                let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
-                navigationItem.titleView = navbarLogo
-            } else if settings?.theme == .white {
-                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                let navbarLogo = UIImageView(image: templateImage)
-                navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
-                navigationItem.titleView = navbarLogo
-            }  else if settings?.theme == .night {
-                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                let navbarLogo = UIImageView(image: templateImage)
-                navbarLogo.tintColor = .white
-                navigationItem.titleView = navbarLogo
+        if let settings = Settings(fromUserDefaults: .standard) {
+            if UIDevice.current.userInterfaceIdiom != .pad {
+                if settings.theme == .defaultLight {
+                    let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
+                    navigationItem.titleView = navbarLogo
+                } else if settings.theme == .white {
+                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                    let navbarLogo = UIImageView(image: templateImage)
+                    navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
+                    navigationItem.titleView = navbarLogo
+                }  else if settings.theme == .night {
+                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                    let navbarLogo = UIImageView(image: templateImage)
+                    navbarLogo.tintColor = .white
+                    navigationItem.titleView = navbarLogo
+                }
             }
         }
     }
@@ -372,7 +370,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     @IBAction func searchTapped(_ sender: Any) {
         if let vc = SearchTableViewController.pfw_instantiateFromStoryboard() as? SearchTableViewController {
             vc.songsManager = songsManager
-            vc.settings = settings
+            vc.modalPresentationStyle = .overCurrentContext
             present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
         }
     }
@@ -380,9 +378,9 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     @IBAction func favoritesTapped(_ sender: Any) {
         if let vc = FavoritesVC.pfw_instantiateFromStoryboard() as? FavoritesVC {
             vc.songsManager = songsManager
+            vc.modalPresentationStyle = .overCurrentContext
             vc.delegate = self
             present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
-            //present(vc, animated: true, completion: nil)
         }
     }
 }
@@ -394,7 +392,6 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
         if UIDevice.current.userInterfaceIdiom != .pad {
             if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                 vc.songsManager = songsManager
-                vc.settings = settings
                 
                 if
                     let segmentedControl = segmentedControl,

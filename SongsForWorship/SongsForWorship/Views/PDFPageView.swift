@@ -96,7 +96,7 @@ class PDFPageView: UIView {
         
         autoreleasepool {
             if let pageRef = pdf.page(at: pdfPageNumber) {
-                let colorSpace = CGColorSpaceCreateDeviceRGB()
+                let colorSpace = CGColorSpaceCreateDeviceGray()
                 
                 let screenScale = UIScreen.main.scale
                 

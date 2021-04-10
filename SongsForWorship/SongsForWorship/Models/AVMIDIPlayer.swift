@@ -19,10 +19,8 @@ extension AVMIDIPlayer {
         let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
         let dirName = targetName.lowercased() + "-resources"
         
-        if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate
-        {
-            let font = app.settings.selectedSoundFontOrDefault()
+        if let settings = Settings(fromUserDefaults: .standard) {
+            let font = settings.selectedSoundFontOrDefault()
             
             if let path = Bundle.main.path(forResource: font.filename, ofType: font.fileExtension, inDirectory: dirName) {
                 return URL(fileURLWithPath: path)

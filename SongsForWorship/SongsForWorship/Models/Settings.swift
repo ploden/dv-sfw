@@ -20,7 +20,7 @@ struct ThemeColors {
     }
 }
 
-enum FontSizeSetting: Int, CaseIterable {
+enum FontSizeSetting: Int, CaseIterable, Codable {
     case smallest = 120
     case smaller = 140
     case small = 160
@@ -58,7 +58,7 @@ enum FontSizeSetting: Int, CaseIterable {
     }
 }
 
-enum ThemeSetting: Int, CaseIterable {
+enum ThemeSetting: Int, CaseIterable, Codable {
     case defaultLight = 0
     case white = 1
     case night = 2
@@ -68,44 +68,121 @@ enum ThemeSetting: Int, CaseIterable {
     @objc func settingsDidChange(_ notification: Notification)
 }
 
-open class Settings {
-    open var shouldUseSystemFonts = false {
-        didSet {
-            NotificationCenter.default.post(name: .settingsDidChange, object: self)
-        }
-    }
-    open var autoNightTheme = false
-    var soundFonts: [SoundFont] = [SoundFont]()
-    var selectedSoundFont: SoundFont?
-    var fontSizeSetting: FontSizeSetting = .medium {
-        didSet {
-            print("fontSizeSetting: \(fontSizeSetting)")
-            NotificationCenter.default.post(name: .settingsDidChange, object: self)
-        }
-    }
+public struct Settings: Codable {
+    public var shouldUseSystemFonts = false
+    public var autoNightTheme = false
+    private(set) var soundFonts: [SoundFont] = [SoundFont]()
+    private(set) var selectedSoundFont: SoundFont?
+    private(set)  var fontSizeSetting: FontSizeSetting = .medium
     var fontSize: CGFloat {
         get {
             return CGFloat(fontSizeSetting.rawValue) / 10.0
         }
     }
-    var theme: ThemeSetting = .defaultLight {
-        didSet {
-            if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-                if theme == .defaultLight || theme == .white {
-                    app.window?.overrideUserInterfaceStyle = .light
-                    ThemeManager.setTheme(index: theme.rawValue)
-                    NotificationCenter.default.post(name: .settingsDidChange, object: self)
-                } else if theme == .night {
-                    app.window?.overrideUserInterfaceStyle = .dark
-                    ThemeManager.setTheme(index: theme.rawValue)
-                    NotificationCenter.default.post(name: .settingsDidChange, object: self)
-                }
-            }
-        }
+    private(set) var theme: ThemeSetting = .defaultLight
+    private(set) var shouldShowSheetMusicInPortrait_iPhone: Bool = false
+    private(set) var shouldShowSheetMusicInLandscape_iPhone: Bool = true
+    private(set) var shouldShowSheetMusic_iPad: Bool = true
+
+    func new(withShouldShowSheetMusicInPortrait_iPhone shouldShowSheetMusicInPortrait_iPhone: Bool) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+        )
+        return s
     }
-    var shouldShowSheetMusicInPortrait_iPhone: Bool = false
-    var shouldShowSheetMusicInLandscape_iPhone: Bool = true
-    var shouldShowSheetMusic_iPad: Bool = true
+    
+    func new(withShouldShowSheetMusicInLandscape_iPhone shouldShowSheetMusicInLandscape_iPhone: Bool) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+        )
+        return s
+    }
+    
+    func new(withShouldShowSheetMusic_iPad shouldShowSheetMusic_iPad: Bool) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: shouldShowSheetMusic_iPad
+        )
+        return s
+    }
+    
+    func new(withTheme theme: ThemeSetting) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+        )
+        return s
+    }
+    
+    func new(withShouldUseSystemFonts shouldUseSystemFonts: Bool) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+        )
+        return s
+    }
+
+    func new(withSoundFonts soundFonts: [SoundFont]) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+        )
+        return s
+    }
+    
+    func save(toUserDefaults userDefaults: UserDefaults) -> Settings? {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(self) {
+            userDefaults.set(encoded, forKey: "SFWSettings")
+            NotificationCenter.default.post(name: .settingsDidChange, object: nil)
+            return self
+        }
+        return nil
+    }
     
     func selectedSoundFontOrDefault() -> SoundFont {
         let font: SoundFont = {
@@ -123,16 +200,40 @@ open class Settings {
         return font
     }
     
-    func increaseFontSize() {
+    func newWithIncreasedFontSize() -> Settings {
         if let larger = fontSizeSetting.largerFontSizeSetting() {
-            fontSizeSetting = larger
+            let s = Settings(
+                shouldUseSystemFonts: self.shouldUseSystemFonts,
+                autoNightTheme: self.autoNightTheme,
+                soundFonts: self.soundFonts,
+                selectedSoundFont: self.selectedSoundFont,
+                fontSizeSetting: larger,
+                theme: self.theme,
+                shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+                shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+                shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            )
+            return s
         }
+        return self
     }
     
-    func decreaseFontSize() {
+    func newWithDecreasedFontSize() -> Settings {
         if let smaller = fontSizeSetting.smallerFontSizeSetting() {
-            fontSizeSetting = smaller
+            let s = Settings(
+                shouldUseSystemFonts: self.shouldUseSystemFonts,
+                autoNightTheme: self.autoNightTheme,
+                soundFonts: self.soundFonts,
+                selectedSoundFont: self.selectedSoundFont,
+                fontSizeSetting: smaller,
+                theme: self.theme,
+                shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+                shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+                shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            )
+            return s
         }
+        return self
     }
     
     func canIncreaseFontSize() -> Bool {
@@ -151,11 +252,26 @@ open class Settings {
         }
     }
     
-    func addObserver(forSettings anObserver: SettingsObserver?) {
+    static func addObserver(forSettings anObserver: SettingsObserver?) {
         NotificationCenter.default.addObserver(anObserver as Any, selector: #selector(SettingsObserver.settingsDidChange(_:)), name: .settingsDidChange, object: nil)
     }
 
     func removeObserver(forSettings anObserver: SettingsObserver?) {
         NotificationCenter.default.removeObserver(anObserver as Any)
+    }
+}
+ 
+extension Settings {
+    public init?(fromUserDefaults userDefaults: UserDefaults) {
+        if let savedSettings = userDefaults.object(forKey: "SFWSettings") as? Data {
+            let decoder = JSONDecoder()
+            if let loadedSettings = try? decoder.decode(Settings.self, from: savedSettings) {
+                self = loadedSettings
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 }

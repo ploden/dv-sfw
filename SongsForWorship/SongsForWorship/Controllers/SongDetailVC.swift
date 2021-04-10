@@ -23,7 +23,7 @@ struct SongDetailItem {
     let displayMode: DisplayMode
 }
 
-class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, HasSettings, PsalmObserver {    
+class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, PsalmObserver {
     enum imageNames: String {
         case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark", showSheetMusic = "music.note.list", showMetre = "text.alignleft"
     }
@@ -35,7 +35,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 let old = notification.userInfo?[NotificationUserInfoKeys.oldValue] as? Song,
                 let new = notification.userInfo?[NotificationUserInfoKeys.newValue] as? Song,
                 let songsManager = songsManager,
-                let settings = settings
+                let settings = Settings(fromUserDefaults: .standard)
             {
                 if old.collection != new.collection {
                     songDetailItems = SongDetailVC.calculateItems(forSongs: songsManager.songsToDisplay ?? [Song](), appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
@@ -49,12 +49,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         get {
             let app = UIApplication.shared.delegate as! PsalterAppDelegate
             return app.appConfig
-        }
-    }
-    var settings: Settings? {
-        didSet {
-            oldValue?.removeObserver(forSettings: self)
-            settings?.addObserver(forSettings: self)
         }
     }
     override class var storyboardName: String {
@@ -114,6 +108,8 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
 
         navigationItem.title = songsManager?.currentSong?.number
 
+        Settings.addObserver(forSettings: self)
+        
         shouldScrollToStartingIndex = true
         
         configureFavoriteBarButtonItem()
@@ -149,7 +145,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         if shouldScrollToStartingIndex {
             if
                 let songsToDisplay = songsManager?.songsToDisplay,
-                let settings = settings,
+                let settings = Settings(fromUserDefaults: .standard),
                 songDetailItems.count == 0
             {
                 songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
@@ -195,7 +191,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                     
                     if
                         let songsToDisplay = self.songsManager?.songsToDisplay,
-                        let settings = self.settings,
+                        let settings = Settings(fromUserDefaults: .standard),
                         self.songDetailItems.count == 0
                     {
                         self.songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: self.displayMode(forSize: self.view.frame.size), isLandscape: self.isLandscape(forSize: self.view.frame.size))
@@ -325,6 +321,10 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         configurePlayerBarButtonItems()
         configureFavoriteBarButtonItem()
     } 
+    
+    deinit {
+        //Settings.removeObserver(self)
+    }
     
     // MARK: - Helpers
     
@@ -495,7 +495,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     func shouldShowPDF(forSize size: CGSize) -> Bool {
-        if let settings = settings {
+        if let settings = Settings(fromUserDefaults: .standard) {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 return settings.shouldShowSheetMusic_iPad
             } else {
@@ -762,14 +762,14 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     @IBAction func showSheetMusicTapped(_ sender: Any) {
-        if let settings = settings {
+        if let settings = Settings(fromUserDefaults: .standard) {
             if UIDevice.current.userInterfaceIdiom == .pad {
-                settings.shouldShowSheetMusic_iPad = !settings.shouldShowSheetMusic_iPad
+                _ = settings.new(withShouldShowSheetMusic_iPad: !settings.shouldShowSheetMusic_iPad).save(toUserDefaults: .standard)
             } else {
                 if isLandscape(forSize: view.frame.size) {
-                    settings.shouldShowSheetMusicInLandscape_iPhone = !settings.shouldShowSheetMusicInLandscape_iPhone
+                    _ = settings.new(withShouldShowSheetMusicInLandscape_iPhone: !settings.shouldShowSheetMusicInLandscape_iPhone).save(toUserDefaults: .standard)
                 } else {
-                    settings.shouldShowSheetMusicInPortrait_iPhone = !settings.shouldShowSheetMusicInPortrait_iPhone
+                    _ = settings.new(withShouldShowSheetMusicInPortrait_iPhone: !settings.shouldShowSheetMusicInPortrait_iPhone).save(toUserDefaults: .standard)                    
                 }
             }
             
@@ -788,9 +788,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         if
             let vc = SettingsVC.pfw_instantiateFromStoryboard() as? SettingsVC,
             let app = UIApplication.shared.delegate as? PsalterAppDelegate
-        {
-            vc.settings = app.settings
-            
+        {            
             vc.modalPresentationStyle = .popover
             
             if let sender = sender as? UIBarButtonItem {

@@ -14,7 +14,11 @@ typealias FileInfo = (String, String, String)
 
 class TextViewVC: UIViewController, HasFileInfo {
     var fileInfo: FileInfo?
-    @IBOutlet weak private var textView: UITextView?
+    @IBOutlet weak private var textView: UITextView? {
+        didSet {
+            textView?.font = Helper.defaultFont(withSize: 12.0, forTextStyle: .body)
+        }
+    }
     var fileURL: URL?
     
     override func viewDidLoad() {

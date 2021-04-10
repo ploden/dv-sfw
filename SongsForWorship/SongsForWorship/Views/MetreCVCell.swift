@@ -12,8 +12,8 @@ import UIKit
 class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
     var song: Song? {
         didSet {
-            if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-                metreLabel?.font = Helper.defaultFont(withSize: app.settings.fontSize)
+            if let settings = Settings(fromUserDefaults: .standard) {
+                metreLabel?.font = Helper.defaultFont(withSize: settings.fontSize)
                 titleLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .title2)
                 versesLabel?.font = Helper.defaultFont(withSize: 14.0, forTextStyle: .body)
                 copyrightLabel?.font = UIFont.systemFont(ofSize: 9.0)

@@ -93,7 +93,6 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSet
                     
                     if UIDevice.current.userInterfaceIdiom != .pad {
                         if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                            vc.settings = settings
                             vc.songsManager = songsManager
                             navigationController?.pushViewController(vc, animated: true)
                         }

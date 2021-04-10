@@ -9,9 +9,7 @@
 import Foundation
 import UIKit
 
-class SettingsVC: UIViewController, HasSettings {
-    var settings: Settings?
-    
+class SettingsVC: UIViewController {
     @IBOutlet var viewsToMakeCircles: [UIView]?
     @IBOutlet weak var systemFontCheckMarkImageView: UIImageView?
     @IBOutlet weak var customFontCheckMarkImageView: UIImageView?
@@ -23,7 +21,7 @@ class SettingsVC: UIViewController, HasSettings {
         
         configureThemeViews()
         
-        if let settings = settings {
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
             customFontCheckMarkImageView?.isHidden = settings.shouldUseSystemFonts
             systemFontCheckMarkImageView?.isHidden = !settings.shouldUseSystemFonts
             
@@ -41,7 +39,7 @@ class SettingsVC: UIViewController, HasSettings {
         }
         
         if
-            let settings = settings,
+            let settings = Settings(fromUserDefaults: UserDefaults.standard),
             let viewsToMakeCircles = viewsToMakeCircles,
             settings.theme.rawValue < viewsToMakeCircles.count
         {
@@ -60,63 +58,63 @@ class SettingsVC: UIViewController, HasSettings {
         
     @IBAction func switchValueChanged(sender: Any) {
         if let aSwitch = sender as? UISwitch {
-            if
-                let app = UIApplication.shared.delegate as? PsalterAppDelegate
-            {
-                app.settings.shouldUseSystemFonts = aSwitch.isOn
+            if let settings = Settings(fromUserDefaults: .standard) {
+                _ = settings.new(withShouldUseSystemFonts: aSwitch.isOn).save(toUserDefaults: .standard)
             }
         }
     }
     
     @IBAction func systemFontViewTapped(_ sender: Any) {
-        if let settings = settings {
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
             customFontCheckMarkImageView?.isHidden = true
             systemFontCheckMarkImageView?.isHidden = false
-            settings.shouldUseSystemFonts = true
+            _ = settings.new(withShouldUseSystemFonts: true).save(toUserDefaults: .standard)
         }
     }
     
     @IBAction func customFontViewTapped(_ sender: Any) {
-        if let settings = settings {
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
             customFontCheckMarkImageView?.isHidden = false
             systemFontCheckMarkImageView?.isHidden = true
-            settings.shouldUseSystemFonts = false
+            _ = settings.new(withShouldUseSystemFonts: false).save(toUserDefaults: .standard)
         }
     }
     
     @IBAction func increaseTextSizeTapped(_ sender: Any) {
-        if let settings = settings {
-            settings.increaseFontSize()
-            increaseFontSizeButton?.isEnabled = settings.canIncreaseFontSize()
-            decreaseFontSizeButton?.isEnabled = settings.canDecreaseFontSize()
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
+            if let updatedSettings = settings.newWithIncreasedFontSize().save(toUserDefaults: .standard) {
+                increaseFontSizeButton?.isEnabled = updatedSettings.canIncreaseFontSize()
+                decreaseFontSizeButton?.isEnabled = updatedSettings.canDecreaseFontSize()
+            }
         }
     }
 
     @IBAction func decreaseTextSizeTapped(_ sender: Any) {
-        if let settings = settings {
-            settings.decreaseFontSize()
-            increaseFontSizeButton?.isEnabled = settings.canIncreaseFontSize()
-            decreaseFontSizeButton?.isEnabled = settings.canDecreaseFontSize()
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
+            if let updatedSettings = settings.newWithDecreasedFontSize().save(toUserDefaults: .standard) {
+                increaseFontSizeButton?.isEnabled = updatedSettings.canIncreaseFontSize()
+                decreaseFontSizeButton?.isEnabled = updatedSettings.canDecreaseFontSize()
+            }
         }
     }
 
     @IBAction func lightThemeTapped(_ sender: Any) {
-        if let settings = settings {
-            settings.theme = .defaultLight
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
+            _ = settings.new(withTheme: .defaultLight).save(toUserDefaults: .standard)
             configureThemeViews()
         }
     }
 
     @IBAction func whiteThemeTapped(_ sender: Any) {
-        if let settings = settings {
-            settings.theme = .white
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
+            _ = settings.new(withTheme: .white).save(toUserDefaults: .standard)
             configureThemeViews()
         }
     }
     
     @IBAction func darkThemeTapped(_ sender: Any) {
-        if let settings = settings {
-            settings.theme = .night
+        if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
+            _ = settings.new(withTheme: .night).save(toUserDefaults: .standard)
             configureThemeViews()
         }
     }

@@ -31,12 +31,13 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
         tableView?.rowHeight = UITableView.automaticDimension
         
         self.navigationItem.hidesSearchBarWhenScrolling = false
+        searchBar?.showsCancelButton = true
         self.navigationItem.titleView = searchBar
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         barTintColorsToRestore = navigationController?.navigationBar.theme_barTintColor
         navigationController?.navigationBar.theme_barTintColor = ThemeColors(defaultLight: .systemBackground, white: .systemBackground, night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))).toHex()
     }
@@ -93,7 +94,6 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
                 
                 if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                     vc.songsManager = songsManager
-                    vc.settings = settings
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }

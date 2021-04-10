@@ -14,8 +14,11 @@ var NumPlaybackRates: size_t = 6
 
 class Helper: NSObject {
     class func defaultFont(withSize size: CGFloat) -> UIFont {
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-            if app.settings.shouldUseSystemFonts {
+        if
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let settings = Settings(fromUserDefaults: .standard)
+        {
+            if settings.shouldUseSystemFonts {
                 return UIFont.systemFont(ofSize: size)
             } else if
                 let font = UIFont(name: app.appConfig.defaultFont, size: size)
@@ -28,10 +31,13 @@ class Helper: NSObject {
     }
     
     class func defaultFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+        if
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let settings = Settings(fromUserDefaults: .standard)
+        {
             let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
             
-            if app.settings.shouldUseSystemFonts {
+            if settings.shouldUseSystemFonts {
                 return preferredFont
             } else if
                 let font = UIFont(name: app.appConfig.defaultFont, size: preferredFont.pointSize)
@@ -44,8 +50,11 @@ class Helper: NSObject {
     }
 
     class func defaultBoldFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-            if app.settings.shouldUseSystemFonts {
+        if
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let settings = Settings(fromUserDefaults: .standard)
+        {
+            if settings.shouldUseSystemFonts {
                 let font = UIFont.preferredFont(forTextStyle: textStyle)
                 return UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: 0)
             } else if

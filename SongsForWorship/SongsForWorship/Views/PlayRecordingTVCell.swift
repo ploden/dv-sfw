@@ -12,10 +12,11 @@ class PlayRecordingTVCell: UITableViewCell {
     @IBOutlet private weak var albumTitleLabel: UILabel? {
         didSet {
             albumTitleLabel?.font = {
-                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-                    if app.settings.shouldUseSystemFonts {
-                        return UIFont.preferredFont(forTextStyle: .title3)
-                    }
+                if
+                    let settings = Settings(fromUserDefaults: .standard),
+                    settings.shouldUseSystemFonts
+                {
+                    return UIFont.preferredFont(forTextStyle: .title3)
                 }
                 return UIFont.systemFont(ofSize: 14.0, weight: .light)
             }()
@@ -25,10 +26,11 @@ class PlayRecordingTVCell: UITableViewCell {
     @IBOutlet private weak var trackTitleLabel: UILabel? {
         didSet {
             trackTitleLabel?.font = {
-                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-                    if app.settings.shouldUseSystemFonts {
-                        return UIFont.preferredFont(forTextStyle: .title2)
-                    }
+                if
+                    let settings = Settings(fromUserDefaults: .standard),
+                    settings.shouldUseSystemFonts
+                {
+                    return UIFont.preferredFont(forTextStyle: .title2)
                 }
                 return UIFont.systemFont(ofSize: 14.0, weight: .light)
             }()
@@ -37,10 +39,11 @@ class PlayRecordingTVCell: UITableViewCell {
     @IBOutlet private weak var artistLabel: UILabel? {
         didSet {
             artistLabel?.font = {
-                if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
-                    if app.settings.shouldUseSystemFonts {
-                        return UIFont.preferredFont(forTextStyle: .title3)
-                    }
+                if
+                    let settings = Settings(fromUserDefaults: .standard),
+                    settings.shouldUseSystemFonts
+                {
+                    return UIFont.preferredFont(forTextStyle: .title3)
                 }
                 return UIFont.systemFont(ofSize: 14.0, weight: .light)
             }()

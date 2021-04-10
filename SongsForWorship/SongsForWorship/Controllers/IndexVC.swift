@@ -17,13 +17,7 @@ extension Bundle {
 
 import MessageUI
 
-class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate, HasSettings {
-    var settings: Settings? {
-        didSet {
-            oldValue?.removeObserver(forSettings: self)
-            settings?.addObserver(forSettings: self)
-        }
-    }
+class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
     var songsManager: SongsManager?
     var sections: [IndexSection]!
     
@@ -43,8 +37,9 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         title = ""
         configureNavBar()
         
-        indexTableView?.register(UINib(nibName: NSStringFromClass(SongTVCell.self.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: NSStringFromClass(SongTVCell.self.self))
-        indexTableView?.register(UINib(nibName: "GenericTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "GenericTVCell")
+        indexTableView?.register(UINib(nibName: String(describing: GenericTVCell.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: String(describing: GenericTVCell.self))
+        indexTableView?.rowHeight = UITableView.automaticDimension
+        indexTableView?.estimatedRowHeight = 50.0
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,8 +52,6 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)
         }
-        
-        //configureNavBar()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -85,20 +78,22 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     // MARK: - Helper methods
     
     func configureNavBar() {
-        if UIDevice.current.userInterfaceIdiom != .pad {
-            if settings?.theme == .defaultLight {
-                let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
-                navigationItem.titleView = navbarLogo
-            } else if settings?.theme == .white {
-                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                let navbarLogo = UIImageView(image: templateImage)
-                navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
-                navigationItem.titleView = navbarLogo
-            }  else if settings?.theme == .night {
-                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                let navbarLogo = UIImageView(image: templateImage)
-                navbarLogo.tintColor = .white
-                navigationItem.titleView = navbarLogo
+        if let settings = Settings(fromUserDefaults: .standard) {
+            if UIDevice.current.userInterfaceIdiom != .pad {
+                if settings.theme == .defaultLight {
+                    let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
+                    navigationItem.titleView = navbarLogo
+                } else if settings.theme == .white {
+                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                    let navbarLogo = UIImageView(image: templateImage)
+                    navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
+                    navigationItem.titleView = navbarLogo
+                }  else if settings.theme == .night {
+                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                    let navbarLogo = UIImageView(image: templateImage)
+                    navbarLogo.tintColor = .white
+                    navigationItem.titleView = navbarLogo
+                }
             }
         }
     }
@@ -196,7 +191,7 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     }
     
     override var shouldAutorotate: Bool {
-        if UIDevice.current.userInterfaceIdiom == .pad || !UIDevice.current.orientation.isLandscape {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return true
         } else {
             return false
@@ -224,31 +219,28 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         return nil
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 54.0
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let genericCellFontSize: CGFloat = 18.0
         
-        var cell: UITableViewCell? = nil
+        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: GenericTVCell.self))
         
-        if indexPath.section < sections.count {
-            let indexSection = sections[indexPath.section]
+        if
+            let generic = cell as? GenericTVCell,
+            indexPath.section < sections.count,
+            let rows = sections[indexPath.section].rows,
+            indexPath.row < rows.count
+        {
+            let indexRow = rows[indexPath.row]
             
-            if indexPath.row < indexSection.rows?.count ?? 0 {
-                let indexRow = indexSection.rows?[indexPath.row]
-                
-                let generic = tableView.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
-                generic?.textLabel?.textColor = UIColor.label
-                generic?.textLabel?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
-                generic?.textLabel?.text = indexRow?.title //songsManager?.songCollections.compactMap { $0.displayName } .joined(separator: " & ")
-                generic?.textLabel?.highlightedTextColor = UIColor.white
-                cell = generic
-            }
+            generic.label?.numberOfLines = 2
+            generic.label?.textAlignment = .center
+            generic.label?.lineBreakMode = .byWordWrapping
+            generic.label?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
+            generic.label?.text = indexRow.title //songsManager?.songCollections.compactMap { $0.displayName } .joined(separator: " & ")
+            generic.label?.highlightedTextColor = UIColor.white
         }
-                
-        return cell ?? UITableViewCell()
+        
+        return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -268,10 +260,6 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                     
                     if var hasSongs = vc as? HasSongsManager {
                         hasSongs.songsManager = songsManager
-                    }
-                    
-                    if let hasSettings = vc as? HasSettings {
-                        hasSettings.settings = settings
                     }
                     
                     if
