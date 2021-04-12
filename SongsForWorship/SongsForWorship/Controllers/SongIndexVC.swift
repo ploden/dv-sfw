@@ -19,6 +19,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     @IBOutlet private var copyrightTVCell: UITableViewCell!
     private var previewingContext: UIViewControllerPreviewing?
     private var segmentedControl: UISegmentedControl?
+    private var searchTableViewController: SearchTableViewController?
     
     // MARK: - UIViewController
     
@@ -27,9 +28,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         
         title = ""
         configureNavBar()
-        
-        let settings = Settings(fromUserDefaults: .standard)
-        print("\(settings)")
         
         if UIDevice.current.userInterfaceIdiom != .pad {
             let interaction = UIContextMenuInteraction(delegate: self)
@@ -40,31 +38,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         songIndexTableView?.estimatedRowHeight = 50.0
         songIndexTableView?.register(UINib(nibName: "GenericTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "GenericTVCell")
         songIndexTableView?.register(UINib(nibName: "SongTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SongTVCell")
-        
-        /*
-        searchController = UISearchController(searchResultsController: nil)
-        
-        searchController.searchBar.delegate = self
-        searchController.searchBar.placeholder = "Search title, verse, tune, or composer"
-        searchController.delegate = self
-        searchController.searchResultsUpdater = self
-        searchController.dimsBackgroundDuringPresentation = false
-        
-        searchController.searchBar.searchBarStyle = .prominent
-        searchController.searchBar.backgroundColor = UIColor(named: "NavBarBackground")
-        searchController.searchBar.barTintColor = .white
- */
-        
-        /*
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithOpaqueBackground()
-        navigationBarAppearance.backgroundColor = UIColor(named: "NavBarBackground")
-        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-        navigationController?.navigationBar.compactAppearance = navigationBarAppearance
-        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
- */
         
         if
             let songsManager = songsManager,
@@ -229,15 +202,15 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     func configureNavBar() {
         if let settings = Settings(fromUserDefaults: .standard) {
             if UIDevice.current.userInterfaceIdiom != .pad {
-                if settings.theme == .defaultLight {
+                if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .defaultLight {
                     let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
                     navigationItem.titleView = navbarLogo
-                } else if settings.theme == .white {
+                } else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .white {
                     let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
                     let navbarLogo = UIImageView(image: templateImage)
                     navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
                     navigationItem.titleView = navbarLogo
-                }  else if settings.theme == .night {
+                }  else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .night {
                     let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
                     let navbarLogo = UIImageView(image: templateImage)
                     navbarLogo.tintColor = .white
@@ -368,19 +341,23 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     }
     
     @IBAction func searchTapped(_ sender: Any) {
-        if let vc = SearchTableViewController.pfw_instantiateFromStoryboard() as? SearchTableViewController {
-            vc.songsManager = songsManager
-            vc.modalPresentationStyle = .overCurrentContext
-            present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
+        if searchTableViewController == nil {
+            searchTableViewController = SearchTableViewController.pfw_instantiateFromStoryboard() as? SearchTableViewController
+        }
+        
+        if let searchTableViewController = self.searchTableViewController {
+            searchTableViewController.songsManager = songsManager
+            let nc = UINavigationController(rootViewController: searchTableViewController)
+            present(nc, animated: true, completion: nil)
         }
     }
     
     @IBAction func favoritesTapped(_ sender: Any) {
         if let vc = FavoritesVC.pfw_instantiateFromStoryboard() as? FavoritesVC {
             vc.songsManager = songsManager
-            vc.modalPresentationStyle = .overCurrentContext
             vc.delegate = self
-            present(UINavigationController(rootViewController: vc), animated: true, completion: nil)
+            let nc = UINavigationController(rootViewController: vc)            
+            present(nc, animated: true, completion: nil)
         }
     }
 }
@@ -409,6 +386,20 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
                 dismiss(animated: true)
                 self.navigationController?.pushViewController(vc, animated: true)
             }
+        } else {
+            if
+                let segmentedControl = segmentedControl,
+                let idx = songsManager?.songCollections.firstIndex(of: song.collection)
+            {
+                segmentedControl.selectedSegmentIndex = idx
+                songIndexTableView?.reloadData()
+                let ip = indexPathForIndex(song.index)
+                
+                if let ip = ip {
+                    songIndexTableView?.scrollToRow(at: ip, at: .middle, animated: false)
+                }
+            }
+            dismiss(animated: true, completion: nil)
         }
     }
 }

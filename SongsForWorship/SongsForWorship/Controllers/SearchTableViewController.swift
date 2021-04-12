@@ -84,17 +84,17 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row < searchResults.count {
             let searchResult = searchResults[indexPath.row]
-            
-            let song = songsManager?.songForNumber(searchResult.songNumber)
                         
-            if let song = song {
+            if let song = songsManager?.songForNumber(searchResult.songNumber) {
                 let songsToDisplay = searchResults.compactMap { songsManager?.songForNumber($0.songNumber) }
-
+                
                 songsManager?.setcurrentSong(song, songsToDisplay: songsToDisplay)
                 
-                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                    vc.songsManager = songsManager
-                    self.navigationController?.pushViewController(vc, animated: true)
+                if UIDevice.current.userInterfaceIdiom != .pad {
+                    if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+                        vc.songsManager = songsManager
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
                 }
             }
         }

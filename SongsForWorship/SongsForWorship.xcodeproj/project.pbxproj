@@ -17,8 +17,8 @@
 		8D422463260659F600F7EB99 /* IndexSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D422462260659F600F7EB99 /* IndexSection.swift */; };
 		8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42246726065AD300F7EB99 /* AppConfig.swift */; };
 		8D50B97424F4C7F600AFDC29 /* Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D50B97324F4C7F600AFDC29 /* Composer.swift */; };
-		8D50B97724F583E000AFDC29 /* TunesLoaderHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D50B97624F583E000AFDC29 /* TunesLoaderHelpers.swift */; };
 		8D54FFA326105E9D00377042 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */; };
+		8D59D71A262397380055651B /* SwiftyMarkdown in Frameworks */ = {isa = PBXBuildFile; productRef = 8D59D719262397380055651B /* SwiftyMarkdown */; };
 		8D72DC1A24EC55B700A8F7AA /* SongCollectionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D72DC1924EC55B700A8F7AA /* SongCollectionFactory.swift */; };
 		8D7DABE324EE391600FD7D91 /* SongTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D7DABE124EE391600FD7D91 /* SongTVCell.xib */; };
 		8D7DABE424EE391600FD7D91 /* SongTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7DABE224EE391600FD7D91 /* SongTVCell.swift */; };
@@ -45,7 +45,7 @@
 		8D99C1F824CED40A005B34F2 /* SongCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1A824CED40A005B34F2 /* SongCollection.swift */; };
 		8D99C1F924CED40A005B34F2 /* AVMIDIPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1A924CED40A005B34F2 /* AVMIDIPlayer.swift */; };
 		8D99C1FA24CED40A005B34F2 /* FAQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AA24CED40A005B34F2 /* FAQ.swift */; };
-		8D99C1FB24CED40A005B34F2 /* BaseTunesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */; };
+		8D99C1FB24CED40A005B34F2 /* TunesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AB24CED40A005B34F2 /* TunesLoader.swift */; };
 		8D99C1FC24CED40A005B34F2 /* Topic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AC24CED40A005B34F2 /* Topic.swift */; };
 		8D99C1FE24CED40A005B34F2 /* SongDetailVCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1AE24CED40A005B34F2 /* SongDetailVCDelegate.swift */; };
 		8D99C1FF24CED40A005B34F2 /* NoRecordingsFoundTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1B024CED40A005B34F2 /* NoRecordingsFoundTVCell.swift */; };
@@ -106,7 +106,7 @@
 		8DBAF4EC261769F900FD3170 /* ScrollingSheetMusicCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8DBAF4EA261769F900FD3170 /* ScrollingSheetMusicCVCell.xib */; };
 		8DD2E1B524E470BF00F0DE30 /* TextViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */; };
 		8DD2E1B724E4756000F0DE30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DD2E1B624E4755F00F0DE30 /* Assets.xcassets */; };
-		8DDE0DF324FCF0C30070154B /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = 8DDE0DF224FCF0C30070154B /* Down */; };
+		8DE8B96326204D00006C5747 /* CustomClassConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE8B96226204D00006C5747 /* CustomClassConfig.swift */; };
 		8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF7D260261B55880096E5F5 /* PDFCVCell.swift */; };
 		8DF7D263261B55880096E5F5 /* PDFCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8DF7D261261B55880096E5F5 /* PDFCVCell.xib */; };
 		8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */; };
@@ -133,7 +133,6 @@
 		8D422462260659F600F7EB99 /* IndexSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexSection.swift; sourceTree = "<group>"; };
 		8D42246726065AD300F7EB99 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		8D50B97324F4C7F600AFDC29 /* Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composer.swift; sourceTree = "<group>"; };
-		8D50B97624F583E000AFDC29 /* TunesLoaderHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunesLoaderHelpers.swift; sourceTree = "<group>"; };
 		8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		8D72DC1924EC55B700A8F7AA /* SongCollectionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCollectionFactory.swift; sourceTree = "<group>"; };
 		8D7DABE124EE391600FD7D91 /* SongTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongTVCell.xib; sourceTree = "<group>"; };
@@ -166,7 +165,7 @@
 		8D99C1A824CED40A005B34F2 /* SongCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongCollection.swift; sourceTree = "<group>"; };
 		8D99C1A924CED40A005B34F2 /* AVMIDIPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVMIDIPlayer.swift; sourceTree = "<group>"; };
 		8D99C1AA24CED40A005B34F2 /* FAQ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FAQ.swift; sourceTree = "<group>"; };
-		8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTunesLoader.swift; sourceTree = "<group>"; };
+		8D99C1AB24CED40A005B34F2 /* TunesLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TunesLoader.swift; sourceTree = "<group>"; };
 		8D99C1AC24CED40A005B34F2 /* Topic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Topic.swift; sourceTree = "<group>"; };
 		8D99C1AE24CED40A005B34F2 /* SongDetailVCDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDetailVCDelegate.swift; sourceTree = "<group>"; };
 		8D99C1B024CED40A005B34F2 /* NoRecordingsFoundTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoRecordingsFoundTVCell.swift; sourceTree = "<group>"; };
@@ -226,6 +225,7 @@
 		8DBAF4EA261769F900FD3170 /* ScrollingSheetMusicCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScrollingSheetMusicCVCell.xib; sourceTree = "<group>"; };
 		8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewVC.swift; sourceTree = "<group>"; };
 		8DD2E1B624E4755F00F0DE30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8DE8B96226204D00006C5747 /* CustomClassConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomClassConfig.swift; sourceTree = "<group>"; };
 		8DF7D260261B55880096E5F5 /* PDFCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFCVCell.swift; sourceTree = "<group>"; };
 		8DF7D261261B55880096E5F5 /* PDFCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PDFCVCell.xib; sourceTree = "<group>"; };
 		8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingConfig.swift; sourceTree = "<group>"; };
@@ -244,7 +244,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DBAF4E22617246600FD3170 /* SwiftTheme in Frameworks */,
-				8DDE0DF324FCF0C30070154B /* Down in Frameworks */,
+				8D59D71A262397380055651B /* SwiftyMarkdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,9 +371,8 @@
 				8D99C1AC24CED40A005B34F2 /* Topic.swift */,
 				8D35567624F122A200AC6C9A /* Tune.swift */,
 				8D99C1A424CED40A005B34F2 /* TuneDescription.swift */,
-				8D99C1AB24CED40A005B34F2 /* BaseTunesLoader.swift */,
+				8D99C1AB24CED40A005B34F2 /* TunesLoader.swift */,
 				8D50B97324F4C7F600AFDC29 /* Composer.swift */,
-				8D50B97624F583E000AFDC29 /* TunesLoaderHelpers.swift */,
 				8D3DB3F0251322950027EC66 /* Settings.swift */,
 				8D3DB3F2251325310027EC66 /* SoundFont.swift */,
 				8D09B672259AFBBD002558A1 /* ScaleXY.swift */,
@@ -383,6 +382,7 @@
 				8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */,
 				8D37C1E62608930C000708D7 /* SoundFontConfig.swift */,
 				8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */,
+				8DE8B96226204D00006C5747 /* CustomClassConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -505,8 +505,8 @@
 			);
 			name = SongsForWorship;
 			packageProductDependencies = (
-				8DDE0DF224FCF0C30070154B /* Down */,
 				8DBAF4E12617246600FD3170 /* SwiftTheme */,
+				8D59D719262397380055651B /* SwiftyMarkdown */,
 			);
 			productName = SongsForWorship;
 			productReference = 8D99C17724CED391005B34F2 /* SongsForWorship.framework */;
@@ -562,8 +562,8 @@
 			);
 			mainGroup = 8D99C16D24CED391005B34F2;
 			packageReferences = (
-				8DDE0DF124FCF0C30070154B /* XCRemoteSwiftPackageReference "Down" */,
 				8DBAF4E02617246600FD3170 /* XCRemoteSwiftPackageReference "SwiftTheme" */,
+				8D59D718262397380055651B /* XCRemoteSwiftPackageReference "SwiftyMarkdown" */,
 			);
 			productRefGroup = 8D99C17824CED391005B34F2 /* Products */;
 			projectDirPath = "";
@@ -683,10 +683,9 @@
 				8D99C23324CED40A005B34F2 /* SongsForWorshipAppDelegate.swift in Sources */,
 				8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */,
 				8DA2204D24DEC8020014B557 /* HasFileURL.swift in Sources */,
-				8D50B97724F583E000AFDC29 /* TunesLoaderHelpers.swift in Sources */,
 				8D72DC1A24EC55B700A8F7AA /* SongCollectionFactory.swift in Sources */,
 				8DA2D687261EE765008D95C6 /* SelectSongMenuVC.swift in Sources */,
-				8D99C1FB24CED40A005B34F2 /* BaseTunesLoader.swift in Sources */,
+				8D99C1FB24CED40A005B34F2 /* TunesLoader.swift in Sources */,
 				8D99C21E24CED40A005B34F2 /* Helper.swift in Sources */,
 				8D99C20124CED40A005B34F2 /* PlayTrackTVCell.swift in Sources */,
 				8D99C22024CED40A005B34F2 /* HasStoryboardName.swift in Sources */,
@@ -709,6 +708,7 @@
 				8D99C1FC24CED40A005B34F2 /* Topic.swift in Sources */,
 				8D99C23224CED40A005B34F2 /* HasSongsManager.swift in Sources */,
 				8DBAF4EB261769F900FD3170 /* ScrollingSheetMusicCVCell.swift in Sources */,
+				8DE8B96326204D00006C5747 /* CustomClassConfig.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1042,6 +1042,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		8D59D718262397380055651B /* XCRemoteSwiftPackageReference "SwiftyMarkdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimonFairbairn/SwiftyMarkdown";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.3;
+			};
+		};
 		8DBAF4E02617246600FD3170 /* XCRemoteSwiftPackageReference "SwiftTheme" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wxxsw/SwiftTheme";
@@ -1050,26 +1058,18 @@
 				minimumVersion = 0.6.2;
 			};
 		};
-		8DDE0DF124FCF0C30070154B /* XCRemoteSwiftPackageReference "Down" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/iwasrobbed/Down.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.3;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8D59D719262397380055651B /* SwiftyMarkdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8D59D718262397380055651B /* XCRemoteSwiftPackageReference "SwiftyMarkdown" */;
+			productName = SwiftyMarkdown;
+		};
 		8DBAF4E12617246600FD3170 /* SwiftTheme */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8DBAF4E02617246600FD3170 /* XCRemoteSwiftPackageReference "SwiftTheme" */;
 			productName = SwiftTheme;
-		};
-		8DDE0DF224FCF0C30070154B /* Down */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8DDE0DF124FCF0C30070154B /* XCRemoteSwiftPackageReference "Down" */;
-			productName = Down;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

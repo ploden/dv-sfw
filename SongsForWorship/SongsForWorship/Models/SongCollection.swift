@@ -12,7 +12,7 @@ import PDFKit
 
 extension Notification.Name {
     static let currentSongDidChange = Notification.Name("currentSongDidChange")
-    static let settingsDidChange = Notification.Name("settingsDidChange")
+    static let settingsDidChange = Notification.Name("SFW_settingsDidChange")
     static let selectedCollectionDidChange = Notification.Name("SelectedCollectionDidChange")
 }
 
@@ -49,11 +49,13 @@ open class SongCollection: NSObject {
         func loadAll(idx: Int) {
             var song = songs![idx]
             
+            /*
             BaseTunesLoader.loadTunes(forSong: song) { [weak self] someError, someTuneDescriptions in
                 if idx+1 < songs!.count {
                     loadAll(idx: idx+1)
                 }
             }
+             */
         }
         
         //loadAll(idx: 0)

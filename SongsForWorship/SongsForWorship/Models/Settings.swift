@@ -70,7 +70,7 @@ enum ThemeSetting: Int, CaseIterable, Codable {
 
 public struct Settings: Codable {
     public var shouldUseSystemFonts = false
-    public var autoNightTheme = false
+    public var autoNightTheme = true
     private(set) var soundFonts: [SoundFont] = [SoundFont]()
     private(set) var selectedSoundFont: SoundFont?
     private(set)  var fontSizeSetting: FontSizeSetting = .medium
@@ -79,11 +79,53 @@ public struct Settings: Codable {
             return CGFloat(fontSizeSetting.rawValue) / 10.0
         }
     }
-    private(set) var theme: ThemeSetting = .defaultLight
+    private var theme: ThemeSetting = .defaultLight
     private(set) var shouldShowSheetMusicInPortrait_iPhone: Bool = false
     private(set) var shouldShowSheetMusicInLandscape_iPhone: Bool = true
     private(set) var shouldShowSheetMusic_iPad: Bool = true
 
+    func theme(forUserInterfaceStyle style: UIUserInterfaceStyle) -> ThemeSetting {
+        if autoNightTheme {
+            if style == .dark {
+                return .night
+            } else if theme != .night {
+                return theme
+            }
+            return .defaultLight
+        }
+        return theme
+    }
+    
+    func new(withAutoNightTheme autoNightTheme: Bool, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+        )
+        
+        let newTheme = s.theme(forUserInterfaceStyle: userInterfaceStyle)
+
+        let s2 = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: newTheme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+        )
+        
+        return s2
+    }
+    
     func new(withShouldShowSheetMusicInPortrait_iPhone shouldShowSheetMusicInPortrait_iPhone: Bool) -> Settings {
         let s = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,
@@ -129,10 +171,20 @@ public struct Settings: Codable {
         return s
     }
     
-    func new(withTheme theme: ThemeSetting) -> Settings {
+    func new(withTheme theme: ThemeSetting, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
+        let newAutoNightTheme: Bool = {
+            if userInterfaceStyle == .dark && theme != .night {
+                return false
+            } else if userInterfaceStyle == .light && theme == .night {
+                return false
+            } else {
+                return self.autoNightTheme
+            }
+        }()
+        
         let s = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: self.autoNightTheme,
+            autoNightTheme: newAutoNightTheme,
             soundFonts: self.soundFonts,
             selectedSoundFont: self.selectedSoundFont,
             fontSizeSetting: self.fontSizeSetting,
@@ -178,7 +230,9 @@ public struct Settings: Codable {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(self) {
             userDefaults.set(encoded, forKey: "SFWSettings")
-            NotificationCenter.default.post(name: .settingsDidChange, object: nil)
+            OperationQueue.main.addOperation({
+                NotificationCenter.default.post(name: Notification.Name.settingsDidChange, object: nil)
+            })
             return self
         }
         return nil
@@ -252,12 +306,12 @@ public struct Settings: Codable {
         }
     }
     
-    static func addObserver(forSettings anObserver: SettingsObserver?) {
-        NotificationCenter.default.addObserver(anObserver as Any, selector: #selector(SettingsObserver.settingsDidChange(_:)), name: .settingsDidChange, object: nil)
+    static func addObserver(forSettings anObserver: SettingsObserver) {
+        NotificationCenter.default.addObserver(anObserver as Any, selector: #selector(SettingsObserver.settingsDidChange(_:)), name: Notification.Name.settingsDidChange, object: nil)
     }
 
     func removeObserver(forSettings anObserver: SettingsObserver?) {
-        NotificationCenter.default.removeObserver(anObserver as Any)
+        NotificationCenter.default.removeObserver(anObserver as Any, name: .settingsDidChange, object: nil)
     }
 }
  

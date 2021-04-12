@@ -13,38 +13,6 @@ enum PFWTunesVCTableViewSection : Int {
     case _Count = 2
 }
 
-@objc public protocol ExtensibleTunesVC {
-    @objc dynamic func tuneCell(for tableView: UITableView, forRowAt indexPath: IndexPath) -> UITableViewCell
-}
-
-extension TunesVC: ExtensibleTunesVC {
-    @objc dynamic public func tuneCell(for tableView: UITableView, forRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell?
-
-        if
-            let tuneTracks = tuneTracks,
-            tuneTracks.count > 0
-        {
-            let playTrackTVCell = tableView.dequeueReusableCell(withIdentifier: "PlayTrackTVCell") as? PlayTrackTVCell
-            
-            if indexPath.row < tuneTracks.count {
-                playTrackTVCell?.trackTitleLabel?.text = tuneTracks[indexPath.row].title
-            }
-            
-            cell = playTrackTVCell
-        } else {
-            cell = headerCell(for: tableView)
-        }
-        
-        
-        if cell == nil {
-            cell = UITableViewCell()
-        }
-        
-        return cell!
-    }
-}
-
 open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, PlayerControlsViewDelegate, PlayerControllerDelegate, HasSongsManager {
     enum ImageNames: String {
         case pause = "pause.fill", play = "play.fill", repeatTrack = "repeat" 
@@ -320,7 +288,8 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         switch indexPath.section {
         case PFWTunesVCTableViewSection._Tune.rawValue:
-            cell = tuneCell(for: tableView, forRowAt: indexPath)
+            break
+            //cell = tuneCell(for: tableView, forRowAt: indexPath)
             /*
             if
                 let tuneTracks = tuneTracks,

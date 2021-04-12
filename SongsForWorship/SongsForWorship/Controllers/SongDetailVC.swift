@@ -43,6 +43,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 }
             }
             scrollToCurrentSong()
+            navigationItem.title = songsManager?.currentSong?.number
         }
     }
     var appConfig: AppConfig {
@@ -119,8 +120,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         collectionView?.register(UINib(nibName: String(describing: MetreCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: MetreCVCell.self))
         collectionView?.register(UINib(nibName: String(describing: SheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: SheetMusicCVCell.self))
         collectionView?.register(UINib(nibName: String(describing: ScrollingSheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: ScrollingSheetMusicCVCell.self))
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -139,7 +138,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
 
     override func viewDidLayoutSubviews() {
-        print("viewDidLayoutSubviews")
         super.viewDidLayoutSubviews()
         
         if shouldScrollToStartingIndex {
@@ -157,51 +155,55 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        print("viewWillTransition")
         super.viewWillTransition(to: size, with: coordinator)
-        
-        //shouldScrollToStartingIndex = true
         
         let animated = true
         
-        if size.width > size.height {
-            navigationController?.hidesBarsOnTap = true
-            navigationItem.setHidesBackButton(true, animated: animated)
-        } else {
-            navigationController?.hidesBarsOnTap = false
-            navigationController?.setNavigationBarHidden(false, animated: animated)
-            navigationController?.setToolbarHidden(false, animated: animated)
-            navigationItem.setHidesBackButton(false, animated: animated)
-        }
-        
-        if let collectionView = collectionView {
-            let numItems = collectionView.numberOfItems(inSection: 0)
+        if view.frame.size.height != size.height && view.frame.size.width == size.width {
+            print("viewWillTransition: only heights changed")
+        } else if view.frame.size.width != size.width {
+            print("viewWillTransition: widths changed")
             
-            if numItems > 0 {
-                //let indexPathBeforeTransitionToSize = IndexPath(item: min(i, numItems - 1), section: 0)
+            if size.width > size.height {
+                navigationController?.hidesBarsOnTap = true
+                navigationItem.setHidesBackButton(true, animated: animated)
+            } else {
+                navigationController?.hidesBarsOnTap = false
+                navigationController?.setNavigationBarHidden(false, animated: animated)
+                navigationController?.setToolbarHidden(false, animated: animated)
+                navigationItem.setHidesBackButton(false, animated: animated)
+            }
+            
+            if let collectionView = collectionView {
+                let numItems = collectionView.numberOfItems(inSection: 0)
                 
-                coordinator.animate(alongsideTransition: { context in
-                    collectionView.alpha = 0.0
-                }) { context in
-                    UIView.animate(withDuration: 0.15, animations: {
+                collectionView.alpha = 0.0
+                
+                if numItems > 0 {
+                    coordinator.animate(alongsideTransition: { context in
+                    }) { context in
+                        self.songDetailItems = [SongDetailItem]()
+                        
+                        if
+                            let songsToDisplay = self.songsManager?.songsToDisplay,
+                            let settings = Settings(fromUserDefaults: .standard),
+                            self.songDetailItems.count == 0
+                        {
+                            self.songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: self.displayMode(forSize: self.view.frame.size), isLandscape: self.isLandscape(forSize: self.view.frame.size))
+                        }
+                        
+                        collectionView.collectionViewLayout.invalidateLayout()
+                        collectionView.reloadData()
+                        
+                        self.scrollToCurrentSong()
+                        self.configureShowSheetMusicBarButtonItem(forSize: size)
+                        
                         collectionView.alpha = 1.0
-                    })
-                    
-                    self.songDetailItems = [SongDetailItem]()
-                    
-                    if
-                        let songsToDisplay = self.songsManager?.songsToDisplay,
-                        let settings = Settings(fromUserDefaults: .standard),
-                        self.songDetailItems.count == 0
-                    {
-                        self.songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: self.displayMode(forSize: self.view.frame.size), isLandscape: self.isLandscape(forSize: self.view.frame.size))
+                        
+                        UIView.animate(withDuration: 0.15, animations: {
+                            collectionView.alpha = 1.0
+                        })
                     }
-
-                    collectionView.collectionViewLayout.invalidateLayout()
-                    collectionView.reloadData()
-
-                    self.scrollToCurrentSong()
-                    self.configureShowSheetMusicBarButtonItem(forSize: size)
                 }
             }
         }
@@ -298,7 +300,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 ip.item < songDetailItems.count
             {
                 if !(navigationItem.title != nil) || indexPathOfLastDisplayedCell?.compare(ip) != .orderedSame {
-                    //let song = self.song(forIndexPath: ip, songsToDisplay: songsToDisplay)
                     let song = songDetailItems[ip.item].songs.first
                     songsManager?.removeObserver(forcurrentSong: self)
                     songsManager?.setcurrentSong(song, songsToDisplay: songsToDisplay)
@@ -320,10 +321,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         navigationItem.title = songsManager?.currentSong?.number
         configurePlayerBarButtonItems()
         configureFavoriteBarButtonItem()
-    } 
-    
-    deinit {
-        //Settings.removeObserver(self)
     }
     
     // MARK: - Helpers
@@ -643,6 +640,12 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             if let navigationController = navigationController {
                 navigationController.setNavigationBarHidden(!navigationController.isNavigationBarHidden, animated: true)
                 navigationController.setToolbarHidden(!navigationController.isToolbarHidden, animated: true)
+                
+                UIView.transition(with: self.view, duration: TimeInterval(UINavigationController.hideShowBarDuration), options: .curveEaseInOut) {
+                    if let collectionView = self.collectionView {
+                        collectionView.visibleCells.forEach { $0.setNeedsDisplay() }
+                    }
+                } completion: { (finished) in }
             }
         }
     }
@@ -785,10 +788,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     @IBAction func showSettingsTapped(_ sender: Any) {
-        if
-            let vc = SettingsVC.pfw_instantiateFromStoryboard() as? SettingsVC,
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate
-        {            
+        if let vc = SettingsVC.pfw_instantiateFromStoryboard() as? SettingsVC {
             vc.modalPresentationStyle = .popover
             
             if let sender = sender as? UIBarButtonItem {

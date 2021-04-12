@@ -481,6 +481,9 @@
                                                             </label>
                                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TC3-eN-j11">
                                                                 <rect key="frame" x="350" y="6.5" width="51" height="31"/>
+                                                                <connections>
+                                                                    <action selector="switchValueChangedWithSender:" destination="peQ-jw-03k" eventType="valueChanged" id="SYd-2y-MzN"/>
+                                                                </connections>
                                                             </switch>
                                                         </subviews>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -528,6 +531,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="autoNightThemeSwitch" destination="TC3-eN-j11" id="DTA-om-IBx"/>
                         <outlet property="customFontCheckMarkImageView" destination="7Re-dT-hLr" id="dKQ-1v-LVY"/>
                         <outlet property="decreaseFontSizeButton" destination="mvX-uv-Smh" id="7Ku-Xu-BYa"/>
                         <outlet property="increaseFontSizeButton" destination="VYR-Ff-8D5" id="Bti-2X-Gfq"/>

@@ -15,11 +15,17 @@ class SettingsVC: UIViewController {
     @IBOutlet weak var customFontCheckMarkImageView: UIImageView?
     @IBOutlet weak var increaseFontSizeButton: UIButton?
     @IBOutlet weak var decreaseFontSizeButton: UIButton?
+    @IBOutlet weak var  autoNightThemeSwitch: UISwitch?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         configureThemeViews()
+        configureAutoNightThemeSwitch()
         
         if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
             customFontCheckMarkImageView?.isHidden = settings.shouldUseSystemFonts
@@ -41,10 +47,16 @@ class SettingsVC: UIViewController {
         if
             let settings = Settings(fromUserDefaults: UserDefaults.standard),
             let viewsToMakeCircles = viewsToMakeCircles,
-            settings.theme.rawValue < viewsToMakeCircles.count
+            settings.theme(forUserInterfaceStyle: style()).rawValue < viewsToMakeCircles.count
         {
             let sorted = viewsToMakeCircles.sorted { $0.superview!.frame.origin.x < $1.superview!.frame.origin.x }
-            sorted[settings.theme.rawValue].layer.borderWidth = 2.0
+            sorted[settings.theme(forUserInterfaceStyle: style()).rawValue].layer.borderWidth = 2.0
+        }
+    }
+    
+    func configureAutoNightThemeSwitch() {
+        if let settings = Settings(fromUserDefaults: .standard) {
+            autoNightThemeSwitch?.isOn = settings.autoNightTheme
         }
     }
     
@@ -59,7 +71,8 @@ class SettingsVC: UIViewController {
     @IBAction func switchValueChanged(sender: Any) {
         if let aSwitch = sender as? UISwitch {
             if let settings = Settings(fromUserDefaults: .standard) {
-                _ = settings.new(withShouldUseSystemFonts: aSwitch.isOn).save(toUserDefaults: .standard)
+                _ = settings.new(withAutoNightTheme: aSwitch.isOn, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
+                configureThemeViews()
             }
         }
     }
@@ -100,23 +113,29 @@ class SettingsVC: UIViewController {
 
     @IBAction func lightThemeTapped(_ sender: Any) {
         if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
-            _ = settings.new(withTheme: .defaultLight).save(toUserDefaults: .standard)
+            _ = settings.new(withTheme: .defaultLight, userInterfaceStyle: style()).save(toUserDefaults: .standard)
             configureThemeViews()
+            configureAutoNightThemeSwitch()
         }
     }
 
     @IBAction func whiteThemeTapped(_ sender: Any) {
         if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
-            _ = settings.new(withTheme: .white).save(toUserDefaults: .standard)
+            _ = settings.new(withTheme: .white, userInterfaceStyle: style()).save(toUserDefaults: .standard)
             configureThemeViews()
+            configureAutoNightThemeSwitch()
         }
     }
     
     @IBAction func darkThemeTapped(_ sender: Any) {
         if let settings = Settings(fromUserDefaults: UserDefaults.standard) {
-            _ = settings.new(withTheme: .night).save(toUserDefaults: .standard)
+            _ = settings.new(withTheme: .night, userInterfaceStyle: style()).save(toUserDefaults: .standard)
             configureThemeViews()
+            configureAutoNightThemeSwitch()
         }
     }
     
+    func style() -> UIUserInterfaceStyle {
+        return UIScreen.main.traitCollection.userInterfaceStyle
+    }
 }

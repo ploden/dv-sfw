@@ -13,7 +13,7 @@ public struct AppConfig: Decodable {
     let copyright: String
     let directory: String
     let defaultFont: String
-    let defaultBoldFontName: String?
+    let defaultBoldFont: String
     let songCollections: [SongCollectionConfig]
     let soundFonts: [SoundFontConfig]
     let tuneRecordings: Bool
@@ -21,4 +21,5 @@ public struct AppConfig: Decodable {
     let pdfRenderingConfigs_iPhone: [PDFRenderingConfig]
     let pdfRenderingConfigs_iPad: [PDFRenderingConfig]
     let shouldHideSheetMusicForCopyrightedTunes: Bool
+    let customClasses: [CustomClassConfig]
 }

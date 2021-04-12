@@ -9,7 +9,13 @@
 import UIKit
 import AVFoundation
 
-public class BaseTunesLoader {
+protocol TunesLoader {
+    static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
+    static func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void)
+    static func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? 
+}
+
+open class SFWTunesLoader: TunesLoader {
     
     class func lengthString(forDuration aDuration: TimeInterval) -> String {
         let length = aDuration
@@ -51,7 +57,7 @@ public class BaseTunesLoader {
         return nil
     }
     
-    static func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
+    open class func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
         var filename = tuneInfo.filenameFormat
             
         if filename.contains("{number}") {
@@ -67,22 +73,19 @@ public class BaseTunesLoader {
         
         return filename
     }
-}
-
-extension BaseTunesLoader: TunesLoader {
     
-    @objc public dynamic static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
+    open class func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
         return self.defaultFilename(forTuneInfo: tuneInfo, song: song)
     }
 
-    @objc public dynamic static func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void) {
+    open class func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void) {
         var tuneDescriptions: [TuneDescription] = []
               
         if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
             let mainDirectory = app.appConfig.directory
             
             for tuneInfo in aSong.collection.tuneInfos {
-                if let filename = BaseTunesLoader.filename(forTuneInfo: tuneInfo, song: aSong) {
+                if let filename = Self.filename(forTuneInfo: tuneInfo, song: aSong) {
                     let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
                     let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.filetype, inDirectory: subDirectory)
                     

@@ -53,9 +53,9 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let syncInstance = FavoritesSyncronizer.shared
-        syncInstance.synciCloud()
-        NotificationCenter.default.addObserver(self, selector: #selector(favoritesChanged(_:)), name: NSNotification.Name.favoritesDidChange, object: nil)        
-        
+        try? syncInstance.synciCloud()
+        //NotificationCenter.default.addObserver(self, selector: #selector(favoritesChanged(_:)), name: NSNotification.Name.favoritesDidChange, object: nil)
+
         songsManager = SongsManager(appConfig: appConfig)
         songsManager?.loadSongs()
         
@@ -68,86 +68,33 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         
         updateFavoritesShortcuts()
 
-        UINavigationBar.appearance().theme_titleTextAttributes = ThemeStringAttributesPicker([.foregroundColor: UIColor.white], [.foregroundColor: UIColor(named: "NavBarBackground")!])        
+        applyStyling()
         
-        //Set navigation bar Back button tint colour
-        UINavigationBar.appearance().theme_tintColor = ThemeColors(
-            defaultLight: .white,
-            white: UIColor(named: "NavBarBackground")!,
-            night: .white
-        ).toHex()
-        
-        let settings = Settings(fromUserDefaults: .standard) ?? Settings()
-        //ThemeManager.setTheme(index: settings.theme.rawValue)
-        _ = settings.save(toUserDefaults: .standard)
-        Settings.addObserver(forSettings: self)
-
-        window = UIWindow()
-        
-        UINavigationBar.appearance().theme_barTintColor = ThemeColors(
-            defaultLight: UIColor(named: "NavBarBackground")!,
-            white: .systemBackground,
-            night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
-        ).toHex()
-        
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).theme_tintColor = ThemeColors(
-            defaultLight: UIView().tintColor!,
-            white: UIColor(named: "NavBarBackground")!,
-            night: .white
-        ).toHex()
-
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).theme_tintColor = ThemeColors(
-            defaultLight: UIView().tintColor!,
-            white: UIColor(named: "NavBarBackground")!,
-            night: .white
-        ).toHex()
-
         var mainController: UIViewController?
 
         if UIDevice.current.userInterfaceIdiom == .pad {
-            let split = Helper.mainStoryboard_iPad().instantiateInitialViewController() as? UISplitViewController
-            let nav = split?.viewControllers[0] as? UINavigationController
-            
-            if let split = split {
-                for vc in split.viewControllers {
-                    if
-                        let nc = vc as? UINavigationController,
-                        let detail = nc.topViewController as? SongDetailVC
-                    {
-                        detail.navigationItem.leftItemsSupplementBackButton = true
-                        detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
-                        detail.songsManager = songsManager
-                        detail.delegate = self
-                    }
-                    if
-                        let nc = vc as? UINavigationController,
-                        let detail = nc.topViewController as? SongDetailVC
-                    {
-                        detail.navigationItem.leftItemsSupplementBackButton = true
-                        detail.navigationItem.leftBarButtonItem = split.displayModeButtonItem
-                        detail.songsManager = songsManager
-                    }
+            if let split = Helper.mainStoryboard_iPad().instantiateInitialViewController() as? UISplitViewController {
+                if
+                    let index = split.viewController(for: .primary) as? IndexVC,
+                    let detail = split.viewController(for: .secondary) as? SongDetailVC
+                {
+                    index.sections = appConfig.index
+                    index.songsManager = songsManager
+                    
+                    detail.navigationItem.leftItemsSupplementBackButton = true
+                    detail.songsManager = songsManager
+                    detail.delegate = self
                 }
+                mainController = split
             }
-
-            let index = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "IndexVC") as? IndexVC
-            index?.sections = appConfig.index
-            index?.songsManager = songsManager
-
-            nav?.viewControllers = [index].compactMap { $0 }
-            mainController = split
-        } else {            
-            UITabBar.appearance().tintColor = UIColor.white
-
-            let sb = Helper.mainStoryboard_iPhone()
-            
-            if let nv = sb.instantiateInitialViewController() as? UINavigationController {
-                navigationController = nv
-                let index = navigationController?.viewControllers[0] as? IndexVC
-                index?.songsManager = songsManager
-                index?.sections = appConfig.index
+        } else if
+            let nav = Helper.mainStoryboard_iPhone().instantiateInitialViewController() as? UINavigationController,
+            let index = nav.topViewController as? IndexVC
+        {
+                navigationController = nav
+                index.songsManager = songsManager
+                index.sections = appConfig.index
                 mainController = navigationController
-            }
         }
         
         window?.rootViewController = mainController
@@ -162,7 +109,7 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
         let syncInstance = FavoritesSyncronizer.shared
-        syncInstance.synciCloud()
+        try? syncInstance.synciCloud()
     }
 
     func handle(_ shortcutItem: UIApplicationShortcutItem?) -> Bool {
@@ -227,21 +174,67 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
     func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
     }
+    
+    func applyStyling() {
+        UINavigationBar.appearance().theme_titleTextAttributes = ThemeStringAttributesPicker(
+            [.foregroundColor: UIColor.white],
+            [.foregroundColor: UIColor(named: "NavBarBackground")!],
+            [.foregroundColor: UIColor.white]
+        )
+        
+        //Set navigation bar Back button tint colour
+        UINavigationBar.appearance().theme_tintColor = ThemeColors(
+            defaultLight: .white,
+            white: UIColor(named: "NavBarBackground")!,
+            night: .white
+        ).toHex()
+        
+        let settings = Settings(fromUserDefaults: .standard) ?? Settings()
+        _ = settings.save(toUserDefaults: .standard)
+        Settings.addObserver(forSettings: self)
+
+        window = UIWindow()
+        
+        UINavigationBar.appearance().theme_barTintColor = ThemeColors(
+            defaultLight: UIColor(named: "NavBarBackground")!,
+            white: .systemBackground,
+            night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+        ).toHex()
+        
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).theme_tintColor = ThemeColors(
+            defaultLight: UIView().tintColor!,
+            white: UIColor(named: "NavBarBackground")!,
+            night: .white
+        ).toHex()
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).theme_tintColor = ThemeColors(
+            defaultLight: UIView().tintColor!,
+            white: UIColor(named: "NavBarBackground")!,
+            night: .white
+        ).toHex()
+    }
 }
 
 extension PsalterAppDelegate: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
         if
             let settings = Settings(fromUserDefaults: .standard),
-            settings.theme.rawValue != ThemeManager.currentThemeIndex
+            let window = window,
+            settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).rawValue != ThemeManager.currentThemeIndex
         {
-            if settings.theme == .defaultLight || settings.theme == .white {
-                window?.overrideUserInterfaceStyle = .light
-                ThemeManager.setTheme(index: settings.theme.rawValue)
-            } else if settings.theme == .night {
-                window?.overrideUserInterfaceStyle = .dark
-                ThemeManager.setTheme(index: settings.theme.rawValue)
+            if settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle) == .defaultLight || settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle) == .white {
+                window.overrideUserInterfaceStyle = .light
+                ThemeManager.setTheme(index: settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).rawValue)
+            } else if settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle) == .night {
+                window.overrideUserInterfaceStyle = .dark
+                ThemeManager.setTheme(index: settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).rawValue)
             }
         }
+    }
+}
+
+extension PsalterAppDelegate: UISplitViewControllerDelegate {
+    public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+        svc.presentsWithGesture = displayMode != .oneBesideSecondary
     }
 }

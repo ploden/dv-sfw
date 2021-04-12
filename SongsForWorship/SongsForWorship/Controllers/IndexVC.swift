@@ -80,15 +80,15 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     func configureNavBar() {
         if let settings = Settings(fromUserDefaults: .standard) {
             if UIDevice.current.userInterfaceIdiom != .pad {
-                if settings.theme == .defaultLight {
+                if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .defaultLight {
                     let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
                     navigationItem.titleView = navbarLogo
-                } else if settings.theme == .white {
+                } else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .white {
                     let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
                     let navbarLogo = UIImageView(image: templateImage)
                     navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
                     navigationItem.titleView = navbarLogo
-                }  else if settings.theme == .night {
+                }  else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .night {
                     let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
                     let navbarLogo = UIImageView(image: templateImage)
                     navbarLogo.tintColor = .white
@@ -281,9 +281,18 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                     if let vc = vc as? SongDetailVCDelegate {
                         detailVC()?.delegate = vc
                     }
-                    
+                                        
                     vc.title = indexRow.title
-                    navigationController?.pushViewController(vc, animated: true)
+                    
+                    if UIDevice.current.userInterfaceIdiom != .pad {
+                        navigationController?.pushViewController(vc, animated: true)
+                    } else {
+                        if vc is IndexVC || vc is SongIndexVC {
+                            navigationController?.pushViewController(vc, animated: true)
+                        } else {
+                            splitViewController?.setViewController(vc, for: .secondary)
+                        }
+                    }
                 }
             }
         }

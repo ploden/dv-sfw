@@ -87,31 +87,51 @@ class PlayerController: NSObject {
     
     func loadTunes() {
         state = .loadingTunes
-        BaseTunesLoader.loadTunes(forSong: song, completion: { [weak self] someError, someTuneDescriptions in
-            if let _ = someError {
-                OperationQueue.main.addOperation({
-                    self?.state = .loadingTunesDidFail
-                    if let self = self {
-                        self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
-                    }
-                })
-            } else {
-                OperationQueue.main.addOperation({
-                    if let self = self {
-                        self.state = .loadingTunesDidSucceed
-                        for desc in someTuneDescriptions {
-                            let track = PlayerTrack(tuneDescription: desc)
-                            self.playerTracks[track] = desc
+        
+        if
+            let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            
+            let tunesLoaderClass: TunesLoader.Type = {
+                if
+                    let customClassConfig = app.appConfig.customClasses.first(where: { $0.baseName == String(describing: TunesLoader.self) }),
+                    let appName = Bundle.main.appName,
+                    let customClass = Bundle.main.classNamed("\(appName).\(customClassConfig.customName)") as? TunesLoader.Type
+                {
+                    return customClass
+                }
+                
+                return SFWTunesLoader.self
+            }()
+            
+            tunesLoaderClass.loadTunes(forSong: song, completion: { [weak self] someError, someTuneDescriptions in
+                if let _ = someError {
+                    OperationQueue.main.addOperation({
+                        self?.state = .loadingTunesDidFail
+                        if let self = self {
+                            self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
                         }
-                        let silentDelegate = self.delegate
-                        self.delegate = nil
-                        self.currentTrack = self.playerTracks.keys.first
-                        self.delegate = silentDelegate
-                        self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
-                    }
-                })
-            }
-        })
+                    })
+                } else {
+                    OperationQueue.main.addOperation({
+                        if let self = self {
+                            self.state = .loadingTunesDidSucceed
+                            for desc in someTuneDescriptions {
+                                let track = PlayerTrack(tuneDescription: desc)
+                                self.playerTracks[track] = desc
+                            }
+                            let silentDelegate = self.delegate
+                            self.delegate = nil
+                            self.currentTrack = self.playerTracks.keys.first
+                            self.delegate = silentDelegate
+                            self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
+                        }
+                    })
+                }
+            })
+            
+            
+            
+        }
     }
     
     func makeQuery(with predicate: MPMediaPropertyPredicate?) -> MPMediaQuery? {

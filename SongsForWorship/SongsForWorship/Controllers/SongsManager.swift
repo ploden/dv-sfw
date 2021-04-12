@@ -92,7 +92,7 @@ class SongsManager: Equatable {
     }
 
     func removeObserver(forSelectedCollection anObserver: SongCollectionObserver?) {
-        NotificationCenter.default.removeObserver(anObserver as Any)
+        NotificationCenter.default.removeObserver(anObserver as Any, name: .selectedCollectionDidChange, object: nil)
     }
     
     func addObserver(forcurrentSong anObserver: PsalmObserver?) {
@@ -100,7 +100,7 @@ class SongsManager: Equatable {
     }
 
     func removeObserver(forcurrentSong anObserver: PsalmObserver?) {
-        NotificationCenter.default.removeObserver(anObserver as Any)
+        NotificationCenter.default.removeObserver(anObserver as Any, name: .currentSongDidChange, object: nil)
     }
     
     func songForNumber(_ number: String?) -> Song? {
