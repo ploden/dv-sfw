@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-import Down
+import SwiftyMarkdown
 
 typealias FileInfo = (String, String, String)
 
@@ -59,13 +59,12 @@ class TextViewVC: UIViewController, HasFileInfo {
     
     class func readMarkdown(fromFileURL url: URL) -> NSAttributedString? {
         if let markdownString = try? String(contentsOf: url, encoding: String.Encoding.utf8) {
-            let down = Down(markdownString: markdownString)
+            let down = SwiftyMarkdown(string: markdownString)
+            let attributedString = down.attributedString()
+            let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
+            mutableAttributedString.addAttribute(.foregroundColor, value: UIColor.label, range: NSRange(location: 0, length: mutableAttributedString.length))
+            return mutableAttributedString
             
-            if let attributedString = try? down.toAttributedString() {
-                let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
-                mutableAttributedString.addAttribute(.foregroundColor, value: UIColor.label, range: NSRange(location: 0, length: mutableAttributedString.length))
-                return mutableAttributedString
-            }                        
         }
         return nil
     }
