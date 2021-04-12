@@ -10,6 +10,16 @@ import Foundation
 import UIKit
 import SwiftTheme
 
+struct ThemeBarStyles {
+    var defaultLight: UIBarStyle
+    var white: UIBarStyle
+    var night: UIBarStyle
+    
+    func toHex() -> ThemeBarStylePicker {
+        return [defaultLight, white, night]
+    }
+}
+
 struct ThemeColors {
     var defaultLight: UIColor
     var white: UIColor
