@@ -13,12 +13,14 @@ class SettingsVC: UIViewController {
     @IBOutlet var viewsToMakeCircles: [UIView]?
     @IBOutlet weak var systemFontCheckMarkImageView: UIImageView?
     @IBOutlet weak var customFontCheckMarkImageView: UIImageView?
+    @IBOutlet weak var customFontLabel: UILabel?
     @IBOutlet weak var increaseFontSizeButton: UIButton?
     @IBOutlet weak var decreaseFontSizeButton: UIButton?
     @IBOutlet weak var  autoNightThemeSwitch: UISwitch?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        customFontLabel?.text = (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig.defaultFontDisplayName
     }
     
     override func viewWillAppear(_ animated: Bool) {

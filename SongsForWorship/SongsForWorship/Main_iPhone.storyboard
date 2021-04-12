@@ -534,6 +534,7 @@
                     <connections>
                         <outlet property="autoNightThemeSwitch" destination="TC3-eN-j11" id="DTA-om-IBx"/>
                         <outlet property="customFontCheckMarkImageView" destination="7Re-dT-hLr" id="dKQ-1v-LVY"/>
+                        <outlet property="customFontLabel" destination="zT5-82-8Cc" id="ggc-IK-tsg"/>
                         <outlet property="decreaseFontSizeButton" destination="mvX-uv-Smh" id="7Ku-Xu-BYa"/>
                         <outlet property="increaseFontSizeButton" destination="VYR-Ff-8D5" id="Bti-2X-Gfq"/>
                         <outlet property="systemFontCheckMarkImageView" destination="O5F-4C-cgd" id="DEy-T9-xsQ"/>
@@ -695,7 +696,7 @@
         <image name="checkmark" catalog="system" width="128" height="114"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <namedColor name="NavBarBackground">
-            <color red="0.40000000000000002" green="0.0" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.030999999493360519" green="0.14499999582767487" blue="0.40400001406669617" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

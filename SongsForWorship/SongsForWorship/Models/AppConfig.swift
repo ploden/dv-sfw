@@ -13,6 +13,7 @@ public struct AppConfig: Decodable {
     let copyright: String
     let directory: String
     let defaultFont: String
+    let defaultFontDisplayName: String
     let defaultBoldFont: String
     let songCollections: [SongCollectionConfig]
     let soundFonts: [SoundFontConfig]
