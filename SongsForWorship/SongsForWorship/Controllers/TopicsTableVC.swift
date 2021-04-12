@@ -89,6 +89,18 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSet
         if let topic = topic {
             if topic.subtopics.count == 0 && topic.songNumbers.count == 1 {
                 if let song = songsManager?.songForNumber(topic.songNumbers.first) {
+                    if
+                        let detail = splitViewController?.viewController(for: .secondary),
+                        !(detail is SongDetailVC) == true
+                    {
+                        if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+                            vc.songsManager = songsManager
+                            if let detailNav = detail.navigationController {
+                                detailNav.setViewControllers([vc], animated: false)
+                            }
+                        }
+                    }
+                    
                     songsManager?.setcurrentSong(song, songsToDisplay: [song])
                     
                     if UIDevice.current.userInterfaceIdiom != .pad {

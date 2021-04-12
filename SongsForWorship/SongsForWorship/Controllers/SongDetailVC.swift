@@ -43,11 +43,20 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     @objc func songDidChange(_ notification: Notification) {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if
-                let old = notification.userInfo?[NotificationUserInfoKeys.oldValue] as? Song,
+                let _ = notification.userInfo?[NotificationUserInfoKeys.oldValue] as? Song,
                 let new = notification.userInfo?[NotificationUserInfoKeys.newValue] as? Song,
                 let songsManager = songsManager,
                 let settings = Settings(fromUserDefaults: .standard)
             {
+                if playerController?.song != new {
+                    playerController?.stopPlaying()
+                    playerController = nil
+                    
+                    if let currentSong = songsManager.currentSong {
+                        self.playerController = PlayerController(withSong: currentSong, delegate: self)
+                    }
+                }
+                
                 // this feels dangerous
                 let newSongDetailItems = SongDetailVC.calculateItems(forSongs: songsManager.songsToDisplay ?? [Song](), appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
                 
@@ -55,7 +64,6 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                     songDetailItems = newSongDetailItems
                     collectionView?.reloadData()
                 }
-                
             }
             scrollToCurrentSong()
             navigationItem.title = songsManager?.currentSong?.number

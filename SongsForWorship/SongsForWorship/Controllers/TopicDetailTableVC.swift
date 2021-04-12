@@ -103,7 +103,20 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
                 navigationController?.pushViewController(vc, animated: true)
             }
         } else if let song = self.song(for: indexPath) {
-            songsManager.setcurrentSong(song, songsToDisplay: songsToDisplay(for: indexPath))                        
+            if
+                let detail = splitViewController?.viewController(for: .secondary),
+                !(detail is SongDetailVC) == true
+            {
+                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+                    vc.songsManager = songsManager
+                    if let detailNav = detail.navigationController {
+                        detailNav.setViewControllers([vc], animated: false)
+                    }
+                }
+            }
+            
+            songsManager.setcurrentSong(song, songsToDisplay: songsToDisplay(for: indexPath))
+            
             if UIDevice.current.userInterfaceIdiom != .pad {
                 if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                     vc.songsManager = songsManager
