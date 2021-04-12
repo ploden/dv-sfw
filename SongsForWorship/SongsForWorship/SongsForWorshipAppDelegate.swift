@@ -71,6 +71,8 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
 
         if UIDevice.current.userInterfaceIdiom == .pad {
             if let split = Helper.mainStoryboard_iPad().instantiateInitialViewController() as? UISplitViewController {
+                split.delegate = self
+                
                 if
                     let index = split.viewController(for: .primary) as? IndexVC,
                     let detail = split.viewController(for: .secondary) as? SongDetailVC
@@ -108,6 +110,9 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
     public func applicationWillEnterForeground(_ application: UIApplication) {
         let syncInstance = FavoritesSyncronizer.shared
         try? syncInstance.synciCloud()
+    }
+    
+    public func applicationDidBecomeActive(_ application: UIApplication) {
         changeThemeAsNeeded()
     }
 
@@ -187,6 +192,9 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             white: UIColor(named: "NavBarBackground")!,
             night: .white
         ).toHex()
+
+        // Set status bar style by setting nav bar style
+        //UINavigationBar.appearance().theme_barStyle = ThemeBarStyles(defaultLight: .black, white: .default, night: .black).toHex()
         
         let settings = Settings(fromUserDefaults: .standard) ?? Settings()
         _ = settings.save(toUserDefaults: .standard)

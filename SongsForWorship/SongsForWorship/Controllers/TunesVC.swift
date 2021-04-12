@@ -158,16 +158,20 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     // MARK: - IBActions
     @IBAction func loopButtonPressed() {
-        playerControlsView?.loopButton?.isSelected = !(playerControlsView?.loopButton?.isSelected)!
-        
-        if playerControlsView?.loopButton?.isSelected != nil {
-            playerController?.loopCounter = Int8(songsManager?.currentSong?.stanzas.count ?? 0)
+        if
+            let playerControlsView = playerControlsView,
+            let loopButton = playerControlsView.loopButton,
+            let playerController = playerController,
+            let currentSong = songsManager?.currentSong
+        {
+            loopButton.isSelected = !loopButton.isSelected
             
-            if let playerController = playerController {
-                playerControlsView?.configureLoopButtonWithNumber(NSNumber(value: playerController.loopCounter))
+            if loopButton.isSelected {
+                playerController.loopCounter = UInt8(currentSong.stanzas.count)
+                playerControlsView.configureLoopButton(withNumber: playerController.loopCounter)
+            } else {
+                playerController.loopCounter = 0
             }
-        } else {
-            playerController?.loopCounter = 0
         }
     }
     
@@ -405,18 +409,18 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                 }
             } else {
                 invalidateProgressUpdateTimer()
+                
+                if playerController.isPaused == false {
+                    playerControlsView?.timeElapsedLabel?.text = "0:00"
+                    playerControlsView?.timeRemainingLabel?.text = "-0:00"
+                }
+                
                 playerControlsView?.playButton?.setImage(UIImage(systemName: ImageNames.play.rawValue), for: .normal)
             }
             
-            playerControlsView?.configureLoopButtonWithNumber(NSNumber(value: playerController.loopCounter))
+            playerControlsView?.configureLoopButton(withNumber: playerController.loopCounter)
             
             configureSelectedTrackTitleLabel()
-            
-            if playerController.loopCounter > 0 {
-                
-            } else {
-                
-            }
         }
     }
     

@@ -186,10 +186,17 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             
             songsManager?.setcurrentSong(song, songsToDisplay: song?.collection.songs)
             
-            if UIDevice.current.userInterfaceIdiom != .pad {
-                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                    vc.songsManager = songsManager
+            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+                vc.songsManager = songsManager
+                if UIDevice.current.userInterfaceIdiom != .pad {
                     self.navigationController?.pushViewController(vc, animated: true)
+                } else if
+                    let detail = splitViewController?.viewController(for: .secondary),
+                    !(detail is SongDetailVC) == true
+                {
+                    if let detailNav = detail.navigationController {
+                        detailNav.setViewControllers([vc], animated: false)
+                    }
                 }
             }
         }
@@ -346,6 +353,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         
         if let searchTableViewController = self.searchTableViewController {
             searchTableViewController.songsManager = songsManager
+            searchTableViewController.delegate = self
             let nc = UINavigationController(rootViewController: searchTableViewController)
             present(nc, animated: true, completion: nil)
         }
@@ -363,6 +371,18 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
 
 extension SongIndexVC: FavoritesTableViewControllerDelegate {
     func favoritesTableViewController(didSelectFavorite song: Song) {
+        if
+            let detail = splitViewController?.viewController(for: .secondary),
+            !(detail is SongDetailVC) == true
+        {
+            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+                vc.songsManager = songsManager
+                if let detailNav = detail.navigationController {
+                    detailNav.setViewControllers([vc], animated: false)
+                }
+            }
+        }
+        
         songsManager?.setcurrentSong(song, songsToDisplay: song.collection.songs)
         
         if UIDevice.current.userInterfaceIdiom != .pad {
@@ -435,5 +455,37 @@ extension SongIndexVC: UIContextMenuInteractionDelegate {
         )
         
         return configuration
+    }
+}
+
+extension SongIndexVC: SearchTableViewControllerDelegate {
+    func searchTableViewController(didSelectSearchResultWithSong song: Song) {
+        if
+            let detail = splitViewController?.viewController(for: .secondary),
+            !(detail is SongDetailVC) == true
+        {
+            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+                vc.songsManager = songsManager
+                if let detailNav = detail.navigationController {
+                    detailNav.setViewControllers([vc], animated: false)
+                }
+            }
+        }
+        
+        songsManager?.setcurrentSong(song, songsToDisplay: song.collection.songs)
+        
+        if
+            let segmentedControl = segmentedControl,
+            let idx = songsManager?.songCollections.firstIndex(of: song.collection)
+        {
+            segmentedControl.selectedSegmentIndex = idx
+            songIndexTableView?.reloadData()
+            let ip = indexPathForIndex(song.index)
+            
+            if let ip = ip {
+                songIndexTableView?.scrollToRow(at: ip, at: .middle, animated: false)
+            }
+        }
+        dismiss(animated: true, completion: nil)
     }
 }

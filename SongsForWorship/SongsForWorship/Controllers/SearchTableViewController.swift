@@ -9,6 +9,10 @@
 import UIKit
 import SwiftTheme
 
+protocol SearchTableViewControllerDelegate: class {
+    func searchTableViewController(didSelectSearchResultWithSong song: Song)
+}
+
 class SearchTableViewController: UITableViewController, HasSongsManager, HasSettings {
     var settings: Settings?
     
@@ -23,7 +27,8 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
     private var isFirstAppearance: Bool = true
     var barTintColorsToRestore: ThemeColorPicker?
     @IBOutlet weak var searchBar: UISearchBar?
-        
+    weak var delegate: SearchTableViewControllerDelegate?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -86,15 +91,16 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
             let searchResult = searchResults[indexPath.row]
                         
             if let song = songsManager?.songForNumber(searchResult.songNumber) {
-                let songsToDisplay = searchResults.compactMap { songsManager?.songForNumber($0.songNumber) }
-                
-                songsManager?.setcurrentSong(song, songsToDisplay: songsToDisplay)
-                
                 if UIDevice.current.userInterfaceIdiom != .pad {
+                    let songsToDisplay = searchResults.compactMap { songsManager?.songForNumber($0.songNumber) }
+                    songsManager?.setcurrentSong(song, songsToDisplay: songsToDisplay)
+                    
                     if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                         vc.songsManager = songsManager
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
+                } else {
+                    delegate?.searchTableViewController(didSelectSearchResultWithSong: song)
                 }
             }
         }

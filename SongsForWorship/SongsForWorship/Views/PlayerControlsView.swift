@@ -77,39 +77,38 @@ class PlayerControlsView: UIView {
         return PFWPlaybackRate(PFWPlaybackRates[playbackRateSegmentedControl?.selectedSegmentIndex ?? 0])
     }
 
-    func configureLoopButtonWithNumber(_ number: NSNumber?) {
-        if let number = number {
-            if number.intValue <= 0 || number.intValue > 9 {
-                loopButton?.isSelected = false
-            } else {
-                loopButton?.isSelected = true
-                
-                let loopIcon = UIImage(named: "loop_icon", in: Helper.songsForWorshipBundle(), with: .none)
-                
-                let cSize = CGSize(width: loopIcon?.size.width ?? 0.0, height: loopIcon?.size.height ?? 0.0)
-                UIGraphicsBeginImageContextWithOptions(cSize, _: false, _: UIScreen.main.scale)
-                let ctx = UIGraphicsGetCurrentContext()
-                UIColor.clear.set()
-                ctx?.fill(CGRect(x: 0, y: 0, width: cSize.width, height: cSize.height))
-                loopIcon?.draw(at: CGPoint(x: 0, y: 0))
-                
-                UIColor.white.set()
-                let circleRect = CGRect(x: 3.0, y: 11.0, width: 14.0, height: 14.0)
-                ctx?.addEllipse(in: circleRect)
-                ctx?.strokePath()
-                ctx?.fillEllipse(in: circleRect)
-                
-                let numberFont = UIFont.boldSystemFont(ofSize: 12.0)
-                let numberPoint = CGPoint(x: circleRect.origin.x + 2.0, y: circleRect.origin.y)
-                number.stringValue.draw(at: numberPoint, withAttributes: [
-                    NSAttributedString.Key.font: numberFont
-                ])
-                
-                let compositeImage = UIGraphicsGetImageFromCurrentImageContext()
-                UIGraphicsEndImageContext()
-                
-                loopButton?.setImage(compositeImage, for: .selected)
-            }
+    func configureLoopButton(withNumber number: UInt8?) {
+        if
+            let number = number,
+            number > 0
+        {
+            loopButton?.isSelected = true
+            
+            let loopIcon = UIImage(named: "loop_icon", in: Helper.songsForWorshipBundle(), with: .none)
+            
+            let cSize = CGSize(width: loopIcon?.size.width ?? 0.0, height: loopIcon?.size.height ?? 0.0)
+            UIGraphicsBeginImageContextWithOptions(cSize, _: false, _: UIScreen.main.scale)
+            let ctx = UIGraphicsGetCurrentContext()
+            UIColor.clear.set()
+            ctx?.fill(CGRect(x: 0, y: 0, width: cSize.width, height: cSize.height))
+            loopIcon?.draw(at: CGPoint(x: 0, y: 0))
+            
+            UIColor.white.set()
+            let circleRect = CGRect(x: 3.0, y: 11.0, width: 14.0, height: 14.0)
+            ctx?.addEllipse(in: circleRect)
+            ctx?.strokePath()
+            ctx?.fillEllipse(in: circleRect)
+            
+            let numberFont = UIFont.boldSystemFont(ofSize: 12.0)
+            let numberPoint = CGPoint(x: circleRect.origin.x + 2.0, y: circleRect.origin.y)
+            "\(number)".draw(at: numberPoint, withAttributes: [
+                NSAttributedString.Key.font: numberFont
+            ])
+            
+            let compositeImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            
+            loopButton?.setImage(compositeImage, for: .selected)
         } else {
             loopButton?.isSelected = false
         }

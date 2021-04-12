@@ -23,7 +23,7 @@ enum PlayerControllerState: Int {
 class PlayerController: NSObject {
     var timePosition: TimeInterval = 0
     var loadTunesDidFail: Bool = false
-    var loopCounter: Int8 = 0 {
+    var loopCounter: UInt8 = 0 {
         didSet {
             delegate?.playbackStateDidChangeForPlayerController(self)
         }
@@ -171,7 +171,9 @@ class PlayerController: NSObject {
             let playbackRate = playbackRate,
             let currentTrack = currentTrack
         {
+            let tmpLoopCounter = loopCounter
             playTrack(currentTrack, atTime: currentPosition(), withDelay: 0.0, rate: playbackRate)
+            loopCounter = tmpLoopCounter
         }
     }
     
@@ -247,8 +249,10 @@ class PlayerController: NSObject {
         if isPaused {
             return
         }
-        
-        loopCounter = max(0, loopCounter - 1)
+
+        if loopCounter > 0 {
+            loopCounter -= 1
+        }
         
         if loopCounter > 0 {
             if
@@ -381,6 +385,7 @@ class PlayerController: NSObject {
 
 extension PlayerController: AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        delegate?.playbackStateDidChangeForPlayerController(self)
+        tunePlayerDidFinishPlaying()
+        //delegate?.playbackStateDidChangeForPlayerController(self)
     }
 }

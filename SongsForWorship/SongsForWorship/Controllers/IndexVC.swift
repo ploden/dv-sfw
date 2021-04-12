@@ -273,16 +273,20 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                     if let vc = vc as? SongDetailVCDelegate {
                         detailVC()?.delegate = vc
                     }
-                                        
+                    
                     vc.title = indexRow.title
                     
                     if UIDevice.current.userInterfaceIdiom != .pad {
                         navigationController?.pushViewController(vc, animated: true)
                     } else {
-                        if vc is IndexVC || vc is SongIndexVC {
+                        if vc is IndexVC || vc is SongIndexVC || vc is TopicsTableVC || vc is TopicDetailTableVC {
                             navigationController?.pushViewController(vc, animated: true)
-                        } else {
-                            splitViewController?.setViewController(vc, for: .secondary)
+                        } else if let detail = splitViewController?.viewController(for: .secondary) {
+                            if let detailNav = detail.navigationController {
+                                detailNav.setViewControllers([vc], animated: false)
+                            } else {
+                                splitViewController?.setViewController(vc, for: .secondary)
+                            }
                         }
                     }
                 }

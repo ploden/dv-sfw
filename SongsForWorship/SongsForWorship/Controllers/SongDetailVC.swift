@@ -23,6 +23,17 @@ struct SongDetailItem {
     let displayMode: DisplayMode
 }
 
+extension SongDetailItem: Equatable {
+    static func == (lhs: SongDetailItem, rhs: SongDetailItem) -> Bool {
+        return lhs.indexPath == rhs.indexPath &&
+            lhs.songs == rhs.songs &&
+            lhs.pdfPageNumbers?.firstPage == rhs.pdfPageNumbers?.firstPage &&
+            lhs.pdfPageNumbers?.secondPage == rhs.pdfPageNumbers?.secondPage &&
+            lhs.cellID == rhs.cellID &&
+            lhs.displayMode == rhs.displayMode
+    }
+}
+
 class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, PsalmObserver {
     enum imageNames: String {
         case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark", showSheetMusic = "music.note.list", showMetre = "text.alignleft"
@@ -37,10 +48,14 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 let songsManager = songsManager,
                 let settings = Settings(fromUserDefaults: .standard)
             {
-                if old.collection != new.collection {
-                    songDetailItems = SongDetailVC.calculateItems(forSongs: songsManager.songsToDisplay ?? [Song](), appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
+                // this feels dangerous
+                let newSongDetailItems = SongDetailVC.calculateItems(forSongs: songsManager.songsToDisplay ?? [Song](), appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
+                
+                if songDetailItems != newSongDetailItems {
+                    songDetailItems = newSongDetailItems
                     collectionView?.reloadData()
                 }
+                
             }
             scrollToCurrentSong()
             navigationItem.title = songsManager?.currentSong?.number
@@ -197,6 +212,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                         
                         self.scrollToCurrentSong()
                         self.configureShowSheetMusicBarButtonItem(forSize: size)
+                        self.navigationItem.title = self.songsManager?.currentSong?.number
                         
                         collectionView.alpha = 1.0
                         
@@ -705,7 +721,9 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 } else if playerController.isPaused {
                     playerController.resume()
                 } else {
-                    showSelectSongVC(withSongs: currentlyVisible)
+                    if let playBarButtonItem = playBarButtonItem {
+                        showSelectSongVC(withSongs: currentlyVisible, fromBarButtonItem: playBarButtonItem)
+                    }
                 }
             }
         } else {
@@ -713,12 +731,12 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         }
     }
     
-    func showSelectSongVC(withSongs songs: [Song]) {
+    func showSelectSongVC(withSongs songs: [Song], fromBarButtonItem barButtonItem: UIBarButtonItem) {
         if let vc = SelectSongMenuVC.pfw_instantiateFromStoryboard() as? SelectSongMenuVC {
             vc.songs = songs
             vc.delegate = self
             vc.modalPresentationStyle = .popover
-            vc.popoverPresentationController?.barButtonItem = playBarButtonItem
+            vc.popoverPresentationController?.barButtonItem = barButtonItem
             if let pres = vc.presentationController {
                 pres.delegate = self
             }
@@ -757,7 +775,9 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             {
                 showPlayerForCurrentSong()
             } else {
-                showSelectSongVC(withSongs: currentlyVisible)
+                if let showPlayerBarButtonItem = showPlayerBarButtonItem {
+                    showSelectSongVC(withSongs: currentlyVisible, fromBarButtonItem: showPlayerBarButtonItem)
+                }
             }
         } else {
             showPlayerForCurrentSong()
@@ -801,7 +821,8 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             
             vc.popoverPresentationController?.backgroundColor = vc.view.backgroundColor
             
-            vc.preferredContentSize = CGSize(width: 325, height: 246)
+            vc.preferredContentSize = CGSize(width: 325, height: 251
+            )
             
             present(vc, animated: true, completion: nil)
         }
@@ -880,9 +901,12 @@ extension SongDetailVC: SettingsObserver {
 
 extension SongDetailVC: SelectSongMenuVCDelegate {
     func selectSongMenuVC(selectSongMenuVC: SelectSongMenuVC?, didSelectSong selectedSong: Song) {
+        let presentingItem = selectSongMenuVC?.popoverPresentationController?.barButtonItem
+        selectSongMenuVC?.dismiss(animated: true, completion: nil)
+        selectSongMenuVC?.delegate = nil // disconnect ASAP
         
         if
-            let presentingItem = selectSongMenuVC?.popoverPresentationController?.barButtonItem,
+            let presentingItem = presentingItem,
             let songsManager = songsManager
         {
             if presentingItem == self.playBarButtonItem {
@@ -897,6 +921,5 @@ extension SongDetailVC: SelectSongMenuVCDelegate {
                 showPlayerForCurrentSong()
             }
         }
-        selectSongMenuVC?.dismiss(animated: true, completion: nil)
     }
 }

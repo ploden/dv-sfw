@@ -103,20 +103,12 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
                 navigationController?.pushViewController(vc, animated: true)
             }
         } else if let song = self.song(for: indexPath) {
-            songsManager.setcurrentSong(song, songsToDisplay: songsToDisplay(for: indexPath))
-            
+            songsManager.setcurrentSong(song, songsToDisplay: songsToDisplay(for: indexPath))                        
             if UIDevice.current.userInterfaceIdiom != .pad {
-                /*
-                let vc = TabBarController.pfw_instantiateFromStoryboard() as? TabBarController
-                vc?.songsManager = songsManager
-                
-                if let vc = vc {
+                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+                    vc.songsManager = songsManager
                     navigationController?.pushViewController(vc, animated: true)
                 }
- */
-                // FIXME: replace tab bar
-
-            } else {
             }
         }
     }

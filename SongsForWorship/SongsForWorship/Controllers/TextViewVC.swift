@@ -38,6 +38,12 @@ class TextViewVC: UIViewController, HasFileInfo {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)        
+        navigationController?.setToolbarHidden(true, animated: animated)
+        textView?.contentOffset = .zero
+    }
+    
     class func readText(fromFileURL url: URL) -> String? {
         var jsonString: String? = nil
         do {
@@ -60,6 +66,7 @@ class TextViewVC: UIViewController, HasFileInfo {
     class func readMarkdown(fromFileURL url: URL) -> NSAttributedString? {
         if let markdownString = try? String(contentsOf: url, encoding: String.Encoding.utf8) {
             let down = SwiftyMarkdown(string: markdownString)
+            down.setFontNameForAllStyles(with: Helper.defaultFont(withSize: 12.0, forTextStyle: .body).fontName)
             let attributedString = down.attributedString()
             let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
             mutableAttributedString.addAttribute(.foregroundColor, value: UIColor.label, range: NSRange(location: 0, length: mutableAttributedString.length))
