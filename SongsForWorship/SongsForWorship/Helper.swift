@@ -44,6 +44,8 @@ class Helper: NSObject {
             {
                 return font
             }
+            
+            return UIFont.systemFont(ofSize: preferredFont.pointSize)
         }
         
         return UIFont.systemFont(ofSize: size)
@@ -54,30 +56,20 @@ class Helper: NSObject {
             let app = UIApplication.shared.delegate as? PsalterAppDelegate,
             let settings = Settings(fromUserDefaults: .standard)
         {
+            let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
+
             if settings.shouldUseSystemFonts {
-                let font = UIFont.preferredFont(forTextStyle: textStyle)
-                return UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: 0)
-            } else if
-                let fontName = app.appConfig.defaultBoldFontName,
-                let font = UIFont(name: fontName, size: size)
+                return preferredFont
+            } else if                
+                let font = UIFont(name: app.appConfig.defaultBoldFont, size: preferredFont.pointSize)
             {
                 return font
             }
+            
+            return UIFont.boldSystemFont(ofSize: preferredFont.pointSize)
         }
         
         return UIFont.boldSystemFont(ofSize: size)
-    }
-    
-    class func nameWithNamespace(name: String) -> String {
-        return name
-    }
-    
-    class func tintColor() -> UIColor {
-        //return [UIColor colorWithRed:19.0f/255.0f green:4.0f/255.0f blue:89.0f/255.0f alpha:1.0f];
-        return UIColor(red: 8.0 / 255.0, green: 37.0 / 255.0, blue: 103.0 / 255.0, alpha: 1.0)
-        //return UIColor(named: "ThemeColor", in: Bundle(for: PsalterAppDelegate.self), compatibleWith: nil)!
-
-        //return UIColor(named: Helper.nameWithNamespace(name: "ThemeColor"))!
     }
 
     class func searchResultsForTerm(_ term: String, songsArray: [Song], completion: @escaping ([SearchResult]?) -> Void) {
@@ -136,12 +128,6 @@ class Helper: NSObject {
 
     class func mainStoryboard_iPad() -> UIStoryboard {
         return UIStoryboard(name: "Main_iPad", bundle: Helper.songsForWorshipBundle())
-    }
-
-    class func applyCustomSelectionColor(to cell: UITableViewCell) {
-        let v = UIView()
-        v.backgroundColor = Helper.tintColor()
-        cell.selectedBackgroundView = v
     }
 
     class func copyrightString(_ now: Date?) -> String {
