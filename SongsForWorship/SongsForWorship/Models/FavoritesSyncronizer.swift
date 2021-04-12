@@ -70,7 +70,7 @@ class FavoritesSyncronizer {
             
             NSUbiquitousKeyValueStore.default.set(favs, forKey: kFavoritesDictionaryName)
             UserDefaults.standard.set(favs, forKey: kFavoritesDictionaryName)
-            NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
+            //NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
         }
         
         var favoriteSongNumbers = FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager)
@@ -82,14 +82,14 @@ class FavoritesSyncronizer {
         NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
     }
 
-    func synciCloud() {
+    func synciCloud() throws {
         let store = NSUbiquitousKeyValueStore.default
         NotificationCenter.default.addObserver(self, selector: #selector(updateKVStoreItems(_:)), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: store)
         let b = store.synchronize()
 
         if !b {
         #if DEBUG
-            //throw NSException(name: NSExceptionName("FavoritesSyncronizerException"), reason: "synchronize returned false", userInfo: nil) as! Error
+            throw NSException(name: NSExceptionName("FavoritesSyncronizerException"), reason: "synchronize returned false", userInfo: nil) as! Error
         #endif
         }
     }
