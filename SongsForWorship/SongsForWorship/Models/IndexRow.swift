@@ -16,4 +16,5 @@ struct IndexRow: Decodable {
     let className: String?
     let title: String?
     let index: [IndexSection]?
+    let action: String?
 }

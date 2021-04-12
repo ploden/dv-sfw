@@ -131,45 +131,33 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         return favs
     }
     
-    func tableView(_ tableView: UITableView?, didSelectFeedbackSectionRowWith index: Int) {
-        if let rowIndex = FeedbackSectionRow(rawValue: index) {
-            switch rowIndex {
-            case .feedback:
-                let recipient = "contact@deovolentellc.com"
-                let subject: String = {
-                    let appName = Bundle.main.appName
-                    let version = Bundle.main.version
-                    return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
-                }()
-                
-                if MFMailComposeViewController.canSendMail() {
-                    let composeController = MFMailComposeViewController()
-                    composeController.mailComposeDelegate = self
-                    composeController.setToRecipients([recipient])
-                    composeController.setSubject(subject)
-                    
-                    present(composeController, animated: true)
-                } else if let emailUrl = createEmailUrl(to: recipient, subject: subject, body: "") {
-                    UIApplication.shared.open(emailUrl)
-                } else {
-                    let alertController = UIAlertController(title: "Cannot Send Mail", message: "Please set up an email account in order to send a support request email.", preferredStyle: .alert)
-                    
-                    alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-                    alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                        }
-                    }))
-                    present(alertController, animated: true)
+    func sendFeedback() {
+        let recipient = "contact@deovolentellc.com"
+        let subject: String = {
+            let appName = Bundle.main.appName
+            let version = Bundle.main.version
+            return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
+        }()
+        
+        if MFMailComposeViewController.canSendMail() {
+            let composeController = MFMailComposeViewController()
+            composeController.mailComposeDelegate = self
+            composeController.setToRecipients([recipient])
+            composeController.setSubject(subject)
+            
+            present(composeController, animated: true)
+        } else if let emailUrl = createEmailUrl(to: recipient, subject: subject, body: "") {
+            UIApplication.shared.open(emailUrl)
+        } else {
+            let alertController = UIAlertController(title: "Cannot Send Mail", message: "Please set up an email account in order to send a support request email.", preferredStyle: .alert)
+            
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 }
-                break
-            case .settings:
-                if let vc = SettingsVC.pfw_instantiateFromStoryboard() {
-                    navigationController?.pushViewController(vc, animated: true)
-                }
-            default:
-                break
-            }
+            }))
+            present(alertController, animated: true)
         }
     }
     
@@ -228,7 +216,7 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
             generic.label?.textAlignment = .center
             generic.label?.lineBreakMode = .byWordWrapping
             generic.label?.font = Helper.defaultFont(withSize: genericCellFontSize, forTextStyle: .title2)
-            generic.label?.text = indexRow.title //songsManager?.songCollections.compactMap { $0.displayName } .joined(separator: " & ")
+            generic.label?.text = indexRow.title
             generic.label?.highlightedTextColor = UIColor.white
         }
         
@@ -245,7 +233,9 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                 if
                     let indexRow = indexSection.rows?[indexPath.row],
                     let name = indexRow.storyboardName,
-                    let id = indexRow.storyboardID
+                    let id = indexRow.storyboardID,
+                    name.count > 0,
+                    id.count > 0
                 {
                     let sb = UIStoryboard(name: name, bundle: Helper.songsForWorshipBundle())
                     let vc = sb.instantiateViewController(withIdentifier: id)
@@ -289,6 +279,12 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                             }
                         }
                     }
+                } else if
+                    let indexRow = indexSection.rows?[indexPath.row],
+                    let action = indexRow.action,
+                    action == "sendFeedback"
+                {
+                    sendFeedback()
                 }
             }
         }
