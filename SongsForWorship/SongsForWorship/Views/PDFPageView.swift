@@ -143,7 +143,9 @@ class PDFPageView: UIView {
                         context.scaleBy(x: scaleToApply, y: scaleToApply)
                         
                         let x = (drawSize.width - (scaleToApply * mediaRect.size.width))
-                        context.translateBy(x: (x / 2.0) / scaleToApply, y: 0)
+                        let y = (drawSize.height - (scaleToApply * mediaRect.size.height))
+
+                        context.translateBy(x: (x / 2.0) / scaleToApply, y: (y / 2.0) / scaleToApply)
                         
                         context.drawPDFPage(pageRef)
                     }
