@@ -47,10 +47,10 @@ class SettingsVC: UIViewController {
         if
             let settings = Settings(fromUserDefaults: UserDefaults.standard),
             let viewsToMakeCircles = viewsToMakeCircles,
-            settings.theme(forUserInterfaceStyle: style()).rawValue < viewsToMakeCircles.count
+            settings.calculateTheme(forUserInterfaceStyle: style()).rawValue < viewsToMakeCircles.count
         {
             let sorted = viewsToMakeCircles.sorted { $0.superview!.frame.origin.x < $1.superview!.frame.origin.x }
-            sorted[settings.theme(forUserInterfaceStyle: style()).rawValue].layer.borderWidth = 2.0
+            sorted[settings.calculateTheme(forUserInterfaceStyle: style()).rawValue].layer.borderWidth = 2.0
         }
     }
     

@@ -79,12 +79,12 @@ public struct Settings: Codable {
             return CGFloat(fontSizeSetting.rawValue) / 10.0
         }
     }
-    private var theme: ThemeSetting = .defaultLight
+    private(set) var theme: ThemeSetting = .defaultLight
     private(set) var shouldShowSheetMusicInPortrait_iPhone: Bool = false
     private(set) var shouldShowSheetMusicInLandscape_iPhone: Bool = true
     private(set) var shouldShowSheetMusic_iPad: Bool = true
 
-    func theme(forUserInterfaceStyle style: UIUserInterfaceStyle) -> ThemeSetting {
+    func calculateTheme(forUserInterfaceStyle style: UIUserInterfaceStyle) -> ThemeSetting {
         if autoNightTheme {
             if style == .dark {
                 return .night
@@ -109,7 +109,7 @@ public struct Settings: Codable {
             shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
         )
         
-        let newTheme = s.theme(forUserInterfaceStyle: userInterfaceStyle)
+        let newTheme = s.calculateTheme(forUserInterfaceStyle: userInterfaceStyle)
 
         let s2 = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,

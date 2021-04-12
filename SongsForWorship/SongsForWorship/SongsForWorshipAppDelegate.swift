@@ -37,13 +37,11 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             print("There was an error reading app config! \(error)")
         }
         
-        
         let soundFonts: [SoundFont]? = result?.soundFonts.compactMap {
             return SoundFont(filename: $0.filename, fileExtension: $0.filetype, isDefault: $0.isDefault, title: $0.title)
         }
         
-        let settings = Settings(fromUserDefaults: .standard) ?? Settings()
-            
+        let settings = Settings(fromUserDefaults: .standard) ?? Settings()            
         _ = settings.new(withSoundFonts: soundFonts ?? []).save(toUserDefaults: .standard)
         
         return result!
@@ -54,7 +52,6 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let syncInstance = FavoritesSyncronizer.shared
         try? syncInstance.synciCloud()
-        //NotificationCenter.default.addObserver(self, selector: #selector(favoritesChanged(_:)), name: NSNotification.Name.favoritesDidChange, object: nil)
 
         songsManager = SongsManager(appConfig: appConfig)
         songsManager?.loadSongs()
@@ -97,6 +94,7 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
                 mainController = navigationController
         }
         
+        window = UIWindow()
         window?.rootViewController = mainController
         window?.makeKeyAndVisible()
         
@@ -110,6 +108,7 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
     public func applicationWillEnterForeground(_ application: UIApplication) {
         let syncInstance = FavoritesSyncronizer.shared
         try? syncInstance.synciCloud()
+        changeThemeAsNeeded()
     }
 
     func handle(_ shortcutItem: UIApplicationShortcutItem?) -> Bool {
@@ -192,8 +191,6 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         let settings = Settings(fromUserDefaults: .standard) ?? Settings()
         _ = settings.save(toUserDefaults: .standard)
         Settings.addObserver(forSettings: self)
-
-        window = UIWindow()
         
         UINavigationBar.appearance().theme_barTintColor = ThemeColors(
             defaultLight: UIColor(named: "NavBarBackground")!,
@@ -213,23 +210,36 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             night: .white
         ).toHex()
     }
+    
+    func changeThemeAsNeeded() {
+        if
+            let settings = Settings(fromUserDefaults: .standard),
+            let window = window
+        {
+            let theme = settings.calculateTheme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle)
+            
+            if theme.rawValue != ThemeManager.currentThemeIndex {
+                if theme == .defaultLight || theme == .white {
+                    window.overrideUserInterfaceStyle = .light
+                    ThemeManager.setTheme(index: theme.rawValue)
+                    if theme != settings.theme {
+                        _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
+                    }
+                } else if theme == .night {
+                    window.overrideUserInterfaceStyle = .dark
+                    ThemeManager.setTheme(index: theme.rawValue)
+                    if theme != settings.theme {
+                        _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension PsalterAppDelegate: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
-        if
-            let settings = Settings(fromUserDefaults: .standard),
-            let window = window,
-            settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).rawValue != ThemeManager.currentThemeIndex
-        {
-            if settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle) == .defaultLight || settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle) == .white {
-                window.overrideUserInterfaceStyle = .light
-                ThemeManager.setTheme(index: settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).rawValue)
-            } else if settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle) == .night {
-                window.overrideUserInterfaceStyle = .dark
-                ThemeManager.setTheme(index: settings.theme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).rawValue)
-            }
-        }
+        changeThemeAsNeeded()
     }
 }
 

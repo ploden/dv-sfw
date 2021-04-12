@@ -96,9 +96,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         {
             songIndexTableView?.selectRow(at: currentSongIndexPath, animated: false, scrollPosition: .middle)
             songIndexTableView?.scrollToNearestSelectedRow(at: .middle, animated: false)
-        }
-        
-        //configureNavBar()
+        }                
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -200,22 +198,22 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     // MARK: - helper methods
     
     func configureNavBar() {
+        print("SongIndexVC: configureNavBar")
+        
         if let settings = Settings(fromUserDefaults: .standard) {
-            if UIDevice.current.userInterfaceIdiom != .pad {
-                if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .defaultLight {
-                    let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
-                    navigationItem.titleView = navbarLogo
-                } else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .white {
-                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                    let navbarLogo = UIImageView(image: templateImage)
-                    navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
-                    navigationItem.titleView = navbarLogo
-                }  else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .night {
-                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                    let navbarLogo = UIImageView(image: templateImage)
-                    navbarLogo.tintColor = .white
-                    navigationItem.titleView = navbarLogo
-                }
+            if settings.calculateTheme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .defaultLight {
+                let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
+                navigationItem.titleView = navbarLogo
+            } else if settings.calculateTheme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .white {
+                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
+                navigationItem.titleView = navbarLogo
+            }  else if settings.calculateTheme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .night {
+                let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = .white
+                navigationItem.titleView = navbarLogo
             }
         }
     }
@@ -321,6 +319,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     }
     
     // MARK: - DetailVCDelegate
+    
     func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
         return songsManager?.currentSong?.collection.songs
     }

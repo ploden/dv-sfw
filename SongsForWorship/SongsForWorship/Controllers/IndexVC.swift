@@ -37,6 +37,8 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         title = ""
         configureNavBar()
         
+        Settings.addObserver(forSettings: self)
+        
         indexTableView?.register(UINib(nibName: String(describing: GenericTVCell.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: String(describing: GenericTVCell.self))
         indexTableView?.rowHeight = UITableView.automaticDimension
         indexTableView?.estimatedRowHeight = 50.0
@@ -57,43 +59,33 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let selection = indexTableView?.indexPathForSelectedRow
-        if selection == nil {
-            return
-        }
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            if selection?.section == 0 {
-                if let selection = selection {
-                    indexTableView?.deselectRow(at: selection, animated: true)
-                }
-            }
-        } else {
-            if let selection = selection {
-                indexTableView?.deselectRow(at: selection, animated: true)
-            }
+        if let selection = indexTableView?.indexPathForSelectedRow {
+            indexTableView?.deselectRow(at: selection, animated: true)
         }
     }
     
     // MARK: - Helper methods
     
     func configureNavBar() {
-        if let settings = Settings(fromUserDefaults: .standard) {
-            if UIDevice.current.userInterfaceIdiom != .pad {
-                if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .defaultLight {
-                    let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
-                    navigationItem.titleView = navbarLogo
-                } else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .white {
-                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                    let navbarLogo = UIImageView(image: templateImage)
-                    navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
-                    navigationItem.titleView = navbarLogo
-                }  else if settings.theme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .night {
-                    let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
-                    let navbarLogo = UIImageView(image: templateImage)
-                    navbarLogo.tintColor = .white
-                    navigationItem.titleView = navbarLogo
-                }
+        print("IndexVC: configureNavBar")
+        
+        if
+            let settings = Settings(fromUserDefaults: .standard),
+            let image = UIImage(named: "nav_bar_icon", in: nil, with: .none)
+        {
+            if settings.theme == .defaultLight {
+                let navbarLogo = UIImageView(image: image)
+                navigationItem.titleView = navbarLogo
+            } else if settings.theme == .white {
+                let templateImage = image.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
+                navigationItem.titleView = navbarLogo
+            }  else if settings.theme == .night {
+                let templateImage = image.withRenderingMode(.alwaysTemplate)
+                let navbarLogo = UIImageView(image: templateImage)
+                navbarLogo.tintColor = .white
+                navigationItem.titleView = navbarLogo
             }
         }
     }
