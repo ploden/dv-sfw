@@ -23,4 +23,18 @@ public struct AppConfig: Decodable {
     let pdfRenderingConfigs_iPad: [PDFRenderingConfig]
     let shouldHideSheetMusicForCopyrightedTunes: Bool
     let customClasses: [CustomClassConfig]
+    
+    /*
+    func customClass(forProtocol aProtocol: Protocol) -> AnyClass {
+        if
+            let customClassConfig = customClasses.first(where: { $0.baseName == String(describing: aProtocol.self) }),
+            let appName = Bundle.main.appName,
+            let customClass = Bundle.main.classNamed("\(appName).\(customClassConfig.customName)")// as? aProtocol.Type
+        {
+            return customClass
+        }
+        
+        return aProtocol
+    }
+     */
 }

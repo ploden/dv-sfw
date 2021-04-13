@@ -29,11 +29,7 @@ enum NotificationUserInfoKeys: String {
     @objc func selectedCollectionDidChange(_ notification: Notification)
 }
 
-open class SongCollection: NSObject {
-    public static func == (lhs: SongCollection, rhs: SongCollection) -> Bool {
-        return lhs.displayName == rhs.displayName
-    }
-    
+open class SongCollection {
     let jsonFilename: String
     let pdfFilename: String
     let directory: String
@@ -48,21 +44,12 @@ open class SongCollection: NSObject {
         
         func loadAll(idx: Int) {
             var song = songs![idx]
-            
-            /*
-            BaseTunesLoader.loadTunes(forSong: song) { [weak self] someError, someTuneDescriptions in
-                if idx+1 < songs!.count {
-                    loadAll(idx: idx+1)
-                }
-            }
-             */
         }
         
-        //loadAll(idx: 0)
         return songs
     }()
 
-    required public init(directory: String, collectionConfig: SongCollectionConfig) {        
+    required public init(directory: String, collectionConfig: SongCollectionConfig) {
         self.jsonFilename = collectionConfig.jsonFilename
         self.displayName = collectionConfig.displayName
         self.pdfFilename = collectionConfig.pdfFilename
@@ -85,9 +72,9 @@ open class SongCollection: NSObject {
         self.tuneInfos = tuneInfos ?? [SongCollectionTuneInfo]()
         
         self.pdf = CGPDFDocument(URL(fileURLWithPath: Bundle.main.path(forResource: pdfFilename, ofType: "pdf", inDirectory: directory)!) as CFURL)!
-    }    
+    }
 
-    public func defaultReadSongsFromFile(jsonFilename: String, directory: String) -> [Song]? {
+    open func readSongsFromFile(jsonFilename: String, directory: String) -> [Song]? {
         let url = URL(fileURLWithPath: Bundle.main.path(forResource: jsonFilename, ofType: "json", inDirectory: directory) ?? "")
 
         var _: Error? = nil
@@ -154,3 +141,12 @@ open class SongCollection: NSObject {
         return songs?.first(where: { $0.number == number })
     }
 }
+
+extension SongCollection: Equatable {
+    public static func == (lhs: SongCollection, rhs: SongCollection) -> Bool {
+        return
+            lhs.displayName == rhs.displayName &&
+            lhs.songs == rhs.songs
+    }
+}
+

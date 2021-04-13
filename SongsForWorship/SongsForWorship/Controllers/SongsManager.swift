@@ -30,7 +30,19 @@ class SongsManager: Equatable {
                 collectionSections.append(newSection)
             }
 
-            let newCollection = SongCollection(directory: appConfig.directory, collectionConfig: collection)
+            let songCollectionClass: SongCollection.Type = {
+                if
+                    let customClassConfig = appConfig.customClasses.first(where: { $0.baseName == String(describing: SongCollection.self) }),
+                    let appName = Bundle.main.appName,
+                    let customClass = Bundle.main.classNamed("\(appName).\(customClassConfig.customName)") as? SongCollection.Type
+                {
+                    return customClass
+                }
+                
+                return SongCollection.self
+            }()
+            
+            let newCollection = songCollectionClass.init(directory: appConfig.directory, collectionConfig: collection)
             newCollection.pdfRenderingConfigs_iPhone = appConfig.pdfRenderingConfigs_iPhone
             newCollection.pdfRenderingConfigs_iPad = appConfig.pdfRenderingConfigs_iPad
             songCollections.append(newCollection)
