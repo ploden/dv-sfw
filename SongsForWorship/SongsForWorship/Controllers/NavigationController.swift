@@ -14,7 +14,6 @@ extension UINavigationController {
         return .lightContent
     }
     
-     /*
     override open var shouldAutorotate: Bool {
         get {
             if let visibleVC = visibleViewController {
@@ -41,5 +40,4 @@ extension UINavigationController {
             return super.supportedInterfaceOrientations
         }
     }
- */
 }
