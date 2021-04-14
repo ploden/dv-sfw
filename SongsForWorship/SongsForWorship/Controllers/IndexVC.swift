@@ -132,32 +132,33 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     }
     
     func sendFeedback() {
-        let recipient = "contact@deovolentellc.com"
-        let subject: String = {
-            let appName = Bundle.main.appName
-            let version = Bundle.main.version
-            return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
-        }()
-        
-        if MFMailComposeViewController.canSendMail() {
-            let composeController = MFMailComposeViewController()
-            composeController.mailComposeDelegate = self
-            composeController.setToRecipients([recipient])
-            composeController.setSubject(subject)
+        if let recipient = (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig.sendFeedbackEmailAddress {
+            let subject: String = {
+                let appName = Bundle.main.appName
+                let version = Bundle.main.version
+                return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
+            }()
             
-            present(composeController, animated: true)
-        } else if let emailUrl = createEmailUrl(to: recipient, subject: subject, body: "") {
-            UIApplication.shared.open(emailUrl)
-        } else {
-            let alertController = UIAlertController(title: "Cannot Send Mail", message: "Please set up an email account in order to send a support request email.", preferredStyle: .alert)
-            
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                }
-            }))
-            present(alertController, animated: true)
+            if MFMailComposeViewController.canSendMail() {
+                let composeController = MFMailComposeViewController()
+                composeController.mailComposeDelegate = self
+                composeController.setToRecipients([recipient])
+                composeController.setSubject(subject)
+                
+                present(composeController, animated: true)
+            } else if let emailUrl = createEmailUrl(to: recipient, subject: subject, body: "") {
+                UIApplication.shared.open(emailUrl)
+            } else {
+                let alertController = UIAlertController(title: "Cannot Send Mail", message: "Please set up an email account in order to send a support request email.", preferredStyle: .alert)
+                
+                alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
+                }))
+                present(alertController, animated: true)
+            }
         }
     }
     
