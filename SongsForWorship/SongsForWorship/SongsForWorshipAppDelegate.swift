@@ -79,6 +79,12 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
                 {
                     index.sections = appConfig.index
                     index.songsManager = songsManager
+                    index.title = ""
+                    
+                    if let songIndexVC = SongIndexVC.pfw_instantiateFromStoryboard() as? SongIndexVC {
+                        songIndexVC.songsManager = songsManager
+                        index.navigationController?.pushViewController(songIndexVC, animated: false)
+                    }
                     
                     detail.navigationItem.leftItemsSupplementBackButton = true
                     detail.songsManager = songsManager
@@ -90,10 +96,16 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             let nav = Helper.mainStoryboard_iPhone().instantiateInitialViewController() as? UINavigationController,
             let index = nav.topViewController as? IndexVC
         {
-                navigationController = nav
-                index.songsManager = songsManager
-                index.sections = appConfig.index
-                mainController = navigationController
+            navigationController = nav
+            index.title = ""
+            index.songsManager = songsManager
+            index.sections = appConfig.index
+            mainController = navigationController
+            
+            if let songIndexVC = SongIndexVC.pfw_instantiateFromStoryboard() as? SongIndexVC {
+                songIndexVC.songsManager = songsManager
+                navigationController?.pushViewController(songIndexVC, animated: false)
+            }
         }
         
         window = UIWindow()
