@@ -71,7 +71,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     var appConfig: AppConfig {
         get {
-            let app = UIApplication.shared.delegate as! PsalterAppDelegate
+            let app = UIApplication.shared.delegate as! SFWAppDelegate
             return app.appConfig
         }
     }

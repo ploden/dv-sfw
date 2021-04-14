@@ -89,7 +89,7 @@ class PlayerController: NSObject {
         state = .loadingTunes
         
         if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+            let app = UIApplication.shared.delegate as? SFWAppDelegate {
             
             let tunesLoaderClass: TunesLoader.Type = {
                 if

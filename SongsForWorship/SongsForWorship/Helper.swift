@@ -15,7 +15,7 @@ var NumPlaybackRates: size_t = 6
 class Helper: NSObject {
     class func defaultFont(withSize size: CGFloat) -> UIFont {
         if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let app = UIApplication.shared.delegate as? SFWAppDelegate,
             let settings = Settings(fromUserDefaults: .standard)
         {
             if settings.shouldUseSystemFonts {
@@ -32,7 +32,7 @@ class Helper: NSObject {
     
     class func defaultFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
         if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let app = UIApplication.shared.delegate as? SFWAppDelegate,
             let settings = Settings(fromUserDefaults: .standard)
         {
             let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
@@ -53,7 +53,7 @@ class Helper: NSObject {
 
     class func defaultBoldFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
         if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let app = UIApplication.shared.delegate as? SFWAppDelegate,
             let settings = Settings(fromUserDefaults: .standard)
         {
             let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
@@ -136,7 +136,7 @@ class Helper: NSObject {
         let cal = Calendar.current
         let yearComponent = cal.component(Calendar.Component.year, from: nonnullNow)
 
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+        if let app = UIApplication.shared.delegate as? SFWAppDelegate {
             let copyright = app.appConfig.copyright
             return String(format: "© %ld \(copyright).\nUsed with permission.", yearComponent)
         } else {

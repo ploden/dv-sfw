@@ -101,7 +101,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tunesTableView?.rowHeight = UITableView.automaticDimension
         
         if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let app = UIApplication.shared.delegate as? SFWAppDelegate,
             app.appConfig.shouldShowAdditionalTunes == false
         {
             tableViewHeightConstraint?.constant = 0.0
@@ -266,7 +266,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     public func numberOfSections(in tableView: UITableView) -> Int {
         if
-            let app = UIApplication.shared.delegate as? PsalterAppDelegate,
+            let app = UIApplication.shared.delegate as? SFWAppDelegate,
             app.appConfig.tuneRecordings == false
         {
             return 1

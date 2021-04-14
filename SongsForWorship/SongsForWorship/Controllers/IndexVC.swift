@@ -132,7 +132,7 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     }
     
     func sendFeedback() {
-        if let recipient = (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig.sendFeedbackEmailAddress {
+        if let recipient = (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig.sendFeedbackEmailAddress {
             let subject: String = {
                 let appName = Bundle.main.appName
                 let version = Bundle.main.version
@@ -249,7 +249,7 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                         let filename = indexRow.filename,
                         let filetype = indexRow.filetype,
                         var hasFileInfo = vc as? HasFileInfo,
-                        let app = UIApplication.shared.delegate as? PsalterAppDelegate                        
+                        let app = UIApplication.shared.delegate as? SFWAppDelegate                        
                     {
                         hasFileInfo.fileInfo = (filename, filetype, app.appConfig.directory)
                     }

@@ -16,6 +16,7 @@
 		8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42245D26064F7800F7EB99 /* IndexRow.swift */; };
 		8D422463260659F600F7EB99 /* IndexSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D422462260659F600F7EB99 /* IndexSection.swift */; };
 		8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42246726065AD300F7EB99 /* AppConfig.swift */; };
+		8D4AD13C26278CCD0011F228 /* SFWAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4AD13B26278CCD0011F228 /* SFWAppDelegate.swift */; };
 		8D50B97424F4C7F600AFDC29 /* Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D50B97324F4C7F600AFDC29 /* Composer.swift */; };
 		8D54FFA326105E9D00377042 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */; };
 		8D59D71A262397380055651B /* SwiftyMarkdown in Frameworks */ = {isa = PBXBuildFile; productRef = 8D59D719262397380055651B /* SwiftyMarkdown */; };
@@ -93,7 +94,6 @@
 		8D99C22F24CED40A005B34F2 /* SongPreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */; };
 		8D99C23024CED40A005B34F2 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E224CED40A005B34F2 /* NavigationController.swift */; };
 		8D99C23224CED40A005B34F2 /* HasSongsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */; };
-		8D99C23324CED40A005B34F2 /* SongsForWorshipAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E524CED40A005B34F2 /* SongsForWorshipAppDelegate.swift */; };
 		8D99C23424CED40A005B34F2 /* PlayerControlsViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */; };
 		8D9D5FA426161A3F00FF84FE /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9D5FA326161A3F00FF84FE /* SettingsVC.swift */; };
 		8D9D5FA92616399400FF84FE /* HasSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9D5FA82616399400FF84FE /* HasSettings.swift */; };
@@ -131,6 +131,7 @@
 		8D42245D26064F7800F7EB99 /* IndexRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRow.swift; sourceTree = "<group>"; };
 		8D422462260659F600F7EB99 /* IndexSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexSection.swift; sourceTree = "<group>"; };
 		8D42246726065AD300F7EB99 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		8D4AD13B26278CCD0011F228 /* SFWAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFWAppDelegate.swift; sourceTree = "<group>"; };
 		8D50B97324F4C7F600AFDC29 /* Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composer.swift; sourceTree = "<group>"; };
 		8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
 		8D7DABE124EE391600FD7D91 /* SongTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongTVCell.xib; sourceTree = "<group>"; };
@@ -212,7 +213,6 @@
 		8D99C1E124CED40A005B34F2 /* SongPreviewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongPreviewViewController.xib; sourceTree = "<group>"; };
 		8D99C1E224CED40A005B34F2 /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		8D99C1E424CED40A005B34F2 /* HasSongsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HasSongsManager.swift; sourceTree = "<group>"; };
-		8D99C1E524CED40A005B34F2 /* SongsForWorshipAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsForWorshipAppDelegate.swift; sourceTree = "<group>"; };
 		8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerControlsViewDelegate.swift; sourceTree = "<group>"; };
 		8D9D5FA326161A3F00FF84FE /* SettingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		8D9D5FA82616399400FF84FE /* HasSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasSettings.swift; sourceTree = "<group>"; };
@@ -289,6 +289,7 @@
 		8D99C17924CED391005B34F2 /* SongsForWorship */ = {
 			isa = PBXGroup;
 			children = (
+				8D4AD13B26278CCD0011F228 /* SFWAppDelegate.swift */,
 				8DD2E1B624E4755F00F0DE30 /* Assets.xcassets */,
 				8D99C19B24CED40A005B34F2 /* Base.lproj */,
 				8D99C1D024CED40A005B34F2 /* Controllers */,
@@ -299,7 +300,6 @@
 				8D99C19F24CED40A005B34F2 /* Models */,
 				8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */,
 				8D99C19A24CED40A005B34F2 /* SongDetail.storyboard */,
-				8D99C1E524CED40A005B34F2 /* SongsForWorshipAppDelegate.swift */,
 				8D99C19224CED40A005B34F2 /* Resources */,
 				8D99C19E24CED40A005B34F2 /* UIViewController.swift */,
 				8D99C1AF24CED40A005B34F2 /* Views */,
@@ -660,6 +660,7 @@
 				8D99C21924CED40A005B34F2 /* TunesHeaderView.swift in Sources */,
 				8D99C1F224CED40A005B34F2 /* SongCollectionSection.swift in Sources */,
 				8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */,
+				8D4AD13C26278CCD0011F228 /* SFWAppDelegate.swift in Sources */,
 				8D99C23024CED40A005B34F2 /* NavigationController.swift in Sources */,
 				8D99C21424CED40A005B34F2 /* EnableRecordingsTVCell.swift in Sources */,
 				8D99C22324CED40A005B34F2 /* SongIndexVC.swift in Sources */,
@@ -677,7 +678,6 @@
 				8D99C1FF24CED40A005B34F2 /* NoRecordingsFoundTVCell.swift in Sources */,
 				8D99C20E24CED40A005B34F2 /* SearchResultTVCell.swift in Sources */,
 				8D99C22E24CED40A005B34F2 /* SongDetailVC.swift in Sources */,
-				8D99C23324CED40A005B34F2 /* SongsForWorshipAppDelegate.swift in Sources */,
 				8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */,
 				8DA2204D24DEC8020014B557 /* HasFileURL.swift in Sources */,
 				8DA2D687261EE765008D95C6 /* SelectSongMenuVC.swift in Sources */,

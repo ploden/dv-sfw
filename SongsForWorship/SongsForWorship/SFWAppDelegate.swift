@@ -18,8 +18,8 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 // MARK: -
 // MARK: Application lifecycle
 
-@UIApplicationMain
-open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
+//@UIApplicationMain
+open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
     private var songsManager: SongsManager?
     lazy public var appConfig: AppConfig = {
         let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
@@ -66,6 +66,8 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         updateFavoritesShortcuts()
 
         applyStyling()
+        
+        startAnalytics()
         
         var mainController: UIViewController?
 
@@ -255,15 +257,17 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             }
         }
     }
+    
+    open func startAnalytics() {}
 }
 
-extension PsalterAppDelegate: SettingsObserver {
+extension SFWAppDelegate: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
         changeThemeAsNeeded()
     }
 }
 
-extension PsalterAppDelegate: UISplitViewControllerDelegate {
+extension SFWAppDelegate: UISplitViewControllerDelegate {
     public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
         svc.presentsWithGesture = displayMode != .oneBesideSecondary
     }

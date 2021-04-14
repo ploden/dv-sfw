@@ -81,7 +81,7 @@ open class SFWTunesLoader: TunesLoader {
     open class func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void) {
         var tuneDescriptions: [TuneDescription] = []
               
-        if let app = UIApplication.shared.delegate as? PsalterAppDelegate {
+        if let app = UIApplication.shared.delegate as? SFWAppDelegate {
             let mainDirectory = app.appConfig.directory
             
             for tuneInfo in aSong.collection.tuneInfos {
