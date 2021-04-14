@@ -9,13 +9,23 @@
 
 import UIKit
 
-class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
+class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelegate {
+    var fileInfo: FileInfo?
+    
     var topic: Topic!
     var redirects: [Topic] = [Topic]()
     var songsManager: SongsManager!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+                
+        if
+            let fileInfo = fileInfo,
+            let path = Bundle.main.path(forResource: fileInfo.0, ofType: fileInfo.1, inDirectory: fileInfo.2)
+        {
+            let url = URL(fileURLWithPath: path)
+            topic = TopicDetailTableVC.readTopic(fromFileURL: url)
+        }
         
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 50.0
@@ -31,6 +41,8 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
         if let detail = self.detailVC() {
             detail.delegate = self
         }
+        
+        navigationController?.setToolbarHidden(true, animated: true)        
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -44,10 +56,9 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         let hasRedirects = redirects.count > 0
-        let hasSubtopics = topic.subtopics.count > 0
         
-        if hasSubtopics {
-            return topic.subtopics.count + (hasRedirects ? 1 : 0)
+        if let subtopics = topic.subtopics, subtopics.count > 0 {
+            return subtopics.count + (hasRedirects ? 1 : 0)
         } else {
             return 1 + (hasRedirects ? 1 : 0)
         }
@@ -56,9 +67,9 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isRedirectsSection(for: section) {
             return redirects.count
-        } else if topic.subtopics.count > 0 {
-            let subtopic = topic.subtopics[section]
-            return subtopic.songNumbers.count
+        } else if topic.subtopics?.count ?? 0 > 0 {
+            let subtopic = topic.subtopics?[section]
+            return subtopic?.songNumbers.count ?? 0
         } else {
             return topic.songNumbers.count
         }
@@ -67,9 +78,9 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if isRedirectsSection(for: section) {
             return "See also"
-        } else if section < topic.subtopics.count {
-            let subtopic = topic.subtopics[section]
-            return subtopic.topic.capitalized(with: NSLocale.current)
+        } else if section < topic.subtopics?.count ?? 0 {
+            let subtopic = topic.subtopics?[section]
+            return subtopic?.topic.capitalized(with: NSLocale.current)
         }
         
         return nil
@@ -129,10 +140,14 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
     // MARK: - Helpers
     
     func isRedirectsSection(for section: Int) -> Bool {
-        if topic.redirects.count == 0 {
+        if
+            let topicRedirects = topic.redirects, topicRedirects.count == 0
+        {
             return false
-        } else if topic.subtopics.count > 0 {
-            if section == topic.subtopics.count {
+        } else if
+            let topicSubtopics = topic.subtopics, topicSubtopics.count > 0
+        {
+            if section == topicSubtopics.count {
                 return true
             }
         } else if section == 1 {
@@ -156,37 +171,34 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
     }
     
     func songsToDisplay(for indexPath: IndexPath?) -> [Song] {
-        var songs = [Song]()
-        
         let songNumbers: [String] = {
-            if self.topic.subtopics.count == 0 {
-                return self.topic.songNumbers
-            } else {
-                if (indexPath?.section ?? 0) < self.topic.subtopics.count {
-                    return self.topic.subtopics[indexPath?.section ?? 0].songNumbers
+            if
+                let subtopics = topic.subtopics,
+                let indexPath = indexPath
+            {
+                if subtopics.count == 0 {
+                    return topic.songNumbers
+                } else {
+                    if indexPath.section < subtopics.count {
+                        return subtopics[indexPath.section].songNumbers
+                    }
                 }
             }
-            return []
+            return topic.songNumbers            
         }()
         
-        for songNumber in songNumbers {
-            if let song = songsManager.songForNumber(songNumber) {
-                songs.append(song)
-            }
-        }
-        
-        return songs
+        return songNumbers.compactMap { songsManager.songForNumber($0) }
     }
     
     func song(for indexPath: IndexPath?) -> Song? {
         let songNumber: String = {
-            if self.topic.subtopics.count == 0 {
+            if self.topic.subtopics == nil || self.topic.subtopics?.count == 0 {
                 if (indexPath?.row ?? 0) < self.topic.songNumbers.count {
                     return self.topic.songNumbers[indexPath?.row ?? 0]
                 }
-            } else {
-                if (indexPath?.section ?? 0) < self.topic.subtopics.count && (indexPath?.row ?? 0) < self.topic.subtopics[indexPath?.section ?? 0].songNumbers.count {
-                    return self.topic.subtopics[indexPath?.section ?? 0].songNumbers[indexPath?.row ?? 0]
+            } else if let subtopics = self.topic.subtopics {
+                if (indexPath?.section ?? 0) < subtopics.count && (indexPath?.row ?? 0) < subtopics[indexPath?.section ?? 0].songNumbers.count {
+                    return subtopics[indexPath?.section ?? 0].songNumbers[indexPath?.row ?? 0]
                 }
             }
             return ""
@@ -209,5 +221,20 @@ class TopicDetailTableVC: UITableViewController, SongDetailVCDelegate {
     
     func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
+    }
+    
+    class func readTopic(fromFileURL url: URL) -> Topic {
+        var result: Topic?
+        
+        do {
+            let data = try Data.init(contentsOf: url, options: .mappedIfSafe)
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            result = try decoder.decode(Topic.self, from: data)
+        } catch {
+            print("There was an error reading app config! \(error)")
+        }
+        
+        return result!
     }
 }
