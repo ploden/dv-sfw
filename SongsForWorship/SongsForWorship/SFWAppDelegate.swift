@@ -76,8 +76,10 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
                 split.delegate = self
                 
                 if
-                    let index = split.viewController(for: .primary) as? IndexVC,
-                    let detail = split.viewController(for: .secondary) as? SongDetailVC
+                    let indexNC = split.viewController(for: .primary) as? UINavigationController,
+                    let index = indexNC.topViewController as? IndexVC,
+                    let detailNC = split.viewController(for: .secondary) as? UINavigationController,
+                    let detail = detailNC.topViewController as? SongDetailVC
                 {
                     index.sections = appConfig.index
                     index.songsManager = songsManager
@@ -85,6 +87,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
                     
                     if let songIndexVC = SongIndexVC.pfw_instantiateFromStoryboard() as? SongIndexVC {
                         songIndexVC.songsManager = songsManager
+                        songIndexVC.title = ""
                         index.navigationController?.setToolbarHidden(false, animated: false)
                         index.navigationController?.pushViewController(songIndexVC, animated: false)
                     }

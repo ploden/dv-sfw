@@ -8,6 +8,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 enum DisplayMode {
     case singlePageMetre
@@ -231,6 +232,18 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 }
             }
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     func scrollToCurrentSong() {

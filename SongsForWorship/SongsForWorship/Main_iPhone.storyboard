@@ -17,7 +17,7 @@
         <!--Navigation Controller-->
         <scene sceneID="XQg-a5-6hs">
             <objects>
-                <navigationController definesPresentationContext="YES" id="LR8-G6-QN7" sceneMemberID="viewController">
+                <navigationController definesPresentationContext="YES" id="LR8-G6-QN7" customClass="SFWNavigationController" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <navigationBar key="navigationBar" alpha="0.10000000000000001" contentMode="scaleToFill" translucent="NO" id="Pub-Et-WVb">

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import SwiftyMarkdown
+import SwiftTheme
 
 typealias FileInfo = (String, String, String)
 
@@ -42,6 +43,18 @@ class TextViewVC: UIViewController, HasFileInfo {
         super.viewWillAppear(animated)        
         navigationController?.setToolbarHidden(true, animated: animated)
         textView?.contentOffset = .zero
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     class func readText(fromFileURL url: URL) -> String? {

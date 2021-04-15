@@ -32,7 +32,6 @@
 		8D99C1E924CED40A005B34F2 /* AppConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19624CED40A005B34F2 /* AppConfig.plist */; };
 		8D99C1EC24CED40A005B34F2 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19924CED40A005B34F2 /* Main_iPad.storyboard */; };
 		8D99C1ED24CED40A005B34F2 /* SongDetail.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19A24CED40A005B34F2 /* SongDetail.storyboard */; };
-		8D99C1EE24CED40A005B34F2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19C24CED40A005B34F2 /* LaunchScreen.storyboard */; };
 		8D99C1EF24CED40A005B34F2 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C19E24CED40A005B34F2 /* UIViewController.swift */; };
 		8D99C1F024CED40A005B34F2 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1A024CED40A005B34F2 /* Song.swift */; };
 		8D99C1F124CED40A005B34F2 /* SongCollectionTuneInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C1A124CED40A005B34F2 /* SongCollectionTuneInfo.swift */; };
@@ -151,7 +150,6 @@
 		8D99C19624CED40A005B34F2 /* AppConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppConfig.plist; sourceTree = "<group>"; };
 		8D99C19924CED40A005B34F2 /* Main_iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPad.storyboard; sourceTree = "<group>"; };
 		8D99C19A24CED40A005B34F2 /* SongDetail.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SongDetail.storyboard; sourceTree = "<group>"; };
-		8D99C19D24CED40A005B34F2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D99C19E24CED40A005B34F2 /* UIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		8D99C1A024CED40A005B34F2 /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		8D99C1A124CED40A005B34F2 /* SongCollectionTuneInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongCollectionTuneInfo.swift; sourceTree = "<group>"; };
@@ -347,7 +345,6 @@
 		8D99C19B24CED40A005B34F2 /* Base.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				8D99C19C24CED40A005B34F2 /* LaunchScreen.storyboard */,
 			);
 			path = Base.lproj;
 			sourceTree = "<group>";
@@ -589,7 +586,6 @@
 				8D99C1E924CED40A005B34F2 /* AppConfig.plist in Resources */,
 				8DD2E1B724E4756000F0DE30 /* Assets.xcassets in Resources */,
 				8D99C22F24CED40A005B34F2 /* SongPreviewViewController.xib in Resources */,
-				8D99C1EE24CED40A005B34F2 /* LaunchScreen.storyboard in Resources */,
 				8D99C20624CED40A005B34F2 /* PlayTrackTVCell.xib in Resources */,
 				8D99C1E824CED40A005B34F2 /* songs.json in Resources */,
 				8D99C21324CED40A005B34F2 /* TunesHeaderView.xib in Resources */,
@@ -726,17 +722,6 @@
 			targetProxy = 8D99C18224CED392005B34F2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		8D99C19C24CED40A005B34F2 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8D99C19D24CED40A005B34F2 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		8D8D9B3F25A50BDA00828D0E /* Debug */ = {

@@ -8,6 +8,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelegate {
     var fileInfo: FileInfo?
@@ -51,6 +52,18 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
     
     override var shouldAutorotate: Bool {
         return false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     // MARK: - Table view data source

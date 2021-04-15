@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSettings {
     var settings: Settings?
@@ -39,6 +40,18 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSet
     
     override var shouldAutorotate: Bool {
         return false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     // MARK: - Table view data source

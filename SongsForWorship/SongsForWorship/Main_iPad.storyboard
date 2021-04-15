@@ -3,6 +3,7 @@
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Split View Controller-->
@@ -10,29 +11,65 @@
             <objects>
                 <splitViewController allowDoubleColumnStyle="YES" id="8vK-aN-gDQ" sceneMemberID="viewController">
                     <connections>
-                        <segue destination="Qe3-o8-OEX" kind="relationship" relationship="masterViewController" id="7Ma-6O-VM8"/>
-                        <segue destination="dDb-g3-Tfg" kind="relationship" relationship="detailViewController" id="ugR-8C-GRl"/>
+                        <segue destination="loK-2d-wlo" kind="relationship" relationship="masterViewController" id="GYS-AA-bW8"/>
+                        <segue destination="saa-Nj-CSX" kind="relationship" relationship="detailViewController" id="ubK-YD-2XV"/>
                     </connections>
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JpU-Xu-MSx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-304" y="-41"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="JMI-fA-A5y">
+            <objects>
+                <navigationController id="loK-2d-wlo" customClass="SFWNavigationController" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="wRJ-uY-pde">
+                        <rect key="frame" x="0.0" y="0.0" width="420" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Qe3-o8-OEX" kind="relationship" relationship="rootViewController" id="3IT-My-td6"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GgU-yH-R0i" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="546" y="-369"/>
+        </scene>
         <!--IndexVC-->
         <scene sceneID="JaT-Jo-VNk">
             <objects>
-                <viewControllerPlaceholder storyboardIdentifier="Main_iPhone" storyboardName="Main_iPhone" referencedIdentifier="IndexVC" id="Qe3-o8-OEX" sceneMemberID="viewController"/>
+                <viewControllerPlaceholder storyboardIdentifier="Main_iPhone" storyboardName="Main_iPhone" referencedIdentifier="IndexVC" id="Qe3-o8-OEX" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="7Jy-xR-8ww"/>
+                </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Xh8-Ic-fOU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="386" y="-343"/>
+            <point key="canvasLocation" x="1164" y="-328"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="JCq-wa-MkZ">
+            <objects>
+                <navigationController id="saa-Nj-CSX" customClass="SFWNavigationController" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="0Xg-du-ehq">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="dDb-g3-Tfg" kind="relationship" relationship="rootViewController" id="euT-M8-Czy"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Hh9-tZ-bzz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="545" y="329"/>
         </scene>
         <!--SongDetailVC-->
         <scene sceneID="vSO-o1-acn">
             <objects>
-                <viewControllerPlaceholder storyboardName="SongDetail" referencedIdentifier="SongDetailVC" id="dDb-g3-Tfg" sceneMemberID="viewController"/>
+                <viewControllerPlaceholder storyboardName="SongDetail" referencedIdentifier="SongDetailVC" id="dDb-g3-Tfg" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="wdg-5b-yrx"/>
+                </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sGY-XT-vhb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="416" y="-152"/>
+            <point key="canvasLocation" x="1130" y="362"/>
         </scene>
     </scenes>
     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

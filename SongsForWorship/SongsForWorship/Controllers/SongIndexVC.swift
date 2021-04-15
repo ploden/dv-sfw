@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver {
     
@@ -110,6 +111,18 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
                 }
             }
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     // MARK: - Rotation Methods

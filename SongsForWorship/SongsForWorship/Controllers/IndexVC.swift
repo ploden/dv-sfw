@@ -16,6 +16,7 @@ extension Bundle {
 }
 
 import MessageUI
+import SwiftTheme
 
 class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
     var songsManager: SongsManager?
@@ -26,10 +27,6 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     }
     
     @IBOutlet private var indexTableView: UITableView?
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,11 +61,21 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         }
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
+    }
+    
     // MARK: - Helper methods
     
-    func configureNavBar() {
-        print("IndexVC: configureNavBar")
-        
+    func configureNavBar() {        
         if
             let settings = Settings(fromUserDefaults: .standard),
             let image = UIImage(named: "nav_bar_icon", in: nil, with: .none)
