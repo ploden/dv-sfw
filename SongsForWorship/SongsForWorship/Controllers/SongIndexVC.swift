@@ -68,7 +68,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationController?.setToolbarHidden(false, animated: true)
+        navigationController?.setToolbarHidden(false, animated: animated)
         navigationController?.toolbar.isTranslucent = false
         
         if UIDevice.current.userInterfaceIdiom != .pad {

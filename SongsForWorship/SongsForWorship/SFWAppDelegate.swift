@@ -85,6 +85,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
                     
                     if let songIndexVC = SongIndexVC.pfw_instantiateFromStoryboard() as? SongIndexVC {
                         songIndexVC.songsManager = songsManager
+                        index.navigationController?.setToolbarHidden(false, animated: false)
                         index.navigationController?.pushViewController(songIndexVC, animated: false)
                     }
                     
@@ -106,6 +107,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
             
             if let songIndexVC = SongIndexVC.pfw_instantiateFromStoryboard() as? SongIndexVC {
                 songIndexVC.songsManager = songsManager
+                navigationController?.setToolbarHidden(false, animated: false)
                 navigationController?.pushViewController(songIndexVC, animated: false)
             }
         }
