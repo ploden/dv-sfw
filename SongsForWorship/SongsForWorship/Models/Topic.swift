@@ -11,10 +11,12 @@ import Foundation
 struct Topic {
   var topic: String
   var songNumbers: [String]
-    var redirects: [String]
+    
+    var redirects: [String]?
 
-  var subtopics: [Topic]
+  var subtopics: [Topic]?
   
+    /*
   init?(dict: [AnyHashable : Any]?) {
     if dict == nil {
       return nil
@@ -40,4 +42,7 @@ struct Topic {
     
     subtopics = tmpArray
   }
+ */
 }
+
+extension Topic: Decodable {}

@@ -8,13 +8,15 @@
 
 import Foundation
 import UIKit
+import SwiftTheme
 
-extension UINavigationController {
-    open override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+class SFWNavigationController: UINavigationController {
+    override var childForStatusBarStyle : UIViewController? {
+        return self.topViewController
     }
-    
-     /*
+}
+
+extension UINavigationController {    
     override open var shouldAutorotate: Bool {
         get {
             if let visibleVC = visibleViewController {
@@ -41,5 +43,4 @@ extension UINavigationController {
             return super.supportedInterfaceOrientations
         }
     }
- */
 }

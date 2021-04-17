@@ -75,10 +75,10 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     @IBOutlet weak var tableViewHeightConstraint: NSLayoutConstraint?
     var lastSelectedCell: IndexPath?
     lazy var shouldShowAdditionalTunes: Bool = {
-        return (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig.shouldShowAdditionalTunes ?? false
+        return (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig.shouldShowAdditionalTunes ?? false
     }()
     lazy var tuneRecordings: Bool = {
-        return (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig.tuneRecordings ?? false
+        return (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig.tuneRecordings ?? false
     }()
     var items: [TunesVCItem] = [TunesVCItem]()
     

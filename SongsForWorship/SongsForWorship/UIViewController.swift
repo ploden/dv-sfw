@@ -8,9 +8,10 @@
 
 import Foundation
 import UIKit
+import SwiftTheme
 
 extension UIViewController: HasStoryboardName {
-
+    
     @objc class var storyboardName: String? {
         get {
             return "Main_iPhone"

@@ -19,8 +19,8 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 // MARK: -
 // MARK: Application lifecycle
 
-@UIApplicationMain
-open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
+//@UIApplicationMain
+open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
     private var songsManager: SongsManager?
     lazy public var appConfig: AppConfig = {
         let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
@@ -68,6 +68,8 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
 
         applyStyling()
         
+        startAnalytics()
+        
         var mainController: UIViewController?
 
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -75,11 +77,21 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
                 split.delegate = self
                 
                 if
-                    let index = split.viewController(for: .primary) as? IndexVC,
-                    let detail = split.viewController(for: .secondary) as? SongDetailVC
+                    let indexNC = split.viewController(for: .primary) as? UINavigationController,
+                    let index = indexNC.topViewController as? IndexVC,
+                    let detailNC = split.viewController(for: .secondary) as? UINavigationController,
+                    let detail = detailNC.topViewController as? SongDetailVC
                 {
                     index.sections = appConfig.index
                     index.songsManager = songsManager
+                    index.title = ""
+                    
+                    if let songIndexVC = SongIndexVC.pfw_instantiateFromStoryboard() as? SongIndexVC {
+                        songIndexVC.songsManager = songsManager
+                        songIndexVC.title = ""
+                        index.navigationController?.setToolbarHidden(false, animated: false)
+                        index.navigationController?.pushViewController(songIndexVC, animated: false)
+                    }
                     
                     detail.navigationItem.leftItemsSupplementBackButton = true
                     detail.songsManager = songsManager
@@ -91,10 +103,17 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             let nav = Helper.mainStoryboard_iPhone().instantiateInitialViewController() as? UINavigationController,
             let index = nav.topViewController as? IndexVC
         {
-                navigationController = nav
-                index.songsManager = songsManager
-                index.sections = appConfig.index
-                mainController = navigationController
+            navigationController = nav
+            index.title = ""
+            index.songsManager = songsManager
+            index.sections = appConfig.index
+            mainController = navigationController
+            
+            if let songIndexVC = SongIndexVC.pfw_instantiateFromStoryboard() as? SongIndexVC {
+                songIndexVC.songsManager = songsManager
+                navigationController?.setToolbarHidden(false, animated: false)
+                navigationController?.pushViewController(songIndexVC, animated: false)
+            }
         }
         
         window = UIWindow()
@@ -252,15 +271,17 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
             }
         }
     }
+    
+    open func startAnalytics() {}
 }
 
-extension PsalterAppDelegate: SettingsObserver {
+extension SFWAppDelegate: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
         changeThemeAsNeeded()
     }
 }
 
-extension PsalterAppDelegate: UISplitViewControllerDelegate {
+extension SFWAppDelegate: UISplitViewControllerDelegate {
     public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
         svc.presentsWithGesture = displayMode != .oneBesideSecondary
     }

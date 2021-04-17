@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 class FAQTableVC: UITableViewController, HasFileInfo {
     var fileInfo: FileInfo?
@@ -33,6 +34,18 @@ class FAQTableVC: UITableViewController, HasFileInfo {
     
     override var shouldAutorotate: Bool {
         return false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     // MARK: - Table view data source

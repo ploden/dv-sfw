@@ -23,6 +23,7 @@ public struct AppConfig: Decodable {
     let pdfRenderingConfigs_iPad: [PDFRenderingConfig]
     let shouldHideSheetMusicForCopyrightedTunes: Bool
     let customClasses: [CustomClassConfig]
+    let sendFeedbackEmailAddress: String
     
     /*
     func customClass(forProtocol aProtocol: Protocol) -> AnyClass {

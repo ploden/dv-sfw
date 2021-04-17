@@ -16,6 +16,7 @@ extension Bundle {
 }
 
 import MessageUI
+import SwiftTheme
 
 class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
     var songsManager: SongsManager?
@@ -26,10 +27,6 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     }
     
     @IBOutlet private var indexTableView: UITableView?
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,11 +61,21 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         }
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
+    }
+    
     // MARK: - Helper methods
     
-    func configureNavBar() {
-        print("IndexVC: configureNavBar")
-        
+    func configureNavBar() {        
         if
             let settings = Settings(fromUserDefaults: .standard),
             let image = UIImage(named: "nav_bar_icon", in: nil, with: .none)
@@ -132,32 +139,33 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     }
     
     func sendFeedback() {
-        let recipient = "contact@deovolentellc.com"
-        let subject: String = {
-            let appName = Bundle.main.appName
-            let version = Bundle.main.version
-            return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
-        }()
-        
-        if MFMailComposeViewController.canSendMail() {
-            let composeController = MFMailComposeViewController()
-            composeController.mailComposeDelegate = self
-            composeController.setToRecipients([recipient])
-            composeController.setSubject(subject)
+        if let recipient = (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig.sendFeedbackEmailAddress {
+            let subject: String = {
+                let appName = Bundle.main.appName
+                let version = Bundle.main.version
+                return "Feedback for \(appName ?? "") \(version ?? "") - \(UIDevice.current.name) - \(UIDevice.current.systemVersion)"
+            }()
             
-            present(composeController, animated: true)
-        } else if let emailUrl = createEmailUrl(to: recipient, subject: subject, body: "") {
-            UIApplication.shared.open(emailUrl)
-        } else {
-            let alertController = UIAlertController(title: "Cannot Send Mail", message: "Please set up an email account in order to send a support request email.", preferredStyle: .alert)
-            
-            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                }
-            }))
-            present(alertController, animated: true)
+            if MFMailComposeViewController.canSendMail() {
+                let composeController = MFMailComposeViewController()
+                composeController.mailComposeDelegate = self
+                composeController.setToRecipients([recipient])
+                composeController.setSubject(subject)
+                
+                present(composeController, animated: true)
+            } else if let emailUrl = createEmailUrl(to: recipient, subject: subject, body: "") {
+                UIApplication.shared.open(emailUrl)
+            } else {
+                let alertController = UIAlertController(title: "Cannot Send Mail", message: "Please set up an email account in order to send a support request email.", preferredStyle: .alert)
+                
+                alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                alertController.addAction(UIAlertAction(title: "Settings", style: .default, handler: { action in
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
+                }))
+                present(alertController, animated: true)
+            }
         }
     }
     
@@ -248,7 +256,7 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                         let filename = indexRow.filename,
                         let filetype = indexRow.filetype,
                         var hasFileInfo = vc as? HasFileInfo,
-                        let app = UIApplication.shared.delegate as? PsalterAppDelegate                        
+                        let app = UIApplication.shared.delegate as? SFWAppDelegate                        
                     {
                         hasFileInfo.fileInfo = (filename, filetype, app.appConfig.directory)
                     }

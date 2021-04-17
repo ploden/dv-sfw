@@ -8,6 +8,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 enum DisplayMode {
     case singlePageMetre
@@ -71,7 +72,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     var appConfig: AppConfig {
         get {
-            let app = UIApplication.shared.delegate as! PsalterAppDelegate
+            let app = UIApplication.shared.delegate as! SFWAppDelegate
             return app.appConfig
         }
     }
@@ -231,6 +232,18 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 }
             }
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     func scrollToCurrentSong() {
@@ -850,7 +863,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         tunesVC.popoverPresentationController?.backgroundColor = tunesVC.view.backgroundColor
         
         if
-            let appConfig = (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig,
+            let appConfig = (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig,
             appConfig.shouldShowAdditionalTunes == true
         {
             tunesVC.preferredContentSize = CGSize(width: 375, height: 172 + 128)

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftTheme
 
 class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver {
     
@@ -68,7 +69,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationController?.setToolbarHidden(false, animated: true)
+        navigationController?.setToolbarHidden(false, animated: animated)
         navigationController?.toolbar.isTranslucent = false
         
         if UIDevice.current.userInterfaceIdiom != .pad {
@@ -110,6 +111,18 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
                 }
             }
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
+            switch theme {
+            case .defaultLight, .night:
+                return .lightContent
+            case .white:
+                return .darkContent
+            }
+        }
+        return .lightContent
     }
     
     // MARK: - Rotation Methods

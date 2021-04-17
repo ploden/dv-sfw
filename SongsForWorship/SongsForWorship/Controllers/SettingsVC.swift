@@ -20,7 +20,7 @@ class SettingsVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        customFontLabel?.text = (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig.defaultFontDisplayName
+        customFontLabel?.text = (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig.defaultFontDisplayName
     }
     
     override func viewWillAppear(_ animated: Bool) {
