@@ -24,15 +24,15 @@ public struct PlayerTrack: Hashable, Equatable {
     let albumArtwork: UIImage?
     let trackType: PlayerTrackType
     
-    init(tuneDescription: TuneDescription) {
-        length = tuneDescription.length
-        title = tuneDescription.title
-        copyright = tuneDescription.copyright
+    init(localFileTuneDescription: LocalFileTuneDescription) {
+        length = localFileTuneDescription.length
+        title = localFileTuneDescription.title
+        copyright = localFileTuneDescription.copyright
         trackType = .tune
         albumTitle = nil
         albumArtwork = nil
         artist = nil
-        composer = tuneDescription.composer
+        composer = localFileTuneDescription.composer
     }
     
     init(mediaItem: MPMediaItem) {
@@ -45,6 +45,17 @@ public struct PlayerTrack: Hashable, Equatable {
         albumArtwork = image
         trackType = .recording
         artist = mediaItem.artist
+        composer = nil
+    }
+    
+    init(appleMusicItemTuneDescription: AppleMusicItemTuneDescription) {
+        length = nil
+        title = appleMusicItemTuneDescription.title
+        copyright = nil
+        albumTitle = nil
+        albumArtwork = nil
+        trackType = .recording
+        artist = nil
         composer = nil
     }
     

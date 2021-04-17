@@ -849,7 +849,14 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         
         tunesVC.popoverPresentationController?.backgroundColor = tunesVC.view.backgroundColor
         
-        tunesVC.preferredContentSize = CGSize(width: 375, height: 172)
+        if
+            let appConfig = (UIApplication.shared.delegate as? PsalterAppDelegate)?.appConfig,
+            appConfig.shouldShowAdditionalTunes == true
+        {
+            tunesVC.preferredContentSize = CGSize(width: 375, height: 172 + 128)
+        } else {
+            tunesVC.preferredContentSize = CGSize(width: 375, height: 172)
+        }
         
         present(tunesVC, animated: true, completion: nil)
     }

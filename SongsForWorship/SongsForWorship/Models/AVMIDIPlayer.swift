@@ -11,7 +11,7 @@ import AVKit
 
 extension AVMIDIPlayer {
     
-    convenience init(withTune tune: TuneDescription, soundBankURL: URL) throws {
+    convenience init(withTune tune: LocalFileTuneDescription, soundBankURL: URL) throws {
         try self.init(contentsOf: tune.url, soundBankURL: soundBankURL)
     }
     
@@ -30,7 +30,7 @@ extension AVMIDIPlayer {
         return nil        
     }
     
-    static func midiPlayer(withTune tune: TuneDescription, soundBankURL: URL) throws -> AVMIDIPlayer {
+    static func midiPlayer(withTune tune: LocalFileTuneDescription, soundBankURL: URL) throws -> AVMIDIPlayer {
         try AVMIDIPlayer(withTune: tune, soundBankURL: soundBankURL)
     }
     

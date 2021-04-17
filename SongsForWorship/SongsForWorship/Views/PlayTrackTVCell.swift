@@ -13,12 +13,8 @@ class PlayTrackTVCell: UITableViewCell {
     @IBOutlet weak var trackTitleLabel: UILabel? {
         didSet {
             trackTitleLabel?.font = {
-                if let settings = Settings(fromUserDefaults: .standard) {
-                    if settings.shouldUseSystemFonts {
-                        return UIFont.preferredFont(forTextStyle: .title3)
-                    }
-                }
-                return UIFont.systemFont(ofSize: 17.0, weight: .light)
+                let preferred = UIFont.preferredFont(forTextStyle: .body)
+                return UIFont.systemFont(ofSize: preferred.pointSize, weight: .light)
             }()
         }
     }

@@ -8,25 +8,30 @@
 
 import Foundation
 
-public enum TuneDescriptionMediaType {
+public enum LocalFileTuneDescriptionMediaType {
     case midi, mp3
 }
 
-public class TuneDescription: NSObject {
-    let length: String?
-    let title: String
-    let composer: String?
-    let copyright: String?
+public protocol TuneDescription {
+    var length: String? { get }
+    var title: String { get }
+    var composer: String? { get }
+    var copyright: String? { get }
+}
+
+public struct LocalFileTuneDescription: TuneDescription {
+    public let length: String?
+    public let title: String
+    public let composer: String?
+    public let copyright: String?
     let url: URL
-    let mediaType: TuneDescriptionMediaType
-    
-    public init(length: String?, title: String, composer: String?, copyright: String?, url: URL, mediaType: TuneDescriptionMediaType) {
-        self.length = length
-        self.title = title
-        self.composer = composer
-        self.copyright = copyright
-        self.url = url
-        self.mediaType = mediaType
-        super.init()
-    }
+    public let mediaType: LocalFileTuneDescriptionMediaType
+}
+
+public struct AppleMusicItemTuneDescription: TuneDescription {
+    public let appleMusicID: String
+    public let length: String?
+    public let title: String
+    public let composer: String?
+    public let copyright: String?
 }

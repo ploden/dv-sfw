@@ -8,6 +8,7 @@
 
 import AVKit
 import SwiftTheme
+import StoreKit
 
 let kFavoritesDictionaryName = "favorites"
 let kFavoriteSongNumbersDictionaryName = "favoriteSongNumbers"
@@ -99,6 +100,14 @@ open class PsalterAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationD
         window = UIWindow()
         window?.rootViewController = mainController
         window?.makeKeyAndVisible()
+        
+        if let firstPsalm = songsManager?.songCollections.first?.songs?.first {
+            AppleMusicController.search(forSong: firstPsalm) { results, error in
+                if let results = results {
+                    print("\(results)")
+                }
+            }
+        }
         
         return true
     }
