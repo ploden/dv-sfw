@@ -4,6 +4,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -42,12 +43,18 @@
                         <constraints>
                             <constraint firstItem="1Cl-yt-mX0" firstAttribute="top" secondItem="Dh7-jX-66y" secondAttribute="bottom" constant="2" id="6ok-tL-1qK"/>
                             <constraint firstItem="1Cl-yt-mX0" firstAttribute="leading" secondItem="TuX-pa-cm7" secondAttribute="leading" id="JZb-wB-IsH"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Dh7-jX-66y" secondAttribute="trailing" constant="10" id="QK1-wo-Tcb"/>
                             <constraint firstAttribute="bottom" secondItem="1Cl-yt-mX0" secondAttribute="bottom" id="VS9-hR-D3n"/>
                             <constraint firstItem="Dh7-jX-66y" firstAttribute="top" secondItem="TuX-pa-cm7" secondAttribute="top" id="VYW-c5-TLZ"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1Cl-yt-mX0" secondAttribute="trailing" constant="10" id="lSn-xS-d0J"/>
                             <constraint firstItem="Dh7-jX-66y" firstAttribute="leading" secondItem="TuX-pa-cm7" secondAttribute="leading" id="o3U-wL-zL7"/>
                         </constraints>
                     </view>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="album_placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="vZY-J2-Jg1">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jlc-wJ-oFZ">
+                        <rect key="frame" x="18" y="8" width="44" height="44"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="album_placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="vZY-J2-Jg1">
                         <rect key="frame" x="18" y="8" width="44" height="44"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="44" id="Rm0-CJ-1ai"/>
@@ -58,10 +65,14 @@
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstAttribute="trailingMargin" secondItem="TuX-pa-cm7" secondAttribute="trailing" id="15J-Nv-LLK"/>
+                    <constraint firstItem="jlc-wJ-oFZ" firstAttribute="top" secondItem="vZY-J2-Jg1" secondAttribute="top" id="2bX-Vy-B4o"/>
                     <constraint firstAttribute="bottom" secondItem="vZY-J2-Jg1" secondAttribute="bottom" constant="8" id="ESf-7f-75C"/>
                     <constraint firstItem="HKk-H2-wYn" firstAttribute="leading" secondItem="vZY-J2-Jg1" secondAttribute="trailing" constant="10" id="JhY-G4-MC3"/>
+                    <constraint firstItem="jlc-wJ-oFZ" firstAttribute="bottom" secondItem="vZY-J2-Jg1" secondAttribute="bottom" id="OBx-RW-S74"/>
                     <constraint firstItem="TuX-pa-cm7" firstAttribute="centerY" secondItem="vZY-J2-Jg1" secondAttribute="centerY" id="UHg-65-xTl"/>
                     <constraint firstItem="TuX-pa-cm7" firstAttribute="leading" secondItem="vZY-J2-Jg1" secondAttribute="trailing" constant="10" id="cSz-uL-K7c"/>
+                    <constraint firstItem="jlc-wJ-oFZ" firstAttribute="leading" secondItem="vZY-J2-Jg1" secondAttribute="leading" id="fbs-dq-lss"/>
+                    <constraint firstItem="jlc-wJ-oFZ" firstAttribute="trailing" secondItem="vZY-J2-Jg1" secondAttribute="trailing" id="ibE-bc-dOH"/>
                     <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="HKk-H2-wYn" secondAttribute="trailing" constant="10" id="jrf-gB-iDn"/>
                     <constraint firstItem="vZY-J2-Jg1" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="18" id="k6B-Sx-s7y"/>
                     <constraint firstItem="vZY-J2-Jg1" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" priority="999" constant="8" id="lgu-Vi-ei1"/>
@@ -74,6 +85,7 @@
                 <outlet property="albumTitleLabel" destination="HKk-H2-wYn" id="XKv-9m-WvQ"/>
                 <outlet property="artistLabel" destination="1Cl-yt-mX0" id="5uf-bA-1Af"/>
                 <outlet property="artworkImageView" destination="vZY-J2-Jg1" id="T01-6y-qKM"/>
+                <outlet property="shadowView" destination="jlc-wJ-oFZ" id="Gl5-W9-tWg"/>
                 <outlet property="trackTitleLabel" destination="Dh7-jX-66y" id="X06-N3-jrb"/>
             </connections>
             <point key="canvasLocation" x="-53" y="-25"/>
@@ -81,5 +93,8 @@
     </objects>
     <resources>
         <image name="album_placeholder" width="343" height="341"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

@@ -93,6 +93,8 @@ public struct Settings: Codable {
     private(set) var shouldShowSheetMusicInPortrait_iPhone: Bool = false
     private(set) var shouldShowSheetMusicInLandscape_iPhone: Bool = true
     private(set) var shouldShowSheetMusic_iPad: Bool = true
+    private(set) var shouldShowAppleMusic = false
+    private(set) var shouldShowMusicLibrary = false
 
     func calculateTheme(forUserInterfaceStyle style: UIUserInterfaceStyle) -> ThemeSetting {
         if autoNightTheme {
@@ -130,7 +132,9 @@ public struct Settings: Codable {
             theme: newTheme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
         )
         
         return s2
@@ -146,7 +150,9 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
         )
         return s
     }
@@ -161,7 +167,9 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
         )
         return s
     }
@@ -176,7 +184,9 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
         )
         return s
     }
@@ -201,7 +211,9 @@ public struct Settings: Codable {
             theme: theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
         )
         return s
     }
@@ -216,7 +228,9 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
         )
         return s
     }
@@ -231,7 +245,43 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
+        )
+        return s
+    }
+    
+    func new(withShouldShowAppleMusic shouldShowAppleMusic: Bool) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: shouldShowAppleMusic,
+            shouldShowMusicLibrary: self.shouldShowMusicLibrary
+        )
+        return s
+    }
+    
+    func new(withShouldShowMusicLibrary shouldShowMusicLibrary: Bool) -> Settings {
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            shouldShowAppleMusic: self.shouldShowAppleMusic,
+            shouldShowMusicLibrary: shouldShowMusicLibrary
         )
         return s
     }

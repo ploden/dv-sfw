@@ -9,10 +9,11 @@
 import UIKit
 import AVFoundation
 import StoreKit
+import MediaPlayer
 
 protocol TunesLoader {
     static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
-    static func loadTunes(forSong aSong: Song, completion: @escaping (Bool, [TuneDescription], Error?) -> Void)
+    static func loadTunes(forSong aSong: Song, withTypes: [TuneDescriptionMediaType], completion: @escaping (Bool, [TuneDescription], Error?) -> Void)
     static func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? 
 }
 
@@ -79,7 +80,7 @@ open class SFWTunesLoader: TunesLoader {
         return self.defaultFilename(forTuneInfo: tuneInfo, song: song)
     }
 
-    open class func loadTunes(forSong aSong: Song, completion: @escaping (Bool, [TuneDescription], Error?) -> Void) {
+    open class func loadTunes(forSong aSong: Song, withTypes: [TuneDescriptionMediaType], completion: @escaping (Bool, [TuneDescription], Error?) -> Void) {
         var tuneDescriptions: [TuneDescription] = []
         if let app = UIApplication.shared.delegate as? SFWAppDelegate {
             let mainDirectory = app.appConfig.directory
@@ -91,7 +92,7 @@ open class SFWTunesLoader: TunesLoader {
                     
                     if let filePath = filePath {
                         let fileUrl = URL(fileURLWithPath: filePath)                        
-                        let desc = LocalFileTuneDescription(length: nil, title: tuneInfo.title, composer: nil, copyright: nil, url: fileUrl, mediaType: .midi)
+                        let desc = LocalFileTuneDescription(length: nil, title: tuneInfo.title, composer: nil, copyright: nil, url: fileUrl, mediaType: .localMIDI)
                         tuneDescriptions.append(desc)
                     } else {
                         print("Tunes file not found: \(filename)")
@@ -99,8 +100,35 @@ open class SFWTunesLoader: TunesLoader {
                 }
             }
         }
+                
+        if
+            let settings = Settings(fromUserDefaults: .standard), settings.shouldShowMusicLibrary,
+            MPMediaLibrary.authorizationStatus() == .authorized
+        {
+            let numberPredicate = MPMediaPropertyPredicate(value: aSong.number, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
+            
+            let titlePredicate = MPMediaPropertyPredicate(value: aSong.title, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
+            
+            if
+                let numberQueryItems = makeQuery(with: numberPredicate)?.items,
+                let titleQueryItems = makeQuery(with: titlePredicate)?.items
+            {
+                let numberQueryItemsSet = Set<MPMediaItem>(numberQueryItems)
+                let titleQueryItemsSet = Set<MPMediaItem>(titleQueryItems)
+                let intersection = titleQueryItemsSet.intersection(numberQueryItemsSet)
+                
+                let collection = MPMediaItemCollection(items: Array(intersection))
+                
+                for mediaItem in collection.items {
+                    tuneDescriptions.append(MusicLibraryItemTuneDescription(mediaItem: mediaItem, composer: nil, copyright: nil))
+                }
+            }
+        }
         
-        if SKCloudServiceController.authorizationStatus() == .authorized {
+        if
+            let settings = Settings(fromUserDefaults: .standard), settings.shouldShowAppleMusic,
+            SKCloudServiceController.authorizationStatus() == .authorized
+        {
             let controller = SKCloudServiceController()
             
             completion(false, tuneDescriptions, nil)
@@ -113,7 +141,7 @@ open class SFWTunesLoader: TunesLoader {
                         AppleMusicController.search(forSong: aSong) { (items, error) in
                             if let items = items {
                                 for item in items {
-                                    let desc = AppleMusicItemTuneDescription(appleMusicID: item.id, length: nil, title: item.name, composer: nil, copyright: nil)
+                                    let desc = AppleMusicItemTuneDescription(appleMusicID: item.id, length: nil, title: item.name, composer: nil, copyright: nil, artwork: item.artwork)
                                     tuneDescriptions.append(desc)
                                 }
                             }
@@ -127,4 +155,15 @@ open class SFWTunesLoader: TunesLoader {
         }
     }
     
+    static func makeQuery(with predicate: MPMediaPropertyPredicate?) -> MPMediaQuery? {
+        let query = MPMediaQuery.songs()
+        
+        //  [query addFilterPredicate:[MPMediaPropertyPredicate predicateWithValue:@"Crown & Covenant" forProperty:MPMediaItemPropertyArtist comparisonType:MPMediaPredicateComparisonEqualTo]];
+        if let predicate = predicate {
+            query.addFilterPredicate(predicate)
+        }
+        query.groupingType = .album
+        
+        return query
+    }
 }

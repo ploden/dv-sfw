@@ -10,17 +10,15 @@ import AVKit
 import SwiftTheme
 import StoreKit
 
-let kFavoritesDictionaryName = "favorites"
-let kFavoriteSongNumbersDictionaryName = "favoriteSongNumbers"
-let kSearchPsalmsShortcutIdentifier = "com.deovolentellc.PsalmsForWorship.searchPsalms"
-let kFavoritePsalmShortcutIdentifier = "com.deovolentellc.PsalmsForWorship.openFavoritePsalm"
-let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
+enum ShortcutIdentifier: String {
+    case goTofavoriteSong
+}
 
 // MARK: -
 // MARK: Application lifecycle
 
-//@UIApplicationMain
 open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
+    let imageCacheManager = ImageCacheManager()
     private var songsManager: SongsManager?
     lazy public var appConfig: AppConfig = {
         let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
@@ -120,14 +118,6 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         window?.rootViewController = mainController
         window?.makeKeyAndVisible()
         
-        if let firstPsalm = songsManager?.songCollections.first?.songs?.first {
-            AppleMusicController.search(forSong: firstPsalm) { results, error in
-                if let results = results {
-                    print("\(results)")
-                }
-            }
-        }
-        
         return true
     }
 
@@ -145,34 +135,21 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
     }
 
     func handle(_ shortcutItem: UIApplicationShortcutItem?) -> Bool {
-        let identifier = shortcutItem?.type
-
         var handeled = false
 
-        if (identifier == kSearchPsalmsShortcutIdentifier) {
-            navigationController?.popToRootViewController(animated: false)
-
-            let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "PsalmIndexVC") as? SongIndexVC
-            vc?.songsManager = songsManager
-            if let vc = vc {
-                navigationController?.show(vc, sender: nil)
+        if
+            let identifier = shortcutItem?.type,
+            let shortcut = ShortcutIdentifier(rawValue: identifier)
+        {
+            switch shortcut {
+            case .goTofavoriteSong:
+                handeled = true
+                break
+            default:
+                break
             }
-
-            handeled = true
-        } else if (identifier == kFavoritePsalmShortcutIdentifier) {
-            let songNumber = shortcutItem?.userInfo?[PFWFavoritesShortcutPsalmIdentifierKey] as? String
-            
-            if
-                let songsManager = songsManager,
-                let song = songsManager.songForNumber(songNumber)
-            {
-                songsManager.setcurrentSong(song, songsToDisplay: IndexVC.favoriteSongs(songsManager: songsManager))
-            }
-
-            handeled = true
         }
-
-
+        
         return handeled
     }
 

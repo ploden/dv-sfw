@@ -375,7 +375,7 @@
                                                                                 <subviews>
                                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KqV-au-RHK">
                                                                                         <rect key="frame" x="0.0" y="0.0" width="37.5" height="10"/>
-                                                                                        <color key="backgroundColor" name="ThemeColor"/>
+                                                                                        <color key="backgroundColor" name="NavBarBackground"/>
                                                                                         <constraints>
                                                                                             <constraint firstAttribute="height" constant="10" id="Tea-oN-9E1"/>
                                                                                         </constraints>
@@ -414,7 +414,7 @@
                                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Song" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LgU-aQ-mJE">
                                                                                                 <rect key="frame" x="12" y="3" width="13" height="6"/>
                                                                                                 <fontDescription key="fontDescription" type="italicSystem" pointSize="5"/>
-                                                                                                <color key="textColor" name="ThemeColor"/>
+                                                                                                <color key="textColor" name="NavBarBackground"/>
                                                                                                 <nil key="highlightedColor"/>
                                                                                             </label>
                                                                                         </subviews>
@@ -705,8 +705,8 @@
         <image name="character" catalog="system" width="128" height="128"/>
         <image name="checkmark" catalog="system" width="128" height="114"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
-        <namedColor name="ThemeColor">
-            <color red="0.40000000000000002" green="0.0" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="NavBarBackground">
+            <color red="0.030999999493360519" green="0.14499999582767487" blue="0.40400001406669617" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

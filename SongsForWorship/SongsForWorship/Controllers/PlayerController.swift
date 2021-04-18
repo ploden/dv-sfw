@@ -17,10 +17,11 @@ protocol PlayerControllerDelegate: class {
 }
 
 enum PlayerControllerState: Int {
-    case tunesNotLoaded, loadingTunes, loadingTunesDidSucceed, loadingTunesDidFail
+    case tunesNotLoaded, loadingTunes, loadingSelectedTuneForPlayback, loadingTunesDidSucceed, loadingTunesDidFail
 }
 
 class PlayerController: NSObject {
+    var queue: OperationQueue
     var timePosition: TimeInterval = 0
     var loadTunesDidFail: Bool = false
     var loopCounter: UInt8 = 0 {
@@ -45,7 +46,8 @@ class PlayerController: NSObject {
     private var player: MPMusicPlayerController?
     private var playerTracks: [PlayerTrack:Any] = [PlayerTrack:Any]()
     
-    required init(withSong aSong: Song, delegate: PlayerControllerDelegate) {
+    required init(withSong aSong: Song, delegate: PlayerControllerDelegate, queue: OperationQueue) {
+        self.queue = queue
         self.song = aSong
         self.delegate = delegate
         super.init()
@@ -53,36 +55,7 @@ class PlayerController: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(stopPlaying), name: NSNotification.Name("stop playing"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(_:)), name: .AVPlayerItemDidPlayToEndTime, object: nil)
         
-        state = .tunesNotLoaded
-        
-        let authStatus = MPMediaLibrary.authorizationStatus()
-        
-        switch authStatus {
-        case .denied, .restricted, .notDetermined:
-            break
-        case .authorized:
-            let numberPredicate = MPMediaPropertyPredicate(value: song.number, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
-            
-            let titlePredicate = MPMediaPropertyPredicate(value: song.title, forProperty: MPMediaItemPropertyTitle, comparisonType: .contains)
-            
-            if
-                let numberQueryItems = makeQuery(with: numberPredicate)?.items,
-                let titleQueryItems = makeQuery(with: titlePredicate)?.items
-            {
-                let numberQueryItemsSet = Set<MPMediaItem>(numberQueryItems)
-                let titleQueryItemsSet = Set<MPMediaItem>(titleQueryItems)
-                let intersection = titleQueryItemsSet.intersection(numberQueryItemsSet)
-                
-                let collection = MPMediaItemCollection(items: Array(intersection))
-                
-                for item in collection.items {
-                    let track = PlayerTrack(mediaItem: item)
-                    playerTracks[track] = item
-                }
-            }
-        default:
-            break
-        }
+        state = .tunesNotLoaded        
     }
     
     func loadTunes() {
@@ -103,7 +76,19 @@ class PlayerController: NSObject {
                 return SFWTunesLoader.self
             }()
             
-            tunesLoaderClass.loadTunes(forSong: song, completion: { [weak self] finished, someTuneDescriptions, someError in
+            let mediaTypes: [TuneDescriptionMediaType] = {
+                var types = [TuneDescriptionMediaType]()
+                if TunesVC.musicLibraryIsEnabled(settings: Settings(fromUserDefaults: .standard)) {
+                    types.append(.localMP3)
+                }
+                if TunesVC.appleMusicIsEnabled(settings: Settings(fromUserDefaults: .standard)) {
+                    types.append(.appleMusic)
+                }
+                types.append(.localMIDI)
+                return types
+            }()
+                
+            tunesLoaderClass.loadTunes(forSong: song, withTypes: mediaTypes, completion: { [weak self] finished, someTuneDescriptions, someError in
                 if let _ = someError, someTuneDescriptions.count == 0 {
                     OperationQueue.main.addOperation({
                         self?.state = .loadingTunesDidFail
@@ -122,11 +107,19 @@ class PlayerController: NSObject {
                                 } else if let desc = desc as? AppleMusicItemTuneDescription {
                                     let track = PlayerTrack(appleMusicItemTuneDescription: desc)
                                     self.playerTracks[track] = desc
+                                } else if let desc = desc as? MusicLibraryItemTuneDescription {
+                                    let track = PlayerTrack(mediaItem: desc.mediaItem)
+                                    self.playerTracks[track] = desc
                                 }
                             }
                             let silentDelegate = self.delegate
                             self.delegate = nil
-                            self.currentTrack = self.playerTracks.keys.first
+                            self.currentTrack = {
+                                if let harmony = self.playerTracks.keys.first(where: { $0.title?.contains("armony") ?? false }) {
+                                    return harmony
+                                }
+                                return self.playerTracks.keys.first
+                            }()
                             self.delegate = silentDelegate
                             self.delegate?.playerControllerTracksDidChange(self, tracks: self.tracks())
                         }
@@ -135,18 +128,6 @@ class PlayerController: NSObject {
             })
             
         }
-    }
-    
-    func makeQuery(with predicate: MPMediaPropertyPredicate?) -> MPMediaQuery? {
-        let query = MPMediaQuery.songs()
-        
-        //  [query addFilterPredicate:[MPMediaPropertyPredicate predicateWithValue:@"Crown & Covenant" forProperty:MPMediaItemPropertyArtist comparisonType:MPMediaPredicateComparisonEqualTo]];
-        if let predicate = predicate {
-            query.addFilterPredicate(predicate)
-        }
-        query.groupingType = .album
-        
-        return query
     }
     
     func isPlaying() -> Bool {
@@ -189,6 +170,7 @@ class PlayerController: NSObject {
         mp3Player?.stop()
         mp3Player = nil
         player?.stop()
+        player = nil
         
         delegate?.playbackStateDidChangeForPlayerController(self)
     }
@@ -235,11 +217,10 @@ class PlayerController: NSObject {
             if currentTrack.trackType == PlayerTrackType.tune {
                 return midiPlayer?.duration ?? mp3Player?.duration ?? 0.0
             } else if currentTrack.trackType == PlayerTrackType.recording {
-                let obj = playerTracks[currentTrack]
-                
-                if (obj is MPMediaItem) {
-                    let item = obj as? MPMediaItem
-                    return item?.playbackDuration ?? 0.0
+                if let item = playerTracks[currentTrack] as? MPMediaItem {
+                    return item.playbackDuration
+                } else if let item = playerTracks[currentTrack] as? AppleMusicItemTuneDescription {
+                    return item.length ?? 0
                 }
             }
         }
@@ -293,7 +274,7 @@ class PlayerController: NSObject {
             
         currentTrack = track
         
-        if let desc = playerTracks[track] as? TuneDescription {
+        if let desc = playerTracks[track] as? LocalFileTuneDescription {
             if wasPlaying {
                 /*
                  For reasons that I do not understand, stopping one track and then immediately starting
@@ -305,8 +286,10 @@ class PlayerController: NSObject {
             } else {
                 playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
             }
-        } else if let item = playerTracks[track] as? MPMediaItem {
-            playMediaItem(item, atTime: time, withDelay: delay, rate: playbackRate)
+        } else if let desc = playerTracks[track] as? MusicLibraryItemTuneDescription {
+            playMediaItem(desc.mediaItem, atTime: time, withDelay: delay, rate: playbackRate)
+        } else if let desc = playerTracks[track] as? AppleMusicItemTuneDescription {
+            playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
         }
     }
     
@@ -318,7 +301,7 @@ class PlayerController: NSObject {
         
         if let localFileTuneDescription = tuneDescription as? LocalFileTuneDescription {
             switch localFileTuneDescription.mediaType {
-            case .mp3:
+            case .localMP3:
                 if let player = try? AVAudioPlayer(contentsOf: localFileTuneDescription.url) {
                     player.enableRate = true
                     player.prepareToPlay()
@@ -330,7 +313,7 @@ class PlayerController: NSObject {
                     player.play()
                     delegate?.playbackStateDidChangeForPlayerController(self)
                 }
-            case .midi:
+            case .localMIDI:
                 if let presetURL = AVMIDIPlayer.songSoundBankUrl(),
                    let player = try? AVMIDIPlayer(withTune: localFileTuneDescription, soundBankURL: presetURL) {
                     player.rate = playbackRate
@@ -344,50 +327,48 @@ class PlayerController: NSObject {
                     })
                     delegate?.playbackStateDidChangeForPlayerController(self)
                 }
+            default:
+                break
             }
         } else if let appleMusicItemTuneDescription = tuneDescription as? AppleMusicItemTuneDescription {
-            //let storeIds: [String] = [appleMusicItemTuneDescription.appleMusicID]
-
-            //let player: MPMusicPlayerController = MPMusicPlayerController.applicationMusicPlayer
-            //player.stop()
-            //player.setQueue(with: [appleMusicItemTuneDescription.appleMusicID])
-            //let queue = MPMusicPlayerStoreQueueDescriptor(storeIDs: storeIds)
-
-            
-            
             self.playbackRate = playbackRate
             isPaused = false
             
-            if player == nil {
-                player = MPMusicPlayerApplicationController.applicationQueuePlayer
-            }
+            state = .loadingSelectedTuneForPlayback
             
-            player?.stop()
-            player?.setQueue(with: [appleMusicItemTuneDescription.appleMusicID])
-            
-            player?.prepareToPlay(completionHandler: { [weak self] error in
-                if error == nil {
-                    OperationQueue.main.addOperation({
-                        self?.player?.play()
-                        if let self = self {
-                            self.delegate?.playbackStateDidChangeForPlayerController(self)
-                        }
-                    })
-                } else {
-                    print(error as Any)
+            queue.addOperation { [weak self] in
+                if self?.player == nil {
+                    self?.player = MPMusicPlayerApplicationController.applicationQueuePlayer
                 }
-            })
+                
+                self?.player?.stop()
+                
+                self?.player?.setQueue(with: [appleMusicItemTuneDescription.appleMusicID])
+                
+                self?.player?.prepareToPlay(completionHandler: { [weak self] error in
+                    if error == nil {
+                        OperationQueue.main.addOperation({
+                            self?.state = .loadingTunesDidSucceed
+                            self?.player?.currentPlaybackRate = playbackRate
+                            self?.player?.currentPlaybackTime = time
+                            self?.player?.play()
+                            if let self = self {
+                                self.delegate?.playbackStateDidChangeForPlayerController(self)
+                            }
+                        })
+                    } else {
+                        print(error as Any)
+                        OperationQueue.main.addOperation({
+                            self?.state = .loadingTunesDidFail
+                            if let self = self {
+                                self.delegate?.playbackStateDidChangeForPlayerController(self)
+                            }
+                        })
+                    }
+                })
+            }
             
             delegate?.playbackStateDidChangeForPlayerController(self)
-            /*
-            player.prepareToPlay() { error in
-                if let error = error {
-                    print("\(error)")
-                } else {
-                    player.play()
-                }
-            }
- */
         }
     }
     

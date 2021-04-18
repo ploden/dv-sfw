@@ -54,7 +54,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                     playerController = nil
                     
                     if let currentSong = songsManager.currentSong {
-                        self.playerController = PlayerController(withSong: currentSong, delegate: self)
+                        self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
                     }
                 }
                 
@@ -97,7 +97,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             let songsManager = songsManager,
             let currentSong = songsManager.currentSong
         {
-            return PlayerController(withSong: currentSong, delegate: self)            
+            return PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
         }
         return nil
     }()
@@ -352,12 +352,13 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 let songsManager = songsManager,
                 let currentSong = songsManager.currentSong
             {
-                self.playerController = PlayerController(withSong: currentSong, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
             }
         }
         navigationItem.title = songsManager?.currentSong?.number
         configurePlayerBarButtonItems()
         configureFavoriteBarButtonItem()
+        configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
     }
     
     // MARK: - Helpers
@@ -577,6 +578,12 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         }()
         
         showSheetMusicBarButtonItem?.image = img
+        
+        if let current = songsManager?.currentSong {
+            showSheetMusicBarButtonItem?.isEnabled = !(appConfig.shouldHideSheetMusicForCopyrightedTunes && current.isTuneCopyrighted)
+        } else {
+            showSheetMusicBarButtonItem?.isEnabled = true
+        }
     }
     
     func showActivityIndicatorBarButtonItem(replacing item: UIBarButtonItem?) {
@@ -621,7 +628,8 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         
         if
             let playerController = playerController,
-            let currentSong = songsManager?.currentSong
+            let currentSong = songsManager?.currentSong,
+            !(appConfig.shouldHideSheetMusicForCopyrightedTunes && currentSong.isTuneCopyrighted)
         {
             if playerController.song == currentSong {
                 if playerController.isPlaying() {
@@ -688,6 +696,11 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     @IBAction func favoriteBarButtonItemTapped(_ sender: Any) {
+        guard presentedViewController == nil else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
+        
         if
             let songsManager = songsManager,
             let currentSong = songsManager.currentSong
@@ -709,7 +722,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             let currentSong = songsManager.currentSong
         {
             if playerController == nil || playerController?.song != currentSong {
-                self.playerController = PlayerController(withSong: currentSong, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
             }
             
             if let playerController = playerController {
@@ -733,6 +746,11 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     @IBAction func playTapped(_ sender: Any) {
+        guard presentedViewController == nil else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
+        
         let currentlyVisible = currentlyVisibleSongs()
         
         if currentlyVisible.count > 1 {
@@ -771,7 +789,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     func showPlayerForCurrentSong() {
         if playerController == nil || playerController?.song != songsManager?.currentSong {
             if let currentSong = songsManager?.currentSong {
-                self.playerController = PlayerController(withSong: currentSong, delegate: self)
+                self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
             }
         }
         
@@ -806,6 +824,11 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     @IBAction func showSheetMusicTapped(_ sender: Any) {
+        guard presentedViewController == nil else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
+        
         if let settings = Settings(fromUserDefaults: .standard) {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 _ = settings.new(withShouldShowSheetMusic_iPad: !settings.shouldShowSheetMusic_iPad).save(toUserDefaults: .standard)
@@ -829,6 +852,11 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
     }
     
     @IBAction func showSettingsTapped(_ sender: Any) {
+        guard presentedViewController == nil else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
+        
         if let vc = SettingsVC.pfw_instantiateFromStoryboard() as? SettingsVC {
             vc.modalPresentationStyle = .popover
             

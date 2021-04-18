@@ -14,22 +14,25 @@ extension Notification.Name {
 }
 
 class FavoritesSyncronizer {
+    static let favoritesDictionaryName = "favorites"
+    static let favoriteSongNumbersDictionaryName = "favoriteSongNumbers"
+
     static let shared = FavoritesSyncronizer()
         
     private init() {}
 
     private class func favorites() -> [Int]? {
-        if let favs = UserDefaults.standard.object(forKey: kFavoritesDictionaryName) as? [Int] {
+        if let favs = UserDefaults.standard.object(forKey: favoritesDictionaryName) as? [Int] {
             return favs
         }
         return nil
     }
 
     class func favoriteSongNumbers(songsManager: SongsManager) -> [String] {
-        if UserDefaults.standard.object(forKey: kFavoriteSongNumbersDictionaryName) == nil {
-            UserDefaults.standard.set([String](), forKey: kFavoriteSongNumbersDictionaryName)
+        if UserDefaults.standard.object(forKey: favoriteSongNumbersDictionaryName) == nil {
+            UserDefaults.standard.set([String](), forKey: favoriteSongNumbersDictionaryName)
         }
-        if let favs = UserDefaults.standard.object(forKey: kFavoriteSongNumbersDictionaryName) as? [String] {
+        if let favs = UserDefaults.standard.object(forKey: favoriteSongNumbersDictionaryName) as? [String] {
             if let oldFavorites = favorites() {
                 let oldFavoriteSongs = oldFavorites.compactMap { songIdx in
                     songsManager.songCollections.first?.songs?.first(where: { songIdx == $0.index })
@@ -59,8 +62,8 @@ class FavoritesSyncronizer {
         currentFavs.append(aSong.number)
         let currentFavsSet = Set(currentFavs)
         
-        NSUbiquitousKeyValueStore.default.set(currentFavsSet.sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }, forKey: kFavoriteSongNumbersDictionaryName)
-        UserDefaults.standard.set(currentFavs, forKey: kFavoriteSongNumbersDictionaryName)
+        NSUbiquitousKeyValueStore.default.set(currentFavsSet.sorted { return $0.localizedStandardCompare($1) == ComparisonResult.orderedAscending }, forKey: favoriteSongNumbersDictionaryName)
+        UserDefaults.standard.set(currentFavs, forKey: favoriteSongNumbersDictionaryName)
         NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
     }
 
@@ -68,8 +71,8 @@ class FavoritesSyncronizer {
         if var favs = FavoritesSyncronizer.favorites() {
             favs.removeAll(where: { $0 == aSong.index } )
             
-            NSUbiquitousKeyValueStore.default.set(favs, forKey: kFavoritesDictionaryName)
-            UserDefaults.standard.set(favs, forKey: kFavoritesDictionaryName)
+            NSUbiquitousKeyValueStore.default.set(favs, forKey: favoritesDictionaryName)
+            UserDefaults.standard.set(favs, forKey: favoritesDictionaryName)
             //NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
         }
         
@@ -77,8 +80,8 @@ class FavoritesSyncronizer {
         
         favoriteSongNumbers.removeAll(where: { $0 == aSong.number } )
         
-        NSUbiquitousKeyValueStore.default.set(favoriteSongNumbers, forKey: kFavoriteSongNumbersDictionaryName)
-        UserDefaults.standard.set(favoriteSongNumbers, forKey: kFavoriteSongNumbersDictionaryName)
+        NSUbiquitousKeyValueStore.default.set(favoriteSongNumbers, forKey: favoriteSongNumbersDictionaryName)
+        UserDefaults.standard.set(favoriteSongNumbers, forKey: favoriteSongNumbersDictionaryName)
         NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
     }
 
@@ -131,7 +134,7 @@ extension FavoritesSyncronizer {
         
         for fav in Array(FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager).prefix(3)) {
             if let favPsalm = songsManager.songForNumber(fav) {
-                let shortcut = UIApplicationShortcutItem(type: kFavoritePsalmShortcutIdentifier, localizedTitle: favPsalm.title, localizedSubtitle: favPsalm.number, icon: nil, userInfo: [PFWFavoritesShortcutPsalmIdentifierKey: favPsalm.number as NSString])
+                let shortcut = UIApplicationShortcutItem(type: ShortcutIdentifier.goTofavoriteSong.rawValue, localizedTitle: favPsalm.title, localizedSubtitle: favPsalm.number, icon: nil, userInfo: [ShortcutIdentifier.goTofavoriteSong.rawValue: favPsalm.number as NSString])
                 shortcuts.append(shortcut)
             }
         }

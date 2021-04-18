@@ -13,5 +13,6 @@ struct AppleMusicMediaItem {
     let artistName: String
     let albumName: String
     let name: String
-    let artwork: [String:Any]
+    let artwork: Artwork
+    let length: TimeInterval
 }

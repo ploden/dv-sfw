@@ -33,10 +33,16 @@ class MetreCVCell: UICollectionViewCell, UIScrollViewDelegate {
             
             if let left = song?.left {
                 topLeftLabel?.text = left.joined(separator: "\n")
+            } else {
+                topLeftLabel?.text = song?.tune?.composer?.displayName
             }
+            
             if let right = song?.right {
                 topRightLabel?.text = right.joined(separator: "\n")
+            } else {
+                topRightLabel?.text = song?.tune?.name
             }
+            
             scrollView?.contentOffset = .zero
         }
     }

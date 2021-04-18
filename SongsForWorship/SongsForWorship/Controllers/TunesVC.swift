@@ -7,13 +7,7 @@
 
 import MediaPlayer
 
-enum PFWTunesVCTableViewSection : Int {
-    case _Tune = 0
-    case _Recording = 1
-    case _Count = 2
-}
-
-struct TunesVCItem {
+struct TunesVCItem: Equatable {
     let indexPath: IndexPath
     let cellID: String
     let track: PlayerTrack?
@@ -29,9 +23,17 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         }
     }
     private var isObservingcurrentSong = false
-    
+    var queue: OperationQueue = {
+        var queue = OperationQueue()
+        queue.name = "Tunes loader queue"
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
+
     @IBOutlet weak var playerControlsView: PlayerControlsView?
-    
+    @IBOutlet weak var overlayView: UIView?
+    @IBOutlet weak var backgroundGradientView: UIView?
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView?
     @IBOutlet weak var volumeControl: MPVolumeView? {
         didSet {
             volumeControl?.showsRouteButton = false
@@ -43,7 +45,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             let songsManager = songsManager,
             let currentSong = songsManager.currentSong
         {
-            return PlayerController(withSong: currentSong, delegate: self)
+            return PlayerController(withSong: currentSong, delegate: self, queue: queue)
         }
         return nil
     }() {
@@ -54,23 +56,9 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             }
         }
     }
-    open var tuneTracks: [PlayerTrack]?
-    private var recordingTracks: [PlayerTrack]?
     var songsManager: SongsManager?
     var loadedPsalmNumber: String?
-    @IBOutlet weak var tunesTableView: UITableView? {
-        didSet {
-            if let tunesTableView = tunesTableView {
-                tunesTableView.separatorStyle = {
-                    if hasTableViewHeaders(tableView: tunesTableView) {
-                        return UITableViewCell.SeparatorStyle.singleLine
-                    } else {
-                        return UITableViewCell.SeparatorStyle.none
-                    }
-                }()
-            }
-        }
-    }
+    @IBOutlet weak var tunesTableView: UITableView?
     @IBOutlet weak var tuneProgressBar: UIProgressView?
     @IBOutlet weak var tableViewHeightConstraint: NSLayoutConstraint?
     var lastSelectedCell: IndexPath?
@@ -85,6 +73,8 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     // MARK: - UIViewController
     open override func viewDidLoad() {
         super.viewDidLoad()
+
+        hideOverlay()
         
         playerControlsView?.delegate = self
         
@@ -104,12 +94,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         tunesTableView?.register(UINib(nibName: String(describing: EnableMusicLibraryTVCell.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: String(describing: EnableMusicLibraryTVCell.self))
         tunesTableView?.register(UINib(nibName: String(describing: EnableAppleMusicTVCell.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: String(describing: EnableAppleMusicTVCell.self))
-
-        let recordingsDisabledClassStr = "RecordingsDisabledTVCell"
-        tunesTableView?.register(UINib(nibName: recordingsDisabledClassStr, bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: recordingsDisabledClassStr)
-        
-        tunesTableView?.register(UINib(nibName: "TunesHeaderView", bundle: Helper.songsForWorshipBundle()), forHeaderFooterViewReuseIdentifier: "TunesHeaderView")
-        
+                
         tunesTableView?.estimatedRowHeight = 44.0
         tunesTableView?.rowHeight = UITableView.automaticDimension
         
@@ -130,25 +115,45 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         if
             let playerController = playerController,
-            playerController.song == songsManager?.currentSong,
-            playerController.state == .loadingTunesDidSucceed
+            playerController.song == songsManager?.currentSong
         {
-            items = TunesVC.calculateItems(forPlayerTracks: playerController.tracks())
+            if playerController.state == .loadingTunesDidSucceed {
+                items = TunesVC.calculateItems(forPlayerTracks: playerController.tracks())
+            } else if playerController.state == .loadingSelectedTuneForPlayback {
+                showOverlay()
+            }
         } else {
             items = [TunesVCItem]()
         }
         
         tunesTableView?.reloadData()
+    }
+    
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
-        let colorTop = UIColor(named: "NavBarBackground")!.cgColor
-        let colorBottom = UIColor.black.cgColor
-                        
-            let gradientLayer = CAGradientLayer()
-            gradientLayer.colors = [colorTop, colorBottom]
-            gradientLayer.locations = [0.0, 1.0]
-            gradientLayer.frame = self.view.bounds
-                    
-            self.view.layer.insertSublayer(gradientLayer, at:0)
+        if let backgroundGradientView = backgroundGradientView {
+            func gradientLayer() -> CAGradientLayer {
+                let colorTop = UIColor(named: "NavBarBackground")!.cgColor
+                let colorBottom = UIColor.black.cgColor
+                
+                let gradientLayer = CAGradientLayer()
+                gradientLayer.colors = [colorTop, colorBottom]
+                gradientLayer.locations = [0.0, 1.0]
+                gradientLayer.frame.size = backgroundGradientView.bounds.size
+                return gradientLayer
+            }
+            
+            if let bg = backgroundGradientView.layer.sublayers?.first as? CAGradientLayer {
+                if bg.frame.size == backgroundGradientView.bounds.size {
+                    // do nothing
+                } else {
+                    backgroundGradientView.layer.replaceSublayer(bg, with: gradientLayer())
+                }
+            } else {
+                backgroundGradientView.layer.insertSublayer(gradientLayer(), at: 0)
+            }
+        }
     }
     
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -162,8 +167,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     func change(_ currentSong: Song?) {
         playerControlsView?.loopButton?.isSelected = false
         playerControlsView?.playButton?.isSelected = false
-        tuneTracks = nil
-        recordingTracks = nil
                 
         if playerController?.song != currentSong {
             playerController?.stopPlaying()
@@ -171,11 +174,12 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             playerController = nil
 
             if let currentSong = currentSong {
-                playerController = PlayerController(withSong: currentSong, delegate: self)
+                playerController = PlayerController(withSong: currentSong, delegate: self, queue: queue)
             }
         }
         
         tunesTableView?.reloadData()
+        tunesTableView?.contentOffset = .zero
     }
     
     class func calculateItems(forPlayerTracks playerTracks: [PlayerTrack]) -> [TunesVCItem] {
@@ -200,9 +204,9 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
          
         let tuneTracks = newTunes.count > 0 ? newTunes : tunes
         
-        let recordingTracks = playerTracks.filter { $0.trackType == .recording }
+        let notTuneTracks = playerTracks.filter { $0.trackType != .tune }
         
-        let together = tuneTracks + recordingTracks
+        let together = tuneTracks + notTuneTracks
         
         var items = [TunesVCItem]()
         
@@ -224,24 +228,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                 items.append(TunesVCItem(indexPath: ip, cellID: cellID, track: track))
             }
         }
-
-        /*
-        let authStatus = MPMediaLibrary.authorizationStatus()
-        
-        switch authStatus {
-        case .denied:
-            let cell = tableView?.dequeueReusableCell(withIdentifier: "RecordingsDisabledTVCell")
-            return cell!
-        case .restricted, .notDetermined:
-            let cell = tableView?.dequeueReusableCell(withIdentifier: "EnableRecordingsTVCell")
-            return cell!
-        case .authorized:
-            let cell = tableView?.dequeueReusableCell(withIdentifier: "NoRecordingsFoundTVCell")
-            return cell!
-        default:
-            break
-        }
- */
         
         let mediaLibraryItem = TunesVCItem(
             indexPath: IndexPath(row: items.count, section: 0),
@@ -262,7 +248,7 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         return items
     }
     
-    func tunesDidLoad(_ aNotification: Notification?) {
+    func tunesDidLoad(_ aNotification: Notification?) {        
         tunesTableView?.reloadData()
     }
     
@@ -295,10 +281,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     @IBAction func playButtonPressed() {
-        if tuneTracks?.count == 0 {
-            return
-        }
-        
         if let playerController = playerController {
             if isPlaying() {
                 // pause
@@ -367,6 +349,106 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         return items.count
     }
     
+    func musicLibrarySwitchAction(isEnabled: Bool) -> UIAction {
+        if isEnabled {
+            let action = UIAction { action in
+                if let settings = Settings(fromUserDefaults: .standard) {
+                    _ = settings.new(withShouldShowMusicLibrary: false).save(toUserDefaults: .standard)
+                }
+            }
+            return action
+        } else {
+            let action = UIAction { action in
+                if let settings = Settings(fromUserDefaults: .standard) {
+                    _ = settings.new(withShouldShowMusicLibrary: true).save(toUserDefaults: .standard)
+                }
+                MPMediaLibrary.requestAuthorization({ authorizationStatus in
+                    OperationQueue.main.addOperation({ [weak self] in
+                        if authorizationStatus == .authorized {
+                            self?.playerController?.loadTunes()
+                        } else if let cell = self?.tunesTableView?.visibleCells.first(where: { $0 is EnableMusicLibraryTVCell} ) as? EnableMusicLibraryTVCell {
+                            let alertController = UIAlertController(title: "Cannot Access Apple Music", message: "There was an error accessing Apple Music.", preferredStyle: .alert)
+                            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (action) in
+                                cell.enableMusicLibrarySwitch?.setOn(false, animated: true)
+                            }))
+                            self?.present(alertController, animated: true)
+                        }
+                    })
+                })
+            }
+            return action
+        }
+    }
+    
+    func appleMusicSwitchAction(isEnabled: Bool) -> UIAction {
+        if isEnabled {
+            let action = UIAction { action in
+                if let settings = Settings(fromUserDefaults: .standard) {
+                    _ = settings.new(withShouldShowAppleMusic: false).save(toUserDefaults: .standard)
+                }
+            }
+            return action
+        } else {
+            let action = UIAction { action in
+                if let settings = Settings(fromUserDefaults: .standard) {
+                    _ = settings.new(withShouldShowAppleMusic: true).save(toUserDefaults: .standard)
+                }
+                MPMediaLibrary.requestAuthorization({ authorizationStatus in
+                    OperationQueue.main.addOperation({ [weak self] in
+                        if authorizationStatus == .authorized {
+                            self?.playerController?.loadTunes()
+                        } else if let cell = self?.tunesTableView?.visibleCells.first(where: { $0 is EnableAppleMusicTVCell} ) as? EnableAppleMusicTVCell {
+                            cell.enableAppleMusicSwitch?.setOn(false, animated: true)
+                        }
+                    })
+                })
+            }
+            return action
+        }
+    }
+    
+    static func musicLibraryIsEnabled(settings: Settings?) -> Bool {
+        var isEnabled: Bool
+        
+        let authStatus = MPMediaLibrary.authorizationStatus()
+        
+        switch authStatus {
+        case .denied, .restricted, .notDetermined:
+            isEnabled = false
+        case .authorized:
+            isEnabled = true
+        default:
+            isEnabled = false
+        }
+        
+        if let settings = settings {
+            isEnabled = isEnabled && settings.shouldShowMusicLibrary
+        }
+        
+        return isEnabled
+    }
+    
+    static func appleMusicIsEnabled(settings: Settings?) -> Bool {
+        var isEnabled: Bool
+        
+        let authStatus = MPMediaLibrary.authorizationStatus()
+        
+        switch authStatus {
+        case .denied, .restricted, .notDetermined:
+            isEnabled = false
+        case .authorized:
+            isEnabled = true
+        default:
+            isEnabled = false
+        }
+        
+        if let settings = settings {
+            isEnabled = isEnabled && settings.shouldShowAppleMusic
+        }
+        
+        return isEnabled
+    }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = items[indexPath.row]
         
@@ -377,58 +459,29 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         } else if
             let cell = cell as? PlayRecordingTVCell
         {
-            cell.configureWithAlbumTitle(item.track?.albumTitle, albumArtwork: item.track?.albumArtwork, trackTitle: item.track?.title, artist: item.track?.artist)
-        } else if
-            let cell = cell as? EnableMusicLibraryTVCell
-        
-        {
-            let authStatus = MPMediaLibrary.authorizationStatus()
-            
-            switch authStatus {
-            case .denied, .restricted, .notDetermined:
-                cell.enableMusicLibrarySwitch?.isOn = false
-                let action = UIAction { action in
-                    MPMediaLibrary.requestAuthorization({ authorizationStatus in
-                        OperationQueue.main.addOperation({
-                            if authorizationStatus == .authorized {
-
-                            } else {
-
-                            }
-                        })
+            if let albumArtworkImage = item.track?.albumArtworkImage {
+                cell.configureWithAlbumTitle(item.track?.albumTitle, albumArtwork: albumArtworkImage, trackTitle: item.track?.title, artist: item.track?.artist)
+            } else {
+                cell.configureWithAlbumTitle(item.track?.albumTitle, albumArtwork: nil, trackTitle: item.track?.title, artist: item.track?.artist)
+                
+                if let imageURL = item.track?.albumArtwork?.imageURL(size: CGSize(width: 120, height: 120)) {
+                    (UIApplication.shared.delegate as? SFWAppDelegate)?.imageCacheManager.fetchImage(url: imageURL, completion: { (image) in
+                        cell.configureWithAlbumTitle(item.track?.albumTitle, albumArtwork: image, trackTitle: item.track?.title, artist: item.track?.artist)
                     })
                 }
-                cell.enableMusicLibrarySwitch?.addAction(action, for: .valueChanged)
-            case .authorized:
-                cell.enableMusicLibrarySwitch?.isOn = true
-            default:
-                cell.enableMusicLibrarySwitch?.isOn = false
             }
+        } else if
+            let cell = cell as? EnableMusicLibraryTVCell
+        {
+            let isEnabled = Self.musicLibraryIsEnabled(settings: Settings.init(fromUserDefaults: .standard))
+            cell.enableMusicLibrarySwitch?.isOn = isEnabled
+            cell.enableMusicLibrarySwitch?.addAction(self.musicLibrarySwitchAction(isEnabled: isEnabled), for: .valueChanged)
         } else if
             let cell = cell as? EnableAppleMusicTVCell
         {
-            let authStatus = MPMediaLibrary.authorizationStatus()
-            
-            switch authStatus {
-            case .denied, .restricted, .notDetermined:
-                cell.enableAppleMusicSwitch?.isOn = false
-                let action = UIAction { action in
-                    MPMediaLibrary.requestAuthorization({ authorizationStatus in
-                        OperationQueue.main.addOperation({
-                            if authorizationStatus == .authorized {
-
-                            } else {
-
-                            }
-                        })
-                    })
-                }
-                cell.enableAppleMusicSwitch?.addAction(action, for: .valueChanged)
-            case .authorized:
-                cell.enableAppleMusicSwitch?.isOn = true
-            default:
-                cell.enableAppleMusicSwitch?.isOn = false
-            }
+            let isEnabled = Self.appleMusicIsEnabled(settings: Settings.init(fromUserDefaults: .standard))
+            cell.enableAppleMusicSwitch?.isOn = isEnabled
+            cell.enableAppleMusicSwitch?.addAction(self.appleMusicSwitchAction(isEnabled: isEnabled), for: .valueChanged)
         }
         
         return cell!
@@ -455,10 +508,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     // MARK: - Helper methods
-    
-    func hasTableViewHeaders(tableView: UITableView) -> Bool {
-        return tableView.numberOfSections > 1
-    }
     
     func configurePlayerControlsView() {
         updateProgressView()
@@ -498,29 +547,6 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             }
             return ""
         }()
-    }
-    
-    static let headerCellCellIdentifier = "Cell"
-    
-    open func headerCell(for tableView: UITableView?) -> UITableViewCell {        
-        let cell = tableView?.dequeueReusableCell(withIdentifier: TunesVC.headerCellCellIdentifier) ?? UITableViewCell(style: .default, reuseIdentifier: TunesVC.headerCellCellIdentifier)
-        
-        if let playerController = playerController {
-            if playerController.loadTunesDidFail {
-                cell.textLabel?.text = "No Tunes Found"
-            } else if songsManager?.currentSong?.isTuneCopyrighted == true {
-                cell.textLabel?.text = "No Tunes available for this song."
-            } else {
-                cell.textLabel?.text = "Loading..."
-            }
-        }
-        
-        cell.textLabel?.textAlignment = .center
-        cell.textLabel?.font = UIFont(name: "Arial", size: 18.0)
-        cell.textLabel?.textColor = UIColor.label
-        cell.selectionStyle = .none
-        
-        return cell
     }
     
     class func titleFromPartAbbreviation(_ abbreviation: String?) -> String? {
@@ -613,28 +639,52 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         updateProgressView()
     }
     
+    func showOverlay() {
+        if let overlayView = overlayView {
+            overlayView.isHidden = false
+            overlayView.superview?.bringSubviewToFront(overlayView)
+            activityIndicator?.startAnimating()
+        }
+    }
+    
+    func hideOverlay() {
+        if let overlayView = overlayView {
+            overlayView.isHidden = true
+            overlayView.superview?.sendSubviewToBack(overlayView)
+            activityIndicator?.stopAnimating()
+        }
+    }
+    
     // MARK: - PFWPlayerControllerDelegate
-    func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?) {
+    func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?) {        
         if playerController.song == self.songsManager?.currentSong {
-            tuneTracks = nil
-            recordingTracks = nil
-                        
-            updateProgressView()
-            
             if let tracks = tracks {
-                items = TunesVC.calculateItems(forPlayerTracks: tracks)
+                let newItems = Self.calculateItems(forPlayerTracks: tracks)
+                
+                if items != newItems {
+                    updateProgressView()
+                    items = newItems
+                    tunesTableView?.reloadData()
+                    configurePlayerControlsView()
+                }
             } else {
-                items = [TunesVCItem]()
+                updateProgressView()
+                items = Self.calculateItems(forPlayerTracks: [PlayerTrack]())
+                tunesTableView?.reloadData()
+                configurePlayerControlsView()
             }
-            
-            tunesTableView?.reloadData()
-            configurePlayerControlsView()
         }
     }
     
     func playbackStateDidChangeForPlayerController(_ playerController: PlayerController) {
         if playerController.song == self.songsManager?.currentSong {
             configurePlayerControlsView()
+            
+            if playerController.state == .loadingSelectedTuneForPlayback {
+                showOverlay()
+            } else {
+                hideOverlay()
+            }
         }
     }
 }

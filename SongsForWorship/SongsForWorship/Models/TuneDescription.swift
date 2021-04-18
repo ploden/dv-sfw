@@ -7,31 +7,52 @@
 //
 
 import Foundation
+import MediaPlayer
 
-public enum LocalFileTuneDescriptionMediaType {
-    case midi, mp3
+public enum TuneDescriptionMediaType {
+    case localMIDI, localMP3, musicLibrary, appleMusic
 }
 
 public protocol TuneDescription {
-    var length: String? { get }
+    var length: TimeInterval? { get }
     var title: String { get }
     var composer: String? { get }
     var copyright: String? { get }
+    var mediaType: TuneDescriptionMediaType { get }
 }
 
 public struct LocalFileTuneDescription: TuneDescription {
-    public let length: String?
+    public let length: TimeInterval?
     public let title: String
     public let composer: String?
     public let copyright: String?
     let url: URL
-    public let mediaType: LocalFileTuneDescriptionMediaType
+    public let mediaType: TuneDescriptionMediaType
+}
+
+public struct MusicLibraryItemTuneDescription: TuneDescription {
+    public let mediaItem: MPMediaItem
+    public var length: TimeInterval? {
+        get {
+            return mediaItem.playbackDuration
+        }
+    }
+    public var title: String {
+        get {
+            return mediaItem.title ?? ""
+        }
+    }
+    public let composer: String?
+    public let copyright: String?
+    public let mediaType: TuneDescriptionMediaType = .musicLibrary
 }
 
 public struct AppleMusicItemTuneDescription: TuneDescription {
     public let appleMusicID: String
-    public let length: String?
+    public let length: TimeInterval?
     public let title: String
     public let composer: String?
     public let copyright: String?
+    public let artwork: Artwork?
+    public let mediaType: TuneDescriptionMediaType = .appleMusic
 }

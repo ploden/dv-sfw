@@ -18,10 +18,11 @@ class PlayRecordingTVCell: UITableViewCell {
         }
     }
     @IBOutlet private weak var artworkImageView: UIImageView?
+    @IBOutlet private weak var shadowView: UIView?
     @IBOutlet private weak var trackTitleLabel: UILabel? {
         didSet {
             trackTitleLabel?.font = {
-                let preferred = UIFont.preferredFont(forTextStyle: .title2)
+                let preferred = UIFont.preferredFont(forTextStyle: .body)
                 return UIFont.systemFont(ofSize: preferred.pointSize, weight: .light)
             }()
         }
@@ -29,7 +30,7 @@ class PlayRecordingTVCell: UITableViewCell {
     @IBOutlet private weak var artistLabel: UILabel? {
         didSet {
             artistLabel?.font = {
-                let preferred = UIFont.preferredFont(forTextStyle: .title2)
+                let preferred = UIFont.preferredFont(forTextStyle: .body)
                 return UIFont.systemFont(ofSize: preferred.pointSize, weight: .light)
             }()
         }
@@ -38,11 +39,21 @@ class PlayRecordingTVCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        artworkImageView?.layer.cornerRadius = 2.0
+        if
+            let artworkImageView = artworkImageView,
+            let shadowView = shadowView
+        {
+            artworkImageView.layer.cornerRadius = 4.0
+            shadowView.layer.cornerRadius = artworkImageView.layer.cornerRadius
+            shadowView.layer.shadowRadius = shadowView.layer.cornerRadius
+            shadowView.layer.shadowOpacity = 0.8
+            shadowView.layer.shadowColor = UIColor.black.cgColor
+            shadowView.layer.shadowOffset = CGSize(width: 2.0, height: 2.0)
+        }
     }
 
     func configureWithAlbumTitle(_ albumTitle: String?, albumArtwork: UIImage?, trackTitle: String?, artist: String?) {
-        if (albumTitle?.count ?? 0) > 0 {
+        if let albumTitle = albumTitle, albumTitle.count > 0 {
             albumTitleLabel?.isHidden = false
             albumTitleLabel?.text = albumTitle
 
@@ -57,6 +68,6 @@ class PlayRecordingTVCell: UITableViewCell {
             albumTitleLabel?.isHidden = true
         }
 
-        artworkImageView?.image = albumArtwork ?? UIImage(named: "album_placeholder", in: Helper.songsForWorshipBundle(), with: .none)
+        artworkImageView?.image = albumArtwork ?? UIImage(named: "album_placeholder", in: Helper.songsForWorshipBundle(), with: .none)        
     }
 }
