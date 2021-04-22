@@ -628,7 +628,8 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                 }
                 
                 playerControlsView?.timeElapsedLabel?.text = intervalToString(interval: currentPos)
-                playerControlsView?.timeRemainingLabel?.text = "-\(intervalToString(interval: duration - currentPos))"
+                let timeRemaining = abs(abs(duration) - abs(currentPos))
+                playerControlsView?.timeRemainingLabel?.text = "-\(intervalToString(interval: timeRemaining))"
             } else {
                 tuneProgressBar?.progress = 0.0
             }

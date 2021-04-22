@@ -141,7 +141,7 @@ open class SFWTunesLoader: TunesLoader {
                         AppleMusicController.search(forSong: aSong) { (items, error) in
                             if let items = items {
                                 for item in items {
-                                    let desc = AppleMusicItemTuneDescription(appleMusicID: item.id, length: nil, title: item.name, composer: nil, copyright: nil, artwork: item.artwork)
+                                    let desc = AppleMusicItemTuneDescription(appleMusicID: item.id, length: item.length, title: item.name, composer: nil, copyright: nil, artwork: item.artwork)
                                     tuneDescriptions.append(desc)
                                 }
                             }

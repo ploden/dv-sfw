@@ -131,14 +131,11 @@ class PlayerController: NSObject {
     }
     
     func isPlaying() -> Bool {
-        if let midiPlayer = midiPlayer {
-            return midiPlayer.isPlaying
-        } else if let mp3Player = mp3Player {
-            return mp3Player.isPlaying
-        } else if let player = player {
-            return player.playbackState == .playing
-        }
-        return false
+        let isPlaying =
+            midiPlayer?.isPlaying ?? false ||
+            mp3Player?.isPlaying ?? false ||
+            (player?.playbackState) == .playing
+        return isPlaying
     }
     
     func restartTrack() {
@@ -213,15 +210,13 @@ class PlayerController: NSObject {
     }
     
     func duration() -> TimeInterval {
-        if let currentTrack = currentTrack {
-            if currentTrack.trackType == PlayerTrackType.tune {
-                return midiPlayer?.duration ?? mp3Player?.duration ?? 0.0
-            } else if currentTrack.trackType == PlayerTrackType.recording {
-                if let item = playerTracks[currentTrack] as? MPMediaItem {
-                    return item.playbackDuration
-                } else if let item = playerTracks[currentTrack] as? AppleMusicItemTuneDescription {
-                    return item.length ?? 0
-                }
+        if let playerDuration = midiPlayer?.duration ?? mp3Player?.duration {
+            return playerDuration
+        } else if let currentTrack = currentTrack {
+            if let item = playerTracks[currentTrack] as? MPMediaItem {
+                return item.playbackDuration
+            } else if let item = playerTracks[currentTrack] as? AppleMusicItemTuneDescription {
+                return item.length ?? 0
             }
         }
         return 0.0
@@ -289,7 +284,18 @@ class PlayerController: NSObject {
         } else if let desc = playerTracks[track] as? MusicLibraryItemTuneDescription {
             playMediaItem(desc.mediaItem, atTime: time, withDelay: delay, rate: playbackRate)
         } else if let desc = playerTracks[track] as? AppleMusicItemTuneDescription {
-            playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
+            //playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
+            if wasPlaying {
+                /*
+                 For reasons that I do not understand, stopping one track and then immediately starting
+                 another does not work.
+                 */
+                OperationQueue.main.addOperation({ [weak self] in
+                    self?.playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
+                })
+            } else {
+                playTuneDescription(desc, atTime: time, withDelay: delay, rate: playbackRate)
+            }
         }
     }
     
