@@ -19,6 +19,7 @@ public struct AppConfig: Decodable {
     let soundFonts: [SoundFontConfig]
     let tuneRecordings: Bool
     let shouldShowAdditionalTunes: Bool
+    let shouldShowPlaybackRateSegmentedControl: Bool
     let pdfRenderingConfigs_iPhone: [PDFRenderingConfig]
     let pdfRenderingConfigs_iPad: [PDFRenderingConfig]
     let shouldHideSheetMusicForCopyrightedTunes: Bool

@@ -13,7 +13,7 @@ var PFWNumPlaybackRates: size_t = 6
 
 class PlayerControlsView: UIView {
     weak var delegate: PlayerControlsViewDelegate?
-    @IBOutlet private weak var playbackRateSegmentedControl: UISegmentedControl? {
+    @IBOutlet weak var playbackRateSegmentedControl: UISegmentedControl? {
         didSet {
             let font = UIFont.boldSystemFont(ofSize: 12.0)
             let normalAttribute: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: UIColor.white]

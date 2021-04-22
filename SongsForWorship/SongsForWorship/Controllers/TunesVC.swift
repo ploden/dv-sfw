@@ -24,7 +24,13 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     private var isObservingcurrentSong = false
     
-    @IBOutlet weak var playerControlsView: PlayerControlsView?
+    @IBOutlet weak var playerControlsView: PlayerControlsView? {
+        didSet {
+            if let app = UIApplication.shared.delegate as? SFWAppDelegate {
+                playerControlsView?.playbackRateSegmentedControl?.isHidden = !app.appConfig.shouldShowPlaybackRateSegmentedControl
+            }
+        }
+    }
     
     @IBOutlet weak var volumeControl: MPVolumeView? {
         didSet {
