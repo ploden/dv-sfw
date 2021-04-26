@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FAQ {
+struct FAQ: Decodable {
     var question: String
     var answer: String
 }

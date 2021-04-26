@@ -21,7 +21,7 @@ class FAQTableVC: UITableViewController, HasFileInfo {
             let path = Bundle.main.path(forResource: fileInfo.0, ofType: fileInfo.1, inDirectory: fileInfo.2)
         {
             let url = URL(fileURLWithPath: path)
-            faqs = FAQTableVC.readFAQs(fromFileURL: url)
+            faqs = try? JSONDecoder().decode([FAQ].self, from: Data(contentsOf: url))
         }
         
         tableView.rowHeight = UITableView.automaticDimension
@@ -75,40 +75,5 @@ class FAQTableVC: UITableViewController, HasFileInfo {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
-    
-    class func readFAQs(fromFileURL url: URL) -> [FAQ] {
-        var jsonString: String? = nil
-        do {
-            jsonString = try String(contentsOf: url, encoding: String.Encoding.utf8)
-        } catch {
-        }
         
-        let jsonData = jsonString?.data(using: .utf8)
-        var dictsArray: [AnyHashable]? = nil
-        do {
-            if let jsonData = jsonData {
-                dictsArray = try JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) as? [AnyHashable]
-            }
-        } catch {}
-        
-        var faqsArray = [FAQ]()
-        
-        if let dictsArray = dictsArray {
-            for dict in dictsArray {
-                guard let dict = dict as? [AnyHashable : Any] else {
-                    continue
-                }
-                
-                if
-                    let question = dict["question"] as? String,
-                    let answer = dict["answer"] as? String
-                {
-                    let faq = FAQ(question: question, answer: answer)
-                    faqsArray.append(faq)
-                }
-            }
-        }
-        
-        return faqsArray
-    }
 }
