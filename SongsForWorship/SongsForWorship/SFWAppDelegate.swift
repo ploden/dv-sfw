@@ -117,6 +117,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         
         window = UIWindow()
         window?.rootViewController = mainController
+        changeThemeAsNeeded()
         window?.makeKeyAndVisible()
         
         return true
@@ -129,6 +130,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
     public func applicationWillEnterForeground(_ application: UIApplication) {
         let syncInstance = FavoritesSyncronizer.shared
         try? syncInstance.synciCloud()
+        changeThemeAsNeeded()
     }
     
     public func applicationDidBecomeActive(_ application: UIApplication) {
