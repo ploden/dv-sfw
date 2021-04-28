@@ -64,8 +64,6 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         }
         
         updateFavoritesShortcuts()
-
-        applyStyling()
         
         startAnalytics()
         
@@ -117,6 +115,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         
         window = UIWindow()
         window?.rootViewController = mainController
+        applyStyling()
         changeThemeAsNeeded()
         window?.makeKeyAndVisible()
         
@@ -130,13 +129,12 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
     public func applicationWillEnterForeground(_ application: UIApplication) {
         let syncInstance = FavoritesSyncronizer.shared
         try? syncInstance.synciCloud()
-        changeThemeAsNeeded()
     }
-    
+
     public func applicationDidBecomeActive(_ application: UIApplication) {
         changeThemeAsNeeded()
     }
-
+    
     func handle(_ shortcutItem: UIApplicationShortcutItem?) -> Bool {
         let identifier = shortcutItem?.type
 
@@ -248,18 +246,16 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
             let theme = settings.calculateTheme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle)
             
             if theme.rawValue != ThemeManager.currentThemeIndex {
+                ThemeManager.setTheme(index: theme.rawValue)
+                
                 if theme == .defaultLight || theme == .white {
                     window.overrideUserInterfaceStyle = .light
-                    ThemeManager.setTheme(index: theme.rawValue)
-                    if theme != settings.theme {
-                        _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
-                    }
                 } else if theme == .night {
                     window.overrideUserInterfaceStyle = .dark
-                    ThemeManager.setTheme(index: theme.rawValue)
-                    if theme != settings.theme {
-                        _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
-                    }
+                }
+                
+                if theme != settings.theme {
+                    _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
                 }
             }
         }

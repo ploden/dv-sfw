@@ -73,6 +73,11 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         return .lightContent
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        (UIApplication.shared.delegate as? SFWAppDelegate)?.changeThemeAsNeeded()
+    }
+    
     // MARK: - Helper methods
     
     func configureNavBar() {        

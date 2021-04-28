@@ -246,6 +246,11 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         return .lightContent
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        (UIApplication.shared.delegate as? SFWAppDelegate)?.changeThemeAsNeeded()
+    }
+    
     func scrollToCurrentSong() {
         if
             let collectionView = collectionView,

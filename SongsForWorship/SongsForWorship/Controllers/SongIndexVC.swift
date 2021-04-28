@@ -125,6 +125,11 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         return .lightContent
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        (UIApplication.shared.delegate as? SFWAppDelegate)?.changeThemeAsNeeded()
+    }
+    
     // MARK: - Rotation Methods
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .pad {
