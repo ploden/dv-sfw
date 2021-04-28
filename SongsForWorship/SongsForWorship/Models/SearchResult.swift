@@ -10,7 +10,6 @@ struct SearchResult {
     static let maxTitleLength = 90
     lazy var title: String? = {
         if
-            let sourceText = sourceText?.replacingOccurrences(of: "\n", with: " "),
             let searchTerm = searchTerm,
             let first = sourceText.range(of: searchTerm, options: .caseInsensitive)
         {
@@ -45,8 +44,16 @@ struct SearchResult {
         }
         return nil
     }()
-    var sourceText: String?
+    var sourceText: String
     var songIndex: Int
-    var songNumber: String?
+    var songNumber: String
     var searchTerm: String?
+}
+
+extension SearchResult: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(sourceText)
+        hasher.combine(songNumber)
+        hasher.combine(searchTerm)
+    }
 }

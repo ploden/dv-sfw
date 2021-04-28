@@ -92,16 +92,36 @@ class Helper: NSObject {
 
             let tuneSearchResults = songsArray.filter { $0.tune?.name.range(of: term, options: [.caseInsensitive]) != nil }
             for result in tuneSearchResults {
-                let searchResult = SearchResult(sourceText: result.tune?.name, songIndex: result.index, songNumber: result.number, searchTerm: term)
-                searchResults.append(searchResult)
+                if let sourceText = result.tune?.name.replacingOccurrences(of: "\n", with: " ") {
+                    let searchResult = SearchResult(sourceText: sourceText, songIndex: result.index, songNumber: result.number, searchTerm: term)
+                    searchResults.append(searchResult)
+                }
             }
 
             let composerSearchResults = songsArray.filter { $0.tune?.composer?.displayName?.range(of: term, options: [.caseInsensitive]) != nil }
             for result in composerSearchResults {
-                let searchResult = SearchResult(sourceText: result.tune?.composer?.displayName, songIndex: result.index, songNumber: result.number, searchTerm: term)
-                searchResults.append(searchResult)
+                if let sourceText = result.tune?.composer?.displayName?.replacingOccurrences(of: "\n", with: " ") {
+                    let searchResult = SearchResult(sourceText: sourceText, songIndex: result.index, songNumber: result.number, searchTerm: term)
+                    searchResults.append(searchResult)
+                }
             }
 
+            let leftSearchResults = songsArray.filter { $0.left?.joined(separator: " ").range(of: term, options: [.caseInsensitive]) != nil }
+            for result in leftSearchResults {
+                if let sourceText = result.left?.joined(separator: " ").replacingOccurrences(of: "\n", with: " ") {
+                    let searchResult = SearchResult(sourceText: sourceText, songIndex: result.index, songNumber: result.number, searchTerm: term)
+                    searchResults.append(searchResult)
+                }
+            }
+            
+            let rightSearchResults = songsArray.filter { $0.right?.joined(separator: " ").range(of: term, options: [.caseInsensitive]) != nil }
+            for result in rightSearchResults {
+                if let sourceText = result.right?.joined(separator: " ").replacingOccurrences(of: "\n", with: " ") {
+                    let searchResult = SearchResult(sourceText: sourceText, songIndex: result.index, songNumber: result.number, searchTerm: term)
+                    searchResults.append(searchResult)
+                }
+            }
+            
             for song in songsArray {
                 let stanzaSearchResults = song.stanzas.filter { $0.range(of: term, options: [.caseInsensitive]) != nil }
                 
@@ -112,8 +132,10 @@ class Helper: NSObject {
                 }
             }
 
+            let searchResultsSet = Set<SearchResult>(searchResults)
+            
             DispatchQueue.main.async(execute: {
-                completion(searchResults)
+                completion(Array(searchResultsSet))
             })
         })
     }

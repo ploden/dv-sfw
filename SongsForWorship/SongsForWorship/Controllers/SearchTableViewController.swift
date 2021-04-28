@@ -121,14 +121,7 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
             
             Helper.searchResultsForTerm(term, songsArray: allSongs) { [weak self] results in
                 let sortedResults = results?.sorted {
-                    if
-                        let firstSongNumber = $0.songNumber,
-                        let secondSongNumber = $1.songNumber
-                    {
-                        return firstSongNumber.localizedStandardCompare(secondSongNumber) == ComparisonResult.orderedAscending
-                        //return firstSongNumber < secondSongNumber
-                    }
-                    return false
+                    return $0.songNumber.localizedStandardCompare($1.songNumber) == ComparisonResult.orderedAscending
                 }
                                     
                 OperationQueue.main.addOperation { [weak self] in
