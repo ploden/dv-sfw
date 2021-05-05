@@ -19,11 +19,13 @@ public struct AppConfig: Decodable {
     let soundFonts: [SoundFontConfig]
     let tuneRecordings: Bool
     let shouldShowAdditionalTunes: Bool
+    let shouldShowPlaybackRateSegmentedControl: Bool
     let pdfRenderingConfigs_iPhone: [PDFRenderingConfig]
     let pdfRenderingConfigs_iPad: [PDFRenderingConfig]
     let shouldHideSheetMusicForCopyrightedTunes: Bool
     let customClasses: [CustomClassConfig]
     let sendFeedbackEmailAddress: String
+    public let versionsToPurgeTunes: [String]
     
     /*
     func customClass(forProtocol aProtocol: Protocol) -> AnyClass {

@@ -30,10 +30,18 @@ open class TunesVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         return queue
     }()
 
-    @IBOutlet weak var playerControlsView: PlayerControlsView?
     @IBOutlet weak var overlayView: UIView?
     @IBOutlet weak var backgroundGradientView: UIView?
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView?
+    
+    @IBOutlet weak var playerControlsView: PlayerControlsView? {
+        didSet {
+            if let app = UIApplication.shared.delegate as? SFWAppDelegate {
+                playerControlsView?.playbackRateSegmentedControl?.isHidden = !app.appConfig.shouldShowPlaybackRateSegmentedControl
+            }
+        }
+    }
+    
     @IBOutlet weak var volumeControl: MPVolumeView? {
         didSet {
             volumeControl?.showsRouteButton = false

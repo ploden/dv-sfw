@@ -6,7 +6,7 @@
 //  Copyright © 2017 Deo Volente, LLC. All rights reserved.
 //
 
-extension Bundle {
+public extension Bundle {
     var appName: String? {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
     }
@@ -34,7 +34,7 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         title = ""
         configureNavBar()
         
-        Settings.addObserver(forSettings: self)
+        Settings.addObserver(forTheme: self)
         
         indexTableView?.register(UINib(nibName: String(describing: GenericTVCell.self), bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: String(describing: GenericTVCell.self))
         indexTableView?.rowHeight = UITableView.automaticDimension
@@ -71,6 +71,11 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
             }
         }
         return .lightContent
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        (UIApplication.shared.delegate as? SFWAppDelegate)?.changeThemeAsNeeded()
     }
     
     // MARK: - Helper methods
@@ -304,8 +309,8 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     
 }
 
-extension IndexVC: SettingsObserver {
-    func settingsDidChange(_ notification: Notification) {
+extension IndexVC: ThemeObserver {
+    func themeDidChange(_ notification: Notification) {
         configureNavBar()
     }
 }

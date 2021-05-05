@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SoundFont: Codable, Equatable {
+public struct SoundFont: Codable, Equatable {
     var filename: String
     var fileExtension: String
     var isDefault: Bool = false

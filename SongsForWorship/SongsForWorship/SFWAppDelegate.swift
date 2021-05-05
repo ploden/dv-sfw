@@ -48,7 +48,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
     public var window: UIWindow?
     weak var navigationController: UINavigationController?
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let syncInstance = FavoritesSyncronizer.shared
         try? syncInstance.synciCloud()
 
@@ -63,10 +63,10 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         }
         
         updateFavoritesShortcuts()
-
-        applyStyling()
         
-        startAnalytics()
+        if shouldPerformAnalytics() {
+            startAnalytics()
+        }
         
         var mainController: UIViewController?
 
@@ -114,8 +114,12 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
             }
         }
         
+        Settings.addObserver(forSettings: self)
+        
         window = UIWindow()
         window?.rootViewController = mainController
+        changeThemeAsNeeded()
+        applyStyling()
         window?.makeKeyAndVisible()
         
         return true
@@ -129,11 +133,11 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         let syncInstance = FavoritesSyncronizer.shared
         try? syncInstance.synciCloud()
     }
-    
+
     public func applicationDidBecomeActive(_ application: UIApplication) {
         changeThemeAsNeeded()
     }
-
+    
     func handle(_ shortcutItem: UIApplicationShortcutItem?) -> Bool {
         var handeled = false
 
@@ -187,39 +191,35 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
     func applyStyling() {
         UINavigationBar.appearance().theme_titleTextAttributes = ThemeStringAttributesPicker(
             [.foregroundColor: UIColor.white],
-            [.foregroundColor: UIColor(named: "NavBarBackground")!],
+            [.foregroundColor: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))],
             [.foregroundColor: UIColor.white]
         )
         
         //Set navigation bar Back button tint colour
         UINavigationBar.appearance().theme_tintColor = ThemeColors(
             defaultLight: .white,
-            white: UIColor(named: "NavBarBackground")!,
+            white: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
             night: .white
         ).toHex()
 
         // Set status bar style by setting nav bar style
         //UINavigationBar.appearance().theme_barStyle = ThemeBarStyles(defaultLight: .black, white: .default, night: .black).toHex()
         
-        let settings = Settings(fromUserDefaults: .standard) ?? Settings()
-        _ = settings.save(toUserDefaults: .standard)
-        Settings.addObserver(forSettings: self)
-        
         UINavigationBar.appearance().theme_barTintColor = ThemeColors(
-            defaultLight: UIColor(named: "NavBarBackground")!,
-            white: .systemBackground,
+            defaultLight: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
+            white: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
             night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
         ).toHex()
         
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).theme_tintColor = ThemeColors(
             defaultLight: UIView().tintColor!,
-            white: UIColor(named: "NavBarBackground")!,
+            white: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
             night: .white
         ).toHex()
 
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).theme_tintColor = ThemeColors(
             defaultLight: UIView().tintColor!,
-            white: UIColor(named: "NavBarBackground")!,
+            white: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
             night: .white
         ).toHex()
     }
@@ -231,25 +231,32 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         {
             let theme = settings.calculateTheme(forUserInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle)
             
-            if theme.rawValue != ThemeManager.currentThemeIndex {
+            if
+                let currentTheme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex),
+                theme != currentTheme
+            {
+                ThemeManager.setTheme(index: theme.rawValue)
+                
                 if theme == .defaultLight || theme == .white {
                     window.overrideUserInterfaceStyle = .light
-                    ThemeManager.setTheme(index: theme.rawValue)
-                    if theme != settings.theme {
-                        _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
-                    }
                 } else if theme == .night {
                     window.overrideUserInterfaceStyle = .dark
-                    ThemeManager.setTheme(index: theme.rawValue)
-                    if theme != settings.theme {
-                        _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
-                    }
                 }
+                
+                if theme != settings.theme {
+                    _ = settings.new(withTheme: theme, userInterfaceStyle: UIScreen.main.traitCollection.userInterfaceStyle).save(toUserDefaults: .standard)
+                }
+                
+                NotificationCenter.default.post(name: Notification.Name.themeDidChange, object: nil)
             }
         }
     }
     
     open func startAnalytics() {}
+    
+    open func shouldPerformAnalytics() -> Bool {
+        return false
+    }
 }
 
 extension SFWAppDelegate: SettingsObserver {

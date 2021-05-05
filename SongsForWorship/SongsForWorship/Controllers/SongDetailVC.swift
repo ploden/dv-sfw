@@ -134,7 +134,8 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         navigationItem.title = songsManager?.currentSong?.number
 
         Settings.addObserver(forSettings: self)
-        
+        Settings.addObserver(forTheme: self)
+
         shouldScrollToStartingIndex = true
         
         configureFavoriteBarButtonItem()
@@ -244,6 +245,11 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             }
         }
         return .lightContent
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        (UIApplication.shared.delegate as? SFWAppDelegate)?.changeThemeAsNeeded()
     }
     
     func scrollToCurrentSong() {
@@ -949,6 +955,14 @@ extension SongDetailVC: PlayerControllerDelegate {
 
 extension SongDetailVC: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
+        if let collectionView = collectionView {
+            collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+        }
+    }
+}
+
+extension SongDetailVC: ThemeObserver {
+    func themeDidChange(_ notification: Notification) {
         if let collectionView = collectionView {
             collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
         }
