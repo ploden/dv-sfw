@@ -25,6 +25,7 @@ public struct AppConfig: Decodable {
     let shouldHideSheetMusicForCopyrightedTunes: Bool
     let customClasses: [CustomClassConfig]
     let sendFeedbackEmailAddress: String
+    public let versionsToPurgeTunes: [String]
     
     /*
     func customClass(forProtocol aProtocol: Protocol) -> AnyClass {

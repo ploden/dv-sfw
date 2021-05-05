@@ -70,6 +70,8 @@ class SettingsVC: UIViewController {
         return false
     }
         
+    // MARK: - IBActions
+    
     @IBAction func switchValueChanged(sender: Any) {
         if let aSwitch = sender as? UISwitch {
             if let settings = Settings(fromUserDefaults: .standard) {

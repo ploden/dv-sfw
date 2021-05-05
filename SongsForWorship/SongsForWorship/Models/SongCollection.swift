@@ -13,6 +13,7 @@ import PDFKit
 extension Notification.Name {
     static let currentSongDidChange = Notification.Name("currentSongDidChange")
     static let settingsDidChange = Notification.Name("SFW_settingsDidChange")
+    static let themeDidChange = Notification.Name("SFW_themeDidChange")
     static let selectedCollectionDidChange = Notification.Name("SelectedCollectionDidChange")
 }
 

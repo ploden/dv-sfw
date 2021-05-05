@@ -64,6 +64,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         definesPresentationContext = true
         
         Settings.addObserver(forSettings: self)
+        Settings.addObserver(forTheme: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -223,8 +224,6 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     // MARK: - helper methods
     
     func configureNavBar() {
-        print("SongIndexVC: configureNavBar")
-        
         if let settings = Settings(fromUserDefaults: .standard) {
             if settings.calculateTheme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .defaultLight {
                 let navbarLogo = UIImageView(image: UIImage(named: "nav_bar_icon", in: nil, with: .none))
@@ -443,6 +442,14 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
 
 extension SongIndexVC: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
+        if let songIndexTableView = songIndexTableView {
+            songIndexTableView.reloadData()
+        }
+    }
+}
+
+extension SongIndexVC: ThemeObserver {
+    func themeDidChange(_ notification: Notification) {
         if let songIndexTableView = songIndexTableView {
             songIndexTableView.reloadData()
         }

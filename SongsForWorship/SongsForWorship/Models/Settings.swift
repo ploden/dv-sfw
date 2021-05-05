@@ -68,7 +68,7 @@ enum FontSizeSetting: Int, CaseIterable, Codable {
     }
 }
 
-enum ThemeSetting: Int, CaseIterable, Codable {
+public enum ThemeSetting: Int, CaseIterable, Codable {
     case defaultLight = 0
     case white = 1
     case night = 2
@@ -76,6 +76,15 @@ enum ThemeSetting: Int, CaseIterable, Codable {
 
 @objc protocol SettingsObserver {
     @objc func settingsDidChange(_ notification: Notification)
+}
+
+@objc protocol ThemeObserver {
+    @objc func themeDidChange(_ notification: Notification)
+}
+
+public struct VersionTimestamp: Codable {
+    public let version: String
+    public let timestamp: TimeInterval
 }
 
 public struct Settings: Codable {
@@ -93,8 +102,10 @@ public struct Settings: Codable {
     private(set) var shouldShowSheetMusicInPortrait_iPhone: Bool = false
     private(set) var shouldShowSheetMusicInLandscape_iPhone: Bool = true
     private(set) var shouldShowSheetMusic_iPad: Bool = true
-
+    public private(set) var loggedTunePurges: [VersionTimestamp] = [VersionTimestamp]()
+    
     func calculateTheme(forUserInterfaceStyle style: UIUserInterfaceStyle) -> ThemeSetting {
+        VersionTimestamp(version: "", timestamp: 0)
         if autoNightTheme {
             if style == .dark {
                 return .night
@@ -106,7 +117,19 @@ public struct Settings: Codable {
         return theme
     }
     
-    func new(withAutoNightTheme autoNightTheme: Bool, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
+    public func calculateShouldPurgeTunes(versionsToPurgeTunes: [String]) -> Bool {
+        if let currentVersion = Bundle.main.version, versionsToPurgeTunes.contains(currentVersion) {
+            if loggedTunePurges.contains(where: { $0.version == currentVersion }) == false {
+                print("SHOULD PURGE TUNES")
+                return true
+            }
+        }
+        
+        print("SHOULD NOT PURGE TUNES")
+        return false
+    }
+    
+    public func new(withAutoNightTheme autoNightTheme: Bool, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
         let s = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,
             autoNightTheme: autoNightTheme,
@@ -116,7 +139,8 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
         )
         
         let newTheme = s.calculateTheme(forUserInterfaceStyle: userInterfaceStyle)
@@ -130,13 +154,14 @@ public struct Settings: Codable {
             theme: newTheme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
         )
         
         return s2
     }
     
-    func new(withShouldShowSheetMusicInPortrait_iPhone shouldShowSheetMusicInPortrait_iPhone: Bool) -> Settings {
+    public func new(withShouldShowSheetMusicInPortrait_iPhone shouldShowSheetMusicInPortrait_iPhone: Bool) -> Settings {
         let s = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,
             autoNightTheme: self.autoNightTheme,
@@ -146,12 +171,13 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
         )
         return s
     }
     
-    func new(withShouldShowSheetMusicInLandscape_iPhone shouldShowSheetMusicInLandscape_iPhone: Bool) -> Settings {
+    public func new(withShouldShowSheetMusicInLandscape_iPhone shouldShowSheetMusicInLandscape_iPhone: Bool) -> Settings {
         let s = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,
             autoNightTheme: self.autoNightTheme,
@@ -161,12 +187,13 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
         )
         return s
     }
     
-    func new(withShouldShowSheetMusic_iPad shouldShowSheetMusic_iPad: Bool) -> Settings {
+    public func new(withShouldShowSheetMusic_iPad shouldShowSheetMusic_iPad: Bool) -> Settings {
         let s = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,
             autoNightTheme: self.autoNightTheme,
@@ -176,12 +203,13 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
         )
         return s
     }
     
-    func new(withTheme theme: ThemeSetting, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
+    public func new(withTheme theme: ThemeSetting, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
         let newAutoNightTheme: Bool = {
             if userInterfaceStyle == .dark && theme != .night {
                 return false
@@ -201,12 +229,13 @@ public struct Settings: Codable {
             theme: theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
         )
         return s
     }
     
-    func new(withShouldUseSystemFonts shouldUseSystemFonts: Bool) -> Settings {
+    public func new(withShouldUseSystemFonts shouldUseSystemFonts: Bool) -> Settings {
         let s = Settings(
             shouldUseSystemFonts: shouldUseSystemFonts,
             autoNightTheme: self.autoNightTheme,
@@ -216,12 +245,13 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
         )
         return s
     }
 
-    func new(withSoundFonts soundFonts: [SoundFont]) -> Settings {
+    public func new(withSoundFonts soundFonts: [SoundFont]) -> Settings {
         let s = Settings(
             shouldUseSystemFonts: self.shouldUseSystemFonts,
             autoNightTheme: self.autoNightTheme,
@@ -231,12 +261,32 @@ public struct Settings: Codable {
             theme: self.theme,
             shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
             shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: self.loggedTunePurges
+        )
+        return s
+    }
+
+    public func new(withLoggedTunePurge version: String, timestamp: TimeInterval) -> Settings {
+        var logged = self.loggedTunePurges
+        logged.append(VersionTimestamp(version: version, timestamp: timestamp))
+        
+        let s = Settings(
+            shouldUseSystemFonts: self.shouldUseSystemFonts,
+            autoNightTheme: self.autoNightTheme,
+            soundFonts: self.soundFonts,
+            selectedSoundFont: self.selectedSoundFont,
+            fontSizeSetting: self.fontSizeSetting,
+            theme: self.theme,
+            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
+            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
+            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
+            loggedTunePurges: logged
         )
         return s
     }
     
-    func save(toUserDefaults userDefaults: UserDefaults) -> Settings? {
+    public func save(toUserDefaults userDefaults: UserDefaults) -> Settings? {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(self) {
             userDefaults.set(encoded, forKey: "SFWSettings")
@@ -322,6 +372,14 @@ public struct Settings: Codable {
 
     func removeObserver(forSettings anObserver: SettingsObserver?) {
         NotificationCenter.default.removeObserver(anObserver as Any, name: .settingsDidChange, object: nil)
+    }
+    
+    static func addObserver(forTheme anObserver: ThemeObserver) {
+        NotificationCenter.default.addObserver(anObserver as Any, selector: #selector(ThemeObserver.themeDidChange(_:)), name: Notification.Name.themeDidChange, object: nil)
+    }
+
+    func removeObserver(forTheme anObserver: ThemeObserver?) {
+        NotificationCenter.default.removeObserver(anObserver as Any, name: .themeDidChange, object: nil)
     }
 }
  
