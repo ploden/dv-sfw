@@ -174,6 +174,24 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         }
     }
     
+    func openFacebookPage() {
+        if
+            let urlString = (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig.facebookPageURL,
+            let url = URL(string: urlString)
+        {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
+
+    func rateApp() {
+        if
+            let appID = (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig.appID,
+            let url = URL(string: "itms-apps://itunes.apple.com/app/\(appID)?action=write-review")
+        {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
+    
     // MARK: - rotation
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -298,6 +316,18 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
                     action == "sendFeedback"
                 {
                     sendFeedback()
+                } else if
+                    let indexRow = indexSection.rows?[indexPath.row],
+                    let action = indexRow.action,
+                    action == "rateApp"
+                {
+                    rateApp()
+                } else if
+                    let indexRow = indexSection.rows?[indexPath.row],
+                    let action = indexRow.action,
+                    action == "openFacebookPage"
+                {
+                    openFacebookPage()
                 }
             }
         }

@@ -11,6 +11,8 @@ import Foundation
 public struct AppConfig: Decodable {
     let index: [IndexSection]
     let copyright: String
+    let appID: String?
+    let facebookPageURL: String?
     let directory: String
     let defaultFont: String
     let defaultFontDisplayName: String
