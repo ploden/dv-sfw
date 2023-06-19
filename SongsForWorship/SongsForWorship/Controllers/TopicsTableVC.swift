@@ -108,14 +108,12 @@ class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSet
         if (topic.subtopics?.count ?? 0 == 0), topic.songNumbers.count == 1 {
             if let song = songsManager?.songForNumber(topic.songNumbers.first) {
                 if
-                    let detail = splitViewController?.viewController(for: .secondary),
-                    !(detail is SongDetailVC) == true
+                    let detailNav = splitViewController?.viewController(for: .secondary) as? UINavigationController,
+                    (detailNav.topViewController is SongDetailVC) == false
                 {
                     if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                         vc.songsManager = songsManager
-                        if let detailNav = detail.navigationController {
-                            detailNav.setViewControllers([vc], animated: false)
-                        }
+                        detailNav.setViewControllers([vc], animated: false)
                     }
                 }
                 
