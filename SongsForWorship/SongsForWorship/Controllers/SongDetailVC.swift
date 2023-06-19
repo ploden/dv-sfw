@@ -151,8 +151,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         super.viewWillAppear(animated)
         
         navigationController?.setToolbarHidden(false, animated: true)
-        navigationController?.toolbar.isTranslucent = false
-        
+
         if
             let isHidden = navigationController?.isNavigationBarHidden,
             isHidden == true

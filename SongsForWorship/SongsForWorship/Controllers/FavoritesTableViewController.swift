@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 import SwiftTheme
 
-protocol FavoritesTableViewControllerDelegate: class {
+protocol FavoritesTableViewControllerDelegate: AnyObject {
     func favoritesTableViewController(didSelectFavorite song: Song)
 }
 

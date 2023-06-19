@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SelectSongMenuVCDelegate: class {
+protocol SelectSongMenuVCDelegate: AnyObject {
     func selectSongMenuVC(selectSongMenuVC: SelectSongMenuVC?, didSelectSong selectedSong: Song)
 }
 

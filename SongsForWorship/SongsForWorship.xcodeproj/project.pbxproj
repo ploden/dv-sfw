@@ -11,6 +11,7 @@
 		8D35567724F122A200AC6C9A /* Tune.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D35567624F122A200AC6C9A /* Tune.swift */; };
 		8D37C1E22608921F000708D7 /* SongCollectionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */; };
 		8D37C1E72608930C000708D7 /* SoundFontConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D37C1E62608930C000708D7 /* SoundFontConfig.swift */; };
+		8D3D340D29F95A33004A7F91 /* PDFReaderViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3D340C29F95A33004A7F91 /* PDFReaderViewVC.swift */; };
 		8D3DB3F1251322950027EC66 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3DB3F0251322950027EC66 /* Settings.swift */; };
 		8D3DB3F3251325310027EC66 /* SoundFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3DB3F2251325310027EC66 /* SoundFont.swift */; };
 		8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42245D26064F7800F7EB99 /* IndexRow.swift */; };
@@ -20,6 +21,7 @@
 		8D50B97424F4C7F600AFDC29 /* Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D50B97324F4C7F600AFDC29 /* Composer.swift */; };
 		8D54FFA326105E9D00377042 /* FavoritesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */; };
 		8D59D71A262397380055651B /* SwiftyMarkdown in Frameworks */ = {isa = PBXBuildFile; productRef = 8D59D719262397380055651B /* SwiftyMarkdown */; };
+		8D7562D22A27AFBD00C7337F /* AnyIndexVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7562D12A27AFBD00C7337F /* AnyIndexVC.swift */; };
 		8D7DABE324EE391600FD7D91 /* SongTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D7DABE124EE391600FD7D91 /* SongTVCell.xib */; };
 		8D7DABE424EE391600FD7D91 /* SongTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7DABE224EE391600FD7D91 /* SongTVCell.swift */; };
 		8D8D9B3225A50B1800828D0E /* PDFRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */; };
@@ -105,6 +107,7 @@
 		8DD2E1B524E470BF00F0DE30 /* TextViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD2E1B424E470BF00F0DE30 /* TextViewVC.swift */; };
 		8DD2E1B724E4756000F0DE30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DD2E1B624E4755F00F0DE30 /* Assets.xcassets */; };
 		8DE8B96326204D00006C5747 /* CustomClassConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE8B96226204D00006C5747 /* CustomClassConfig.swift */; };
+		8DF75D8B2A04687500F2D307 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 8DF75D8A2A04687500F2D307 /* OrderedCollections */; };
 		8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF7D260261B55880096E5F5 /* PDFCVCell.swift */; };
 		8DF7D263261B55880096E5F5 /* PDFCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8DF7D261261B55880096E5F5 /* PDFCVCell.xib */; };
 		8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */; };
@@ -125,6 +128,7 @@
 		8D35567624F122A200AC6C9A /* Tune.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tune.swift; sourceTree = "<group>"; };
 		8D37C1E12608921F000708D7 /* SongCollectionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCollectionConfig.swift; sourceTree = "<group>"; };
 		8D37C1E62608930C000708D7 /* SoundFontConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFontConfig.swift; sourceTree = "<group>"; };
+		8D3D340C29F95A33004A7F91 /* PDFReaderViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReaderViewVC.swift; sourceTree = "<group>"; };
 		8D3DB3F0251322950027EC66 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		8D3DB3F2251325310027EC66 /* SoundFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFont.swift; sourceTree = "<group>"; };
 		8D42245D26064F7800F7EB99 /* IndexRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRow.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 		8D4AD13B26278CCD0011F228 /* SFWAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFWAppDelegate.swift; sourceTree = "<group>"; };
 		8D50B97324F4C7F600AFDC29 /* Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composer.swift; sourceTree = "<group>"; };
 		8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesTableViewController.swift; sourceTree = "<group>"; };
+		8D7562D12A27AFBD00C7337F /* AnyIndexVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyIndexVC.swift; sourceTree = "<group>"; };
 		8D7DABE124EE391600FD7D91 /* SongTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongTVCell.xib; sourceTree = "<group>"; };
 		8D7DABE224EE391600FD7D91 /* SongTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongTVCell.swift; sourceTree = "<group>"; };
 		8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingTests.swift; sourceTree = "<group>"; };
@@ -241,6 +246,7 @@
 			files = (
 				8DBAF4E22617246600FD3170 /* SwiftTheme in Frameworks */,
 				8D59D71A262397380055651B /* SwiftyMarkdown in Frameworks */,
+				8DF75D8B2A04687500F2D307 /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +455,8 @@
 				8D54FFA226105E9D00377042 /* FavoritesTableViewController.swift */,
 				8D9D5FA82616399400FF84FE /* HasSettings.swift */,
 				8DA2D686261EE765008D95C6 /* SelectSongMenuVC.swift */,
+				8D3D340C29F95A33004A7F91 /* PDFReaderViewVC.swift */,
+				8D7562D12A27AFBD00C7337F /* AnyIndexVC.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -501,6 +509,7 @@
 			packageProductDependencies = (
 				8DBAF4E12617246600FD3170 /* SwiftTheme */,
 				8D59D719262397380055651B /* SwiftyMarkdown */,
+				8DF75D8A2A04687500F2D307 /* OrderedCollections */,
 			);
 			productName = SongsForWorship;
 			productReference = 8D99C17724CED391005B34F2 /* SongsForWorship.framework */;
@@ -558,6 +567,7 @@
 			packageReferences = (
 				8DBAF4E02617246600FD3170 /* XCRemoteSwiftPackageReference "SwiftTheme" */,
 				8D59D718262397380055651B /* XCRemoteSwiftPackageReference "SwiftyMarkdown" */,
+				8DF75D892A04687500F2D307 /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			productRefGroup = 8D99C17824CED391005B34F2 /* Products */;
 			projectDirPath = "";
@@ -671,7 +681,9 @@
 				8D99C1F124CED40A005B34F2 /* SongCollectionTuneInfo.swift in Sources */,
 				8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */,
 				8D99C21C24CED40A005B34F2 /* PlayRecordingTVCell.swift in Sources */,
+				8D3D340D29F95A33004A7F91 /* PDFReaderViewVC.swift in Sources */,
 				8D99C1FF24CED40A005B34F2 /* NoRecordingsFoundTVCell.swift in Sources */,
+				8D7562D22A27AFBD00C7337F /* AnyIndexVC.swift in Sources */,
 				8D99C20E24CED40A005B34F2 /* SearchResultTVCell.swift in Sources */,
 				8D99C22E24CED40A005B34F2 /* SongDetailVC.swift in Sources */,
 				8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */,
@@ -816,7 +828,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -874,7 +886,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1036,7 +1048,15 @@
 			repositoryURL = "https://github.com/wxxsw/SwiftTheme";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.6.2;
+				minimumVersion = 0.6.4;
+			};
+		};
+		8DF75D892A04687500F2D307 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1051,6 +1071,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8DBAF4E02617246600FD3170 /* XCRemoteSwiftPackageReference "SwiftTheme" */;
 			productName = SwiftTheme;
+		};
+		8DF75D8A2A04687500F2D307 /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8DF75D892A04687500F2D307 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

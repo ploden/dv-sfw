@@ -9,7 +9,7 @@
 import UIKit
 import SwiftTheme
 
-class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSettings {
+class TopicsTableVC: UITableViewController, HasFileInfo, HasSongsManager, HasSettings, AnyIndexVC {
     var settings: Settings?
     private var topicsSections: [TopicsSection] = [TopicsSection]()
     var songsManager: SongsManager?

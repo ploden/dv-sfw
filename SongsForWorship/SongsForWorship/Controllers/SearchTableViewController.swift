@@ -9,7 +9,7 @@
 import UIKit
 import SwiftTheme
 
-protocol SearchTableViewControllerDelegate: class {
+protocol SearchTableViewControllerDelegate: AnyObject {
     func searchTableViewController(didSelectSearchResultWithSong song: Song)
 }
 
@@ -119,14 +119,10 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
             
             isPerformingSearch = true
             
-            Helper.searchResultsForTerm(term, songsArray: allSongs) { [weak self] results in
-                let sortedResults = results?.sorted {
-                    return $0.songNumber.localizedStandardCompare($1.songNumber) == ComparisonResult.orderedAscending
-                }
-                                    
+            Helper.searchResultsForTerm(term, songsArray: allSongs) { [weak self] results in                                    
                 OperationQueue.main.addOperation { [weak self] in
-                    if let sortedResults = sortedResults {
-                        self?.searchResults = sortedResults
+                    if let results = results {
+                        self?.searchResults = results
                          
                         self?.tableView?.reloadData()
                         

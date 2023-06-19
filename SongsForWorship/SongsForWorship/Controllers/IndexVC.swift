@@ -18,7 +18,7 @@ public extension Bundle {
 import MessageUI
 import SwiftTheme
 
-class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
+class IndexVC: UIViewController, HasSongsManager, AnyIndexVC, UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate {
     var songsManager: SongsManager?
     var sections: [IndexSection]!
     
@@ -80,25 +80,29 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
     
     // MARK: - Helper methods
     
-    func configureNavBar() {        
-        if
+    func configureNavBar() {
+        guard
             let settings = Settings(fromUserDefaults: .standard),
             let image = UIImage(named: "nav_bar_icon", in: nil, with: .none)
+        else
         {
-            if settings.theme == .defaultLight {
-                let navbarLogo = UIImageView(image: image)
-                navigationItem.titleView = navbarLogo
-            } else if settings.theme == .white {
-                let templateImage = image.withRenderingMode(.alwaysTemplate)
-                let navbarLogo = UIImageView(image: templateImage)
-                navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
-                navigationItem.titleView = navbarLogo
-            }  else if settings.theme == .night {
-                let templateImage = image.withRenderingMode(.alwaysTemplate)
-                let navbarLogo = UIImageView(image: templateImage)
-                navbarLogo.tintColor = .white
-                navigationItem.titleView = navbarLogo
-            }
+            return
+        }
+        
+        switch settings.theme {
+        case .defaultLight:
+            let navbarLogo = UIImageView(image: image)
+            navigationItem.titleView = navbarLogo
+        case .night:
+            let templateImage = image.withRenderingMode(.alwaysTemplate)
+            let navbarLogo = UIImageView(image: templateImage)
+            navbarLogo.tintColor = .white
+            navigationItem.titleView = navbarLogo
+        case .white:
+            let templateImage = image.withRenderingMode(.alwaysTemplate)
+            let navbarLogo = UIImageView(image: templateImage)
+            navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
+            navigationItem.titleView = navbarLogo
         }
     }
     
@@ -236,72 +240,77 @@ class IndexVC: UIViewController, HasSongsManager, UITableViewDelegate, UITableVi
         return cell!
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {        
+        guard indexPath.section < sections.count else {
+            return
+        }
         
-        if indexPath.section < sections.count {
-            let indexSection = sections[indexPath.section]
-            
-            if indexPath.row < indexSection.rows?.count ?? 0 {
-                if
-                    let indexRow = indexSection.rows?[indexPath.row],
-                    let name = indexRow.storyboardName,
-                    let id = indexRow.storyboardID,
-                    name.count > 0,
-                    id.count > 0
-                {
-                    let sb = UIStoryboard(name: name, bundle: Helper.songsForWorshipBundle())
-                    let vc = sb.instantiateViewController(withIdentifier: id)
-                    
-                    if var hasSongs = vc as? HasSongsManager {
-                        hasSongs.songsManager = songsManager
-                    }
-                    
-                    if
-                        let filename = indexRow.filename,
-                        let filetype = indexRow.filetype,
-                        var hasFileInfo = vc as? HasFileInfo,
-                        let app = UIApplication.shared.delegate as? SFWAppDelegate                        
-                    {
-                        hasFileInfo.fileInfo = (filename, filetype, app.appConfig.directory)
-                    }
-                    
-                    if
-                        let vc = vc as? IndexVC,
-                        let index = indexRow.index
-                    {
-                        vc.sections = index
-                    }
-                    
-                    if let vc = vc as? SongDetailVCDelegate {
-                        detailVC()?.delegate = vc
-                    }
-                    
-                    vc.title = indexRow.title
-                    
-                    if UIDevice.current.userInterfaceIdiom != .pad {
-                        navigationController?.pushViewController(vc, animated: true)
-                    } else {
-                        if vc is IndexVC || vc is SongIndexVC || vc is TopicsTableVC || vc is TopicDetailTableVC {
-                            navigationController?.pushViewController(vc, animated: true)
-                        } else if let detail = splitViewController?.viewController(for: .secondary) {
-                            if let detailNav = detail.navigationController {
-                                detailNav.setViewControllers([vc], animated: false)
-                            } else {
-                                splitViewController?.setViewController(vc, for: .secondary)
-                            }
-                        }
-                    }
-                } else if
-                    let indexRow = indexSection.rows?[indexPath.row],
-                    let action = indexRow.action,
-                    action == "sendFeedback"
-                {
-                    sendFeedback()
+        let indexSection = sections[indexPath.section]
+        
+        if
+            let indexRow = indexSection.rows?[indexPath.row],
+            let action = indexRow.action,
+            action == "sendFeedback"
+        {
+            sendFeedback()
+            return
+        }
+        
+        guard
+            indexPath.row < indexSection.rows?.count ?? 0,
+            let indexRow = indexSection.rows?[indexPath.row],
+            let name = indexRow.storyboardName,
+            let id = indexRow.storyboardID,
+            name.count > 0,
+            id.count > 0
+        else
+        {
+            return
+        }
+        
+        let sb = UIStoryboard(name: name, bundle: Helper.songsForWorshipBundle())
+        let vc = sb.instantiateViewController(withIdentifier: id)
+        
+        if var hasSongs = vc as? HasSongsManager {
+            hasSongs.songsManager = songsManager
+        }
+        
+        if
+            let filename = indexRow.filename,
+            let filetype = indexRow.filetype,
+            var hasFileInfo = vc as? HasFileInfo,
+            let app = UIApplication.shared.delegate as? SFWAppDelegate
+        {
+            hasFileInfo.fileInfo = (filename, filetype, app.appConfig.directory)
+        }
+        
+        if
+            let vc = vc as? IndexVC,
+            let index = indexRow.index
+        {
+            vc.sections = index
+        }
+        
+        if let vc = vc as? SongDetailVCDelegate {
+            detailVC()?.delegate = vc
+        }
+        
+        vc.title = indexRow.title
+        
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            if vc is AnyIndexVC {
+                navigationController?.pushViewController(vc, animated: true)
+            } else if let detail = splitViewController?.viewController(for: .secondary) {
+                if let detailNav = detail as? UINavigationController {
+                    detailNav.setViewControllers([vc], animated: false)
+                } else {
+                    splitViewController?.setViewController(vc, for: .secondary)
                 }
             }
         }
-    }        
+    }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         dismiss(animated: true)

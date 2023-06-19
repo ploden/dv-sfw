@@ -10,7 +10,7 @@
 import UIKit
 import SwiftTheme
 
-class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelegate {
+class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelegate, AnyIndexVC {
     var fileInfo: FileInfo?
     
     var topic: Topic!
@@ -128,14 +128,12 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
             }
         } else if let song = self.song(for: indexPath) {
             if
-                let detail = splitViewController?.viewController(for: .secondary),
-                !(detail is SongDetailVC) == true
+                let detailNav = splitViewController?.viewController(for: .secondary) as? UINavigationController,
+                (detailNav.topViewController is SongDetailVC) == false
             {
                 if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
                     vc.songsManager = songsManager
-                    if let detailNav = detail.navigationController {
-                        detailNav.setViewControllers([vc], animated: false)
-                    }
+                    detailNav.setViewControllers([vc], animated: false)
                 }
             }
             

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol PlayerControlsViewDelegate: class {
+protocol PlayerControlsViewDelegate: AnyObject {
     func loopButtonPressed()
     func playButtonPressed()
     func prevButtonPressed()

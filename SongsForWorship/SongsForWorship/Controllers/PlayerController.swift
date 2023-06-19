@@ -11,7 +11,7 @@ import MediaPlayer
 
 typealias PFWPlaybackRate = Float
 
-protocol PlayerControllerDelegate: class {
+protocol PlayerControllerDelegate: AnyObject {
     func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?)
     func playbackStateDidChangeForPlayerController(_ playerController: PlayerController)
 }

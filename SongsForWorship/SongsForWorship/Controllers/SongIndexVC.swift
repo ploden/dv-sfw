@@ -9,7 +9,7 @@
 import UIKit
 import SwiftTheme
 
-class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver {
+class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, AnyIndexVC, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver {
     
     private var firstTime: Bool = false
     private var isPerformingSearch = false
@@ -71,46 +71,23 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         super.viewWillAppear(animated)
         
         navigationController?.setToolbarHidden(false, animated: animated)
-        navigationController?.toolbar.isTranslucent = false
         
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)
         }
         
-        let currentSongIndexPath: IndexPath? = {
-            var ip: IndexPath?
-            
-            if
-                let songsManager = self.songsManager,
-                let currentSong = songsManager.currentSong
-            {
-                ip = self.indexPathForIndex(currentSong.index)
-            }
-            
-            return ip
-        }()
-        
-        let selectedRowIndexPath = songIndexTableView?.indexPathForSelectedRow
-        
-        if
-            let currentSongIndexPath = currentSongIndexPath,
-            selectedRowIndexPath != nil && currentSongIndexPath != selectedRowIndexPath
-        {
-            songIndexTableView?.selectRow(at: currentSongIndexPath, animated: false, scrollPosition: .middle)
-            songIndexTableView?.scrollToNearestSelectedRow(at: .middle, animated: false)
-        }                
+        updateSelectedRow(animated: animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if UIDevice.current.userInterfaceIdiom != .pad {
-            let selection = songIndexTableView?.indexPathForSelectedRow
-            if selection != nil {
-                if let selection = selection {
-                    songIndexTableView?.deselectRow(at: selection, animated: true)
-                }
+            if let selection = songIndexTableView?.indexPathForSelectedRow {
+                songIndexTableView?.deselectRow(at: selection, animated: true)
             }
+        } else {
+            updateSelectedRow(animated: animated)
         }
     }
     
@@ -200,28 +177,91 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if isCopyrightTVCell(indexPath) == false {
-            let song = self.songForIndexPath(indexPath)
-            
-            songsManager?.setcurrentSong(song, songsToDisplay: song?.collection.songs)
-            
-            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                vc.songsManager = songsManager
-                if UIDevice.current.userInterfaceIdiom != .pad {
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } else if
-                    let detail = splitViewController?.viewController(for: .secondary),
-                    !(detail is SongDetailVC) == true
-                {
-                    if let detailNav = detail.navigationController {
-                        detailNav.setViewControllers([vc], animated: false)
-                    }
-                }
+        guard isCopyrightTVCell(indexPath) == false else {
+            return
+        }
+        
+        let song = self.songForIndexPath(indexPath)
+        
+        songsManager?.setcurrentSong(song, songsToDisplay: song?.collection.songs)
+        
+        if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
+            vc.songsManager = songsManager
+            if UIDevice.current.userInterfaceIdiom != .pad {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else if
+                let detailNav = splitViewController?.viewController(for: .secondary) as? UINavigationController,
+                (detailNav.topViewController is SongDetailVC) == false
+            {
+                detailNav.setViewControllers([vc], animated: false)
             }
         }
     }
     
     // MARK: - helper methods
+    
+    func updateSelectedRow(animated: Bool) {
+        guard let songIndexTableView = songIndexTableView else {
+            return
+        }
+        
+        let currentSongIndexPath: IndexPath? = {
+            if let currentSong = self.songsManager?.currentSong {
+                return indexPathForIndex(currentSong.index)
+            }
+            return nil
+        }()
+        
+        guard let currentSongIndexPath = currentSongIndexPath else {
+            if let selectedRowIndexPath = songIndexTableView.indexPathForSelectedRow {
+                songIndexTableView.deselectRow(at: selectedRowIndexPath, animated: animated)
+            }
+            return
+        }
+        
+        /*
+         On iPad, a cell should always be selected. On phone,
+         the cell should be selected before appearance and then
+         deselected.
+         */
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            guard view.window != nil else {
+                return
+            }
+            
+            if
+                songIndexTableView.indexPathForSelectedRow == nil ||
+                currentSongIndexPath != songIndexTableView.indexPathForSelectedRow
+            {
+                songIndexTableView.selectRow(at: currentSongIndexPath, animated: animated, scrollPosition: .none)
+                
+                if
+                    let visibleRowsCount = songIndexTableView.indexPathsForVisibleRows?.count,
+                    visibleRowsCount > 2,
+                    let trimmedIndexPathsForVisibleRows = songIndexTableView.indexPathsForVisibleRows?[1..<visibleRowsCount-1],
+                    trimmedIndexPathsForVisibleRows.contains(currentSongIndexPath) == false
+                {
+                    songIndexTableView.scrollToNearestSelectedRow(at: .middle, animated: animated)
+                }
+            }
+        } else {
+            if
+                songIndexTableView.indexPathForSelectedRow == nil ||
+                currentSongIndexPath != songIndexTableView.indexPathForSelectedRow
+            {
+                songIndexTableView.selectRow(at: currentSongIndexPath, animated: animated, scrollPosition: .none)
+                
+                if
+                    let visibleRowsCount = songIndexTableView.indexPathsForVisibleRows?.count,
+                    visibleRowsCount > 2,
+                    let trimmedIndexPathsForVisibleRows = songIndexTableView.indexPathsForVisibleRows?[1..<visibleRowsCount-1],
+                    trimmedIndexPathsForVisibleRows.contains(currentSongIndexPath) == false
+                {
+                    songIndexTableView.scrollToNearestSelectedRow(at: .middle, animated: animated)
+                }
+            }
+        }
+    }
     
     func configureNavBar() {
         if let settings = Settings(fromUserDefaults: .standard) {
@@ -301,36 +341,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             let object = notification.object as? SongsManager,
             object == songsManager
         {
-            let currentSongIndexPath: IndexPath? = {
-                var ip: IndexPath?
-                
-                if
-                    let songsManager = songsManager,
-                    let current = songsManager.currentSong
-                {
-                    ip = self.indexPathForIndex(current.index)
-                }
-                
-                return ip
-            }()
-            
-            let selectedRowIndexPath = songIndexTableView?.indexPathForSelectedRow
-            
-            if
-                UIDevice.current.userInterfaceIdiom == .pad,
-                let selectedRowIndexPath = selectedRowIndexPath,
-                currentSongIndexPath != selectedRowIndexPath
-            {
-                songIndexTableView?.selectRow(at: currentSongIndexPath, animated: true, scrollPosition: .none)
-                
-                let selectedRowIndexPath = songIndexTableView?.indexPathForSelectedRow
-                
-                if let selectedRowIndexPath = selectedRowIndexPath {
-                    if !(songIndexTableView?.indexPathsForVisibleRows?.contains(selectedRowIndexPath) ?? false) {
-                        songIndexTableView?.scrollToNearestSelectedRow(at: .middle, animated: true)
-                    }
-                }
-            }
+            updateSelectedRow(animated: true)
         }
     }
     

@@ -202,27 +202,55 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
         return false
     }
     
-    func applyStyling() {
-        UINavigationBar.appearance().theme_titleTextAttributes = ThemeStringAttributesPicker(
-            [.foregroundColor: UIColor.white],
-            [.foregroundColor: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))],
-            [.foregroundColor: UIColor.white]
-        )
+    func applyStyling() {        
+        let defaultLightNavBarAppearance: UINavigationBarAppearance = {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.backgroundColor = UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
+            return appearance
+        }()
+
+        let whiteNavBarAppearance: UINavigationBarAppearance = {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.titleTextAttributes = [.foregroundColor: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))]
+            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))]
+            appearance.backgroundColor = UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
+            return appearance
+        }()
         
-        //Set navigation bar Back button tint colour
+        let darkNavBarAppearance: UINavigationBarAppearance = {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.backgroundColor = UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+            return appearance
+        }()
+        
+        UINavigationBar.appearance().theme_standardAppearance = ThemeNavigationBarAppearancePicker(appearances: defaultLightNavBarAppearance, whiteNavBarAppearance, darkNavBarAppearance)
+        UINavigationBar.appearance().theme_scrollEdgeAppearance = ThemeNavigationBarAppearancePicker(appearances: defaultLightNavBarAppearance, whiteNavBarAppearance, darkNavBarAppearance)
+        
         UINavigationBar.appearance().theme_tintColor = ThemeColors(
             defaultLight: .white,
             white: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
             night: .white
         ).toHex()
-
-        // Set status bar style by setting nav bar style
-        //UINavigationBar.appearance().theme_barStyle = ThemeBarStyles(defaultLight: .black, white: .default, night: .black).toHex()
         
-        UINavigationBar.appearance().theme_barTintColor = ThemeColors(
-            defaultLight: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
-            white: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
-            night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+        UISearchBar.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).theme_barStyle = ThemeBarStylePicker(arrayLiteral: .black, .default, .default)
+        
+        UISearchBar.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).theme_barTintColor = ThemeColors(
+            defaultLight: .white,
+            white: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
+            night: .white
+        ).toHex()
+        
+        UISearchBar.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).theme_tintColor = ThemeColors(
+            defaultLight: .white,
+            white: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
+            night: .white
         ).toHex()
         
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UIToolbar.self]).theme_tintColor = ThemeColors(

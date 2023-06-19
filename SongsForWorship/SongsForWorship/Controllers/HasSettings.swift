@@ -9,6 +9,6 @@
 import Foundation
 import UIKit
 
-protocol HasSettings: class {
+protocol HasSettings: AnyObject {
     var settings: Settings? { get set }
 }
