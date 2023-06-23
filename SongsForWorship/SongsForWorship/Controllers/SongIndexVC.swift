@@ -205,6 +205,16 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, AnyI
             return
         }
         
+        if
+            let segmentedControl = segmentedControl,
+            let currentSong = self.songsManager?.currentSong,
+            let idx = songsManager?.songCollections.firstIndex(of: currentSong.collection),
+            idx != segmentedControl.selectedSegmentIndex
+        {
+            segmentedControl.selectedSegmentIndex = idx
+            songIndexTableView.reloadData()
+        }
+        
         let currentSongIndexPath: IndexPath? = {
             if let currentSong = self.songsManager?.currentSong {
                 return indexPathForIndex(currentSong.index)

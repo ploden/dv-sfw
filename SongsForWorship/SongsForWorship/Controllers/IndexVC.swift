@@ -299,6 +299,7 @@ class IndexVC: UIViewController, HasSongsManager, AnyIndexVC, UITableViewDelegat
         
         if UIDevice.current.userInterfaceIdiom != .pad {
             navigationController?.pushViewController(vc, animated: true)
+            songsManager?.setcurrentSong(nil, songsToDisplay: nil)
         } else {
             if vc is AnyIndexVC {
                 navigationController?.pushViewController(vc, animated: true)
