@@ -13,11 +13,7 @@ extension Notification.Name {
     static let favoritesDidChange = Notification.Name("FavoritesDidChange")
 }
 
-class FavoritesSyncronizer {
-    static let shared = FavoritesSyncronizer()
-        
-    private init() {}
-
+public class FavoritesSyncronizer {
     private class func favorites() -> [Int]? {
         if let favs = UserDefaults.standard.object(forKey: kFavoritesDictionaryName) as? [Int] {
             return favs
@@ -70,7 +66,6 @@ class FavoritesSyncronizer {
             
             NSUbiquitousKeyValueStore.default.set(favs, forKey: kFavoritesDictionaryName)
             UserDefaults.standard.set(favs, forKey: kFavoritesDictionaryName)
-            //NotificationCenter.default.post(name: NSNotification.Name.favoritesDidChange, object: nil)
         }
         
         var favoriteSongNumbers = FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager)
@@ -83,18 +78,17 @@ class FavoritesSyncronizer {
     }
 
     func synciCloud() throws {
+        print("FavoritesSyncronizer: synciCloud")
         let store = NSUbiquitousKeyValueStore.default
-        NotificationCenter.default.addObserver(self, selector: #selector(updateKVStoreItems(_:)), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: store)
-        let b = store.synchronize()
-
-        if !b {
-        #if DEBUG
+        NotificationCenter.default.addObserver(self, selector: #selector(updateKVStoreItems(notification:)), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: store)
+        
+        if store.synchronize() == false {
             throw NSException(name: NSExceptionName("FavoritesSyncronizerException"), reason: "synchronize returned false", userInfo: nil) as! Error
-        #endif
         }
     }
 
-    @objc func updateKVStoreItems(_ notification: Notification?) {
+    @objc func updateKVStoreItems(notification: Notification?) {
+        print("FavoritesSyncronizer: updateKVStoreItems")
         // Get the list of keys that changed.
         let userInfo = notification?.userInfo
         
@@ -103,6 +97,7 @@ class FavoritesSyncronizer {
             let reason = reasonForChange.intValue
             
             if (reason == NSUbiquitousKeyValueStoreServerChange) || (reason == NSUbiquitousKeyValueStoreInitialSyncChange) {
+                print("FavoritesSyncronizer: updateKVStoreItems: NSUbiquitousKeyValueStoreServerChange or NSUbiquitousKeyValueStoreInitialSyncChange")
                 // If something is changing externally, get the changes
                 // and update the corresponding keys locally.
                 let changedKeys = userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [AnyHashable]
