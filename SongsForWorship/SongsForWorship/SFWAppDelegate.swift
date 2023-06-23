@@ -21,6 +21,7 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 //@UIApplicationMain
 open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
     private var songsManager: SongsManager?
+    private var favoritesSynchronizer = FavoritesSyncronizer()
     lazy public var appConfig: AppConfig = {
         let targetName = Bundle.main.infoDictionary?["CFBundleName"] as! String
         let dirName = targetName.lowercased() + "-resources"
@@ -50,8 +51,11 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
     weak var navigationController: UINavigationController?
 
     open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        let syncInstance = FavoritesSyncronizer.shared
-        try? syncInstance.synciCloud()
+        do {
+            try favoritesSynchronizer.synciCloud()
+        } catch {
+            print("UIApplication: didFinishLaunchingWithOptions: synciCloud failed")
+        }
 
         songsManager = SongsManager(appConfig: appConfig)
         songsManager?.loadSongs()
@@ -131,10 +135,21 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
-        let syncInstance = FavoritesSyncronizer.shared
-        try? syncInstance.synciCloud()
+        do {
+            try favoritesSynchronizer.synciCloud()
+        } catch {
+            print("UIApplication: applicationWillEnterForeground: synciCloud failed")
+        }
     }
 
+    public func applicationWillResignActive(_ application: UIApplication) {
+        do {
+            try favoritesSynchronizer.synciCloud()
+        } catch {
+            print("UIApplication: applicationWillResignActive: synciCloud failed")
+        }
+    }
+    
     public func applicationDidBecomeActive(_ application: UIApplication) {
         changeThemeAsNeeded()
     }
