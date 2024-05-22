@@ -2,8 +2,25 @@
 //  Settings.swift
 //  SongsForWorship
 //
-//  Created by Philip Loden on 9/17/20.
-//  Copyright © 2020 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 9/17/20. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import Foundation
@@ -14,7 +31,7 @@ struct ThemeBarStyles {
     var defaultLight: UIBarStyle
     var white: UIBarStyle
     var night: UIBarStyle
-    
+
     func toHex() -> ThemeBarStylePicker {
         return [defaultLight, white, night]
     }
@@ -24,7 +41,7 @@ struct ThemeColors {
     var defaultLight: UIColor
     var white: UIColor
     var night: UIColor
-    
+
     func toHex() -> ThemeColorPicker {
         return [defaultLight.hexString(false), white.hexString(false), night.hexString(false)]
     }
@@ -38,14 +55,14 @@ enum FontSizeSetting: Int, CaseIterable, Codable {
     case large = 220
     case larger = 280
     case largest = 330
-    
+
     static func sortedCases() -> [FontSizeSetting] {
         return FontSizeSetting.allCases.sorted { $0.rawValue < $1.rawValue }
     }
-    
+
     func smallerFontSizeSetting() -> FontSizeSetting? {
         let allCases = FontSizeSetting.sortedCases()
-        
+
         if
             let idx = allCases.firstIndex(of: self),
             idx - 1 > 0
@@ -54,10 +71,10 @@ enum FontSizeSetting: Int, CaseIterable, Codable {
         }
         return nil
     }
-    
+
     func largerFontSizeSetting() -> FontSizeSetting? {
         let allCases = FontSizeSetting.sortedCases()
-        
+
         if
             let idx = allCases.firstIndex(of: self),
             idx + 1 < allCases.count
@@ -93,17 +110,15 @@ public struct Settings: Codable {
     private(set) var soundFonts: [SoundFont] = [SoundFont]()
     private(set) var selectedSoundFont: SoundFont?
     private(set)  var fontSizeSetting: FontSizeSetting = .medium
-    var fontSize: CGFloat {
-        get {
-            return CGFloat(fontSizeSetting.rawValue) / 10.0
-        }
+    public var fontSize: CGFloat {
+        return CGFloat(fontSizeSetting.rawValue) / 10.0
     }
     private(set) var theme: ThemeSetting = .defaultLight
-    private(set) var shouldShowSheetMusicInPortrait_iPhone: Bool = false
-    private(set) var shouldShowSheetMusicInLandscape_iPhone: Bool = true
-    private(set) var shouldShowSheetMusic_iPad: Bool = true
+    private(set) var shouldShowSheetMusicInPortraitForiPhone: Bool = false
+    private(set) var shouldShowSheetMusicInLandscapeForiPhone: Bool = true
+    private(set) var shouldShowSheetMusicForiPad: Bool = true
     public private(set) var loggedTunePurges: [VersionTimestamp] = [VersionTimestamp]()
-    
+
     func calculateTheme(forUserInterfaceStyle style: UIUserInterfaceStyle) -> ThemeSetting {
         VersionTimestamp(version: "", timestamp: 0)
         if autoNightTheme {
@@ -116,99 +131,48 @@ public struct Settings: Codable {
         }
         return theme
     }
-    
+
     public func calculateShouldPurgeTunes(versionsToPurgeTunes: [String]) -> Bool {
         if let currentVersion = Bundle.main.version, versionsToPurgeTunes.contains(currentVersion) {
             if loggedTunePurges.contains(where: { $0.version == currentVersion }) == false {
-                print("SHOULD PURGE TUNES")
                 return true
             }
         }
-        
-        print("SHOULD NOT PURGE TUNES")
+
         return false
     }
-    
-    public func new(withAutoNightTheme autoNightTheme: Bool, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
-        let s = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: autoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: self.theme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        
-        let newTheme = s.calculateTheme(forUserInterfaceStyle: userInterfaceStyle)
 
-        let s2 = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: autoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: newTheme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        
-        return s2
+    public func new(withAutoNightTheme autoNightTheme: Bool, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
+        var firstNewSettings = self
+        firstNewSettings.autoNightTheme = autoNightTheme
+
+        let newTheme = firstNewSettings.calculateTheme(forUserInterfaceStyle: userInterfaceStyle)
+
+        var secondNewSettings = self
+        secondNewSettings.autoNightTheme = autoNightTheme
+        secondNewSettings.theme = newTheme
+
+        return secondNewSettings
     }
-    
-    public func new(withShouldShowSheetMusicInPortrait_iPhone shouldShowSheetMusicInPortrait_iPhone: Bool) -> Settings {
-        let s = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: self.autoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: self.theme,
-            shouldShowSheetMusicInPortrait_iPhone: shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        return s
+
+    public func new(withShouldShowSheetMusicInPortraitForiPhone shouldShowSheetMusicInPortraitForiPhone: Bool) -> Settings {
+        var newSettings = self
+        newSettings.shouldShowSheetMusicInPortraitForiPhone = shouldShowSheetMusicInPortraitForiPhone
+        return newSettings
     }
-    
-    public func new(withShouldShowSheetMusicInLandscape_iPhone shouldShowSheetMusicInLandscape_iPhone: Bool) -> Settings {
-        let s = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: self.autoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: self.theme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        return s
+
+    public func new(withShouldShowSheetMusicInLandscapeForiPhone shouldShowSheetMusicInLandscapeForiPhone: Bool) -> Settings {
+        var newSettings = self
+        newSettings.shouldShowSheetMusicInLandscapeForiPhone = shouldShowSheetMusicInLandscapeForiPhone
+        return newSettings
     }
-    
-    public func new(withShouldShowSheetMusic_iPad shouldShowSheetMusic_iPad: Bool) -> Settings {
-        let s = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: self.autoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: self.theme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        return s
+
+    public func new(withShouldShowSheetMusicForiPad shouldShowSheetMusicForiPad: Bool) -> Settings {
+        var newSettings = self
+        newSettings.shouldShowSheetMusicForiPad = shouldShowSheetMusicForiPad
+        return newSettings
     }
-    
+
     public func new(withTheme theme: ThemeSetting, userInterfaceStyle: UIUserInterfaceStyle) -> Settings {
         let newAutoNightTheme: Bool = {
             if userInterfaceStyle == .dark && theme != .night {
@@ -219,73 +183,34 @@ public struct Settings: Codable {
                 return self.autoNightTheme
             }
         }()
-        
-        let s = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: newAutoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: theme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        return s
+
+        var newSettings = self
+        newSettings.autoNightTheme = newAutoNightTheme
+        newSettings.theme = theme
+        return newSettings
     }
-    
+
     public func new(withShouldUseSystemFonts shouldUseSystemFonts: Bool) -> Settings {
-        let s = Settings(
-            shouldUseSystemFonts: shouldUseSystemFonts,
-            autoNightTheme: self.autoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: self.theme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        return s
+        var newSettings = self
+        newSettings.shouldUseSystemFonts = shouldUseSystemFonts
+        return newSettings
     }
 
     public func new(withSoundFonts soundFonts: [SoundFont]) -> Settings {
-        let s = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: self.autoNightTheme,
-            soundFonts: soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: self.theme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: self.loggedTunePurges
-        )
-        return s
+        var newSettings = self
+        newSettings.soundFonts = soundFonts
+        return newSettings
     }
 
     public func new(withLoggedTunePurge version: String, timestamp: TimeInterval) -> Settings {
         var logged = self.loggedTunePurges
         logged.append(VersionTimestamp(version: version, timestamp: timestamp))
-        
-        let s = Settings(
-            shouldUseSystemFonts: self.shouldUseSystemFonts,
-            autoNightTheme: self.autoNightTheme,
-            soundFonts: self.soundFonts,
-            selectedSoundFont: self.selectedSoundFont,
-            fontSizeSetting: self.fontSizeSetting,
-            theme: self.theme,
-            shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-            shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-            shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad,
-            loggedTunePurges: logged
-        )
-        return s
+
+        var newSettings = self
+        newSettings.loggedTunePurges = logged
+        return newSettings
     }
-    
+
     public func save(toUserDefaults userDefaults: UserDefaults) -> Settings? {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(self) {
@@ -297,7 +222,7 @@ public struct Settings: Codable {
         }
         return nil
     }
-    
+
     func selectedSoundFontOrDefault() -> SoundFont {
         let font: SoundFont = {
             if let selected = selectedSoundFont {
@@ -310,46 +235,28 @@ public struct Settings: Codable {
                 return self.soundFonts.first!
             }
         }()
-        
+
         return font
     }
-    
+
     func newWithIncreasedFontSize() -> Settings {
         if let larger = fontSizeSetting.largerFontSizeSetting() {
-            let s = Settings(
-                shouldUseSystemFonts: self.shouldUseSystemFonts,
-                autoNightTheme: self.autoNightTheme,
-                soundFonts: self.soundFonts,
-                selectedSoundFont: self.selectedSoundFont,
-                fontSizeSetting: larger,
-                theme: self.theme,
-                shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-                shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-                shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
-            )
-            return s
+            var newSettings = self
+            newSettings.fontSizeSetting = larger
+            return newSettings
         }
         return self
     }
-    
+
     func newWithDecreasedFontSize() -> Settings {
         if let smaller = fontSizeSetting.smallerFontSizeSetting() {
-            let s = Settings(
-                shouldUseSystemFonts: self.shouldUseSystemFonts,
-                autoNightTheme: self.autoNightTheme,
-                soundFonts: self.soundFonts,
-                selectedSoundFont: self.selectedSoundFont,
-                fontSizeSetting: smaller,
-                theme: self.theme,
-                shouldShowSheetMusicInPortrait_iPhone: self.shouldShowSheetMusicInPortrait_iPhone,
-                shouldShowSheetMusicInLandscape_iPhone: self.shouldShowSheetMusicInLandscape_iPhone,
-                shouldShowSheetMusic_iPad: self.shouldShowSheetMusic_iPad
-            )
-            return s
+            var newSettings = self
+            newSettings.fontSizeSetting = smaller
+            return newSettings
         }
         return self
     }
-    
+
     func canIncreaseFontSize() -> Bool {
         if fontSizeSetting.largerFontSizeSetting() != nil {
             return true
@@ -357,7 +264,7 @@ public struct Settings: Codable {
             return false
         }
     }
-    
+
     func canDecreaseFontSize() -> Bool {
         if fontSizeSetting.smallerFontSizeSetting() != nil {
             return true
@@ -365,24 +272,30 @@ public struct Settings: Codable {
             return false
         }
     }
-    
+
     static func addObserver(forSettings anObserver: SettingsObserver) {
-        NotificationCenter.default.addObserver(anObserver as Any, selector: #selector(SettingsObserver.settingsDidChange(_:)), name: Notification.Name.settingsDidChange, object: nil)
+        NotificationCenter.default.addObserver(anObserver as Any,
+                                               selector: #selector(SettingsObserver.settingsDidChange(_:)),
+                                               name: Notification.Name.settingsDidChange,
+                                               object: nil)
     }
 
     func removeObserver(forSettings anObserver: SettingsObserver?) {
         NotificationCenter.default.removeObserver(anObserver as Any, name: .settingsDidChange, object: nil)
     }
-    
+
     static func addObserver(forTheme anObserver: ThemeObserver) {
-        NotificationCenter.default.addObserver(anObserver as Any, selector: #selector(ThemeObserver.themeDidChange(_:)), name: Notification.Name.themeDidChange, object: nil)
+        NotificationCenter.default.addObserver(anObserver as Any,
+                                               selector: #selector(ThemeObserver.themeDidChange(_:)),
+                                               name: Notification.Name.themeDidChange,
+                                               object: nil)
     }
 
     func removeObserver(forTheme anObserver: ThemeObserver?) {
         NotificationCenter.default.removeObserver(anObserver as Any, name: .themeDidChange, object: nil)
     }
 }
- 
+
 extension Settings {
     public init?(fromUserDefaults userDefaults: UserDefaults) {
         if let savedSettings = userDefaults.object(forKey: "SFWSettings") as? Data {
@@ -395,5 +308,20 @@ extension Settings {
         } else {
             return nil
         }
+    }
+}
+
+extension Settings: Equatable {
+    public static func == (lhs: Settings, rhs: Settings) -> Bool {
+        return lhs.autoNightTheme == rhs.autoNightTheme &&
+        lhs.shouldShowSheetMusicForiPad == rhs.shouldShowSheetMusicForiPad &&
+        lhs.shouldShowSheetMusicInLandscapeForiPhone == rhs.shouldShowSheetMusicInLandscapeForiPhone &&
+        lhs.shouldUseSystemFonts == rhs.shouldUseSystemFonts &&
+        lhs.shouldShowSheetMusicInPortraitForiPhone == rhs.shouldShowSheetMusicInPortraitForiPhone &&
+        lhs.fontSize == rhs.fontSize &&
+        lhs.fontSizeSetting == lhs.fontSizeSetting &&
+        lhs.selectedSoundFont == rhs.selectedSoundFont &&
+        lhs.soundFonts == rhs.soundFonts &&
+        lhs.theme == rhs.theme
     }
 }

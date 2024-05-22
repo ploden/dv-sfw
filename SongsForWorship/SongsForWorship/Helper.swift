@@ -1,82 +1,66 @@
 //
-//  PsalmsForWorshipUtil.m
-//  PsalmsForWorship
+//  SongsForWorshipUtil.m
+//  SongsForWorship
 //
-//  Created by PHILIP LODEN on 4/18/11.
+//  Created by Phil Loden on 4/18/11.
 //  Copyright 2011 Deo Volente, LLC. All rights reserved.
 //
 
 import UIKit
 import OrderedCollections
 
-let NonnullIsNilErrorMessage = "nonnull is nil"
-var PlaybackRates = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
-var NumPlaybackRates: size_t = 6
+let nonnullIsNilErrorMessage = "nonnull is nil"
+var playbackRates = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
+var numPlaybackRates: size_t = 6
 
-class Helper: NSObject {
-    class func defaultFont(withSize size: CGFloat) -> UIFont {
-        if
-            let app = UIApplication.shared.delegate as? SFWAppDelegate,
-            let settings = Settings(fromUserDefaults: .standard)
-        {
-            if settings.shouldUseSystemFonts {
-                return UIFont.systemFont(ofSize: size)
-            } else if
-                let font = UIFont(name: app.appConfig.defaultFont, size: size)
-            {
-                return font
-            }
+public class Helper: NSObject {
+    public class func defaultFont(withSize size: CGFloat, appConfig: AppConfig, settings: Settings) -> UIFont {
+        if settings.shouldUseSystemFonts {
+            return UIFont.systemFont(ofSize: size)
+        } else if let font = UIFont(name: appConfig.defaultFont, size: size) {
+            return font
         }
-        
-        return UIFont.systemFont(ofSize: size)
-    }
-    
-    class func defaultFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
-        if
-            let app = UIApplication.shared.delegate as? SFWAppDelegate,
-            let settings = Settings(fromUserDefaults: .standard)
-        {
-            let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
-            
-            if settings.shouldUseSystemFonts {
-                return preferredFont
-            } else if
-                let font = UIFont(name: app.appConfig.defaultFont, size: preferredFont.pointSize)
-            {
-                return font
-            }
-            
-            return UIFont.systemFont(ofSize: preferredFont.pointSize)
-        }
-        
+
         return UIFont.systemFont(ofSize: size)
     }
 
-    class func defaultBoldFont(withSize size: CGFloat, forTextStyle textStyle: UIFont.TextStyle) -> UIFont {
-        if
-            let app = UIApplication.shared.delegate as? SFWAppDelegate,
-            let settings = Settings(fromUserDefaults: .standard)
-        {
-            let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
+    public class func defaultFont(withSize size: CGFloat,
+                           forTextStyle textStyle: UIFont.TextStyle,
+                           appConfig: AppConfig,
+                           settings: Settings) -> UIFont
+    {
+        let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
 
-            if settings.shouldUseSystemFonts {
-                return preferredFont
-            } else if                
-                let font = UIFont(name: app.appConfig.defaultBoldFont, size: preferredFont.pointSize)
-            {
-                return font
-            }
-            
-            return UIFont.boldSystemFont(ofSize: preferredFont.pointSize)
+        if settings.shouldUseSystemFonts {
+            return preferredFont
+        } else if let font = UIFont(name: appConfig.defaultFont, size: preferredFont.pointSize) {
+            return font
         }
-        
-        return UIFont.boldSystemFont(ofSize: size)
+
+        return UIFont.systemFont(ofSize: preferredFont.pointSize)
     }
 
-    class func searchResultsForTerm(_ term: String, songsArray: [Song], completion: @escaping ([SearchResult]?) -> Void) {
-        let queue = DispatchQueue.global(qos: .default)
+    class func defaultBoldFont(withSize size: CGFloat,
+                               forTextStyle textStyle: UIFont.TextStyle,
+                               appConfig: AppConfig,
+                               settings: Settings) -> UIFont
+    {
+        let preferredFont = UIFont.preferredFont(forTextStyle: textStyle)
 
-        queue.async(execute: {
+        if settings.shouldUseSystemFonts {
+            return preferredFont
+        } else if let font = UIFont(name: appConfig.defaultBoldFont, size: preferredFont.pointSize) {
+            return font
+        }
+
+        return UIFont.boldSystemFont(ofSize: preferredFont.pointSize)
+    }
+
+    class func searchResults(forTerm term: String, songsArray: [Song]) async -> [SearchResult]? {
+        //let queue = DispatchQueue.global(qos: .default)
+
+        //queue.async(execute: {
+        let searchTask = Task { () -> [SearchResult]? in
             var searchResults = [SearchResult]()
 
             let titleSearchResults = songsArray.compactMap {
@@ -87,9 +71,9 @@ class Helper: NSObject {
                 }
                 return nil
             }
-            
+
             searchResults.append(contentsOf: titleSearchResults)
-            
+
             let songNumberSearchResults = songsArray.compactMap {
                 let haystack = $0.number
                 if Self.isMatch(haystack: haystack, needle: term) {
@@ -98,7 +82,7 @@ class Helper: NSObject {
                 }
                 return nil
             }
-            
+
             searchResults.append(contentsOf: songNumberSearchResults)
 
             let tuneSearchResults = songsArray.compactMap {
@@ -111,7 +95,7 @@ class Helper: NSObject {
                 }
                 return nil
             }
-            
+
             searchResults.append(contentsOf: tuneSearchResults)
 
             let composerSearchResults = songsArray.filter { Self.isMatch(haystack: $0.tune?.composer?.displayName, needle: term) }
@@ -122,6 +106,7 @@ class Helper: NSObject {
                 }
             }
 
+            /*
             let leftSearchResults = songsArray.filter { $0.left?.joined(separator: " ").range(of: term, options: [.caseInsensitive]) != nil }
             for result in leftSearchResults {
                 if let sourceText = result.left?.joined(separator: " ").replacingOccurrences(of: "\n", with: " ") {
@@ -129,7 +114,7 @@ class Helper: NSObject {
                     searchResults.append(searchResult)
                 }
             }
-            
+
             let rightSearchResults = songsArray.filter { $0.right?.joined(separator: " ").range(of: term, options: [.caseInsensitive]) != nil }
             for result in rightSearchResults {
                 if let sourceText = result.right?.joined(separator: " ").replacingOccurrences(of: "\n", with: " ") {
@@ -137,11 +122,12 @@ class Helper: NSObject {
                     searchResults.append(searchResult)
                 }
             }
-            
+             */
+
             for song in songsArray {
                 for stanza in song.stanzas {
                     let lines = stanza.components(separatedBy: .newlines)
-                    
+
                     for line in lines {
                         let haystack = line
                         if
@@ -153,48 +139,40 @@ class Helper: NSObject {
                     }
                 }
             }
-            
-            DispatchQueue.main.async(execute: {
-                completion(searchResults)
-            })
-        })
+
+            return searchResults
+            /*
+             DispatchQueue.main.async(execute: {
+             completion(searchResults)
+             })
+             */
+            //})
+        }
+
+        return await searchTask.value
     }
 
     class func isMatch(haystack: String?, needle: String?) -> Bool {
         guard let haystack = haystack, let needle = needle else {
             return false
         }
-        
+
         return haystack.range(of: needle, options: [.caseInsensitive]) != nil
 
         let matcher = SmartSearchMatcher(searchString: haystack)
         return matcher.matches(needle)
     }
-    
+
     class func songsForWorshipBundle() -> Bundle {
         return Bundle(identifier: "com.deovolentellc.SongsForWorship")!
     }
-    
-    class func mainStoryboard_iPhone() -> UIStoryboard {
+
+    class func mainStoryboardForiPhone() -> UIStoryboard {
         return UIStoryboard(name: "Main_iPhone", bundle: Helper.songsForWorshipBundle())
     }
 
     class func mainStoryboard_iPad() -> UIStoryboard {
         return UIStoryboard(name: "Main_iPad", bundle: Helper.songsForWorshipBundle())
-    }
-
-    class func copyrightString(_ now: Date?) -> String {
-        let nonnullNow = now ?? Date()
-
-        let cal = Calendar.current
-        let yearComponent = cal.component(Calendar.Component.year, from: nonnullNow)
-
-        if let app = UIApplication.shared.delegate as? SFWAppDelegate {
-            let copyright = app.appConfig.copyright
-            return String(format: "© %ld \(copyright).\nUsed with permission.", yearComponent)
-        } else {
-            return String(format: "© %ld.\nUsed with permission.", yearComponent)
-        }
     }
 }
 

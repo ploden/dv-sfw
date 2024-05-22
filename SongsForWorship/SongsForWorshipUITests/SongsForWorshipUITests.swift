@@ -2,7 +2,7 @@
 //  SongsForWorshipUITests.swift
 //  SongsForWorshipUITests
 //
-//  Created by Philip Loden on 1/5/21.
+//  Created by Phil Loden on 1/5/21.
 //  Copyright © 2021 Deo Volente, LLC. All rights reserved.
 //
 
@@ -16,7 +16,8 @@ class SongsForWorshipUITests: XCTestCase {
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
 
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        // In UI tests it’s important to set the initial state - such as interface orientation - required
+        // for your tests before they run. The setUp method is a good place to do this.
     }
 
     override func tearDownWithError() throws {

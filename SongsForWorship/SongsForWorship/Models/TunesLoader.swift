@@ -1,106 +1,33 @@
 //
 //  TunesLoader.m
-//  PsalmsForWorship
+//  SongsForWorship
 //
-//  Created by PHILIP LODEN on 4/30/10.
-//  Copyright 2010 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 4/30/10. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import UIKit
 import AVFoundation
 
-protocol TunesLoader {
+public protocol TunesLoader {
     static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
-    static func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void)
-    static func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? 
-}
-
-open class SFWTunesLoader: TunesLoader {
-    
-    class func lengthString(forDuration aDuration: TimeInterval) -> String {
-        let length = aDuration
-        let minutes = floor(length / 60)
-        let seconds = Int(round(Double(length - (minutes * 60))))
-        return String(format: "%zd:%02zd", minutes, seconds)
-    }
-    
-    class func songNumberForPartsURLFromNumber(_ aSongNumber: String) -> String {
-        return aSongNumber.lowercased(with: NSLocale.current)
-    }
-    
-    class func songNumberForHarmonyURLFromNumber(_ aSongNumber: String) -> String? {
-        let number: Int? = {
-            if let noLetters = Int(aSongNumber) {
-                return noLetters
-            } else {
-                let removeLetter = String(aSongNumber.dropLast())
-                return Int(removeLetter)
-            }
-        }()
-        
-        if let number = number {
-            if number < 10 {
-                if aSongNumber.count == 1 {
-                    return "00\(number)"
-                } else if aSongNumber.count == 2 {
-                    return "00\(number)\((aSongNumber as NSString).substring(from: 1))"
-                }
-            } else if number < 100 {
-                if aSongNumber.count == 2 {
-                    return "0\(number)"
-                } else if aSongNumber.count == 3 {
-                    return "0\(number)\((aSongNumber as NSString).substring(from: 2))"
-                }
-            }
-            return aSongNumber
-        }
-        return nil
-    }
-    
-    open class func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
-        var filename = tuneInfo.filenameFormat
-            
-        if filename.contains("{number}") {
-            filename = filename.replacingOccurrences(of: "{number}", with: song.number.lowercased())
-        }
-        
-        if
-            let tuneWithoutMeter = song.tune?.nameWithoutMeter,
-            filename.contains("{info_tune_wo_meter}")
-        {
-            filename = filename.replacingOccurrences(of: "{info_tune_wo_meter}", with: tuneWithoutMeter.lowercased())
-        }
-        
-        return filename
-    }
-    
-    open class func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String? {
-        return self.defaultFilename(forTuneInfo: tuneInfo, song: song)
-    }
-
-    open class func loadTunes(forSong aSong: Song, completion: @escaping (Error?, [TuneDescription]) -> Void) {
-        var tuneDescriptions: [TuneDescription] = []
-              
-        if let app = UIApplication.shared.delegate as? SFWAppDelegate {
-            let mainDirectory = app.appConfig.directory
-            
-            for tuneInfo in aSong.collection.tuneInfos {
-                if let filename = Self.filename(forTuneInfo: tuneInfo, song: aSong) {
-                    let subDirectory = "\(mainDirectory)/\(tuneInfo.directory)"
-                    let filePath = Bundle.main.path(forResource: filename, ofType: tuneInfo.filetype, inDirectory: subDirectory)
-                    
-                    if let filePath = filePath {
-                        let fileUrl = URL(fileURLWithPath: filePath)                        
-                        let desc = TuneDescription(length: nil, title: tuneInfo.title, composer: nil, copyright: nil, url: fileUrl, mediaType: .midi)
-                        tuneDescriptions.append(desc)
-                    } else {
-                        print("Tunes file not found: \(filename)")
-                    }
-                }
-            }
-        }
-        
-        completion(nil, tuneDescriptions)
-    }
-    
+    static func loadTunes(forSong aSong: Song, appConfig: AppConfig, tuneInfos: [SongCollectionTuneInfo], completion: @escaping (Error?, [TuneDescription]) -> Void)
+    static func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
 }

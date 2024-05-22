@@ -2,7 +2,7 @@
 //  PDFRenderingTests.swift
 //  SongsForWorshipTests
 //
-//  Created by Philip Loden on 1/5/21.
+//  Created by Phil Loden on 1/5/21.
 //  Copyright © 2021 Deo Volente, LLC. All rights reserved.
 //
 
@@ -27,8 +27,7 @@ class PDFRenderingTests: XCTestCase {
     }
 
     func testPDFRendering() throws {
-        
-        
+
     }
 
 }

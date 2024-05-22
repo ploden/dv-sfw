@@ -1,9 +1,26 @@
 //
-//  FavoritesTableViewController.swift
+//  FavoritesVC.swift
 //  SongsForWorship
 //
-//  Created by Philip Loden on 3/28/21.
-//  Copyright © 2021 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 3/28/21. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import Foundation
@@ -17,17 +34,13 @@ protocol FavoritesTableViewControllerDelegate: AnyObject {
 
 class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource, HasSongsManager {
     override class var storyboardName: String {
-        get {
-            return "Main_iPhone"
-        }
+        return "Main_iPhone"
     }
-    var songsManager: SongsManager? {
+    var appConfig: AppConfig!
+    var settings: Settings!
+    var songsManager: SongsManager! {
         didSet {
-            if let songsManager = songsManager {
-                favorites = IndexVC.favoriteSongs(songsManager: songsManager)
-            } else {
-                favorites = [Song]()
-            }
+            favorites = Self.favoriteSongs(songsManager: songsManager)
         }
     }
     private var favorites: [Song] = [Song]()
@@ -35,7 +48,7 @@ class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     @IBOutlet weak var tableView: UITableView?
     @IBOutlet weak var toolbar: UIToolbar?
     weak var delegate: FavoritesTableViewControllerDelegate?
-        
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -45,35 +58,43 @@ class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
             white: UIColor(named: "NavBarBackground")!,
             night: .white
         ).toHex()
-        
+
         tableView?.register(UINib(nibName: "SongTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SongTVCell")
 
         navigationItem.title = "Bookmarks"
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        navigationController?.navigationBar.theme_titleTextAttributes = ThemeStringAttributesPicker([.foregroundColor: UIColor.black], [.foregroundColor: UIColor.black], [.foregroundColor: UIColor.white])
-        
+        navigationController?.navigationBar.theme_titleTextAttributes = ThemeStringAttributesPicker(
+            [.foregroundColor: UIColor.black],
+            [.foregroundColor: UIColor.black],
+            [.foregroundColor: UIColor.white]
+        )
+
         barTintColorsToRestore = navigationController?.navigationBar.theme_barTintColor
-        navigationController?.navigationBar.theme_barTintColor = ThemeColors(defaultLight: .systemBackground, white: .systemBackground, night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))).toHex()
+        navigationController?.navigationBar.theme_barTintColor = ThemeColors(
+            defaultLight: .systemBackground,
+            white: .systemBackground,
+            night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+        ).toHex()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         if let barTintColorsToRestore = barTintColorsToRestore {
             navigationController?.navigationBar.theme_barTintColor = barTintColorsToRestore
         }
     }
-    
+
     // MARK: - Table view data source
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0.0
     }
-    
+
      func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -84,15 +105,22 @@ class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
 
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SongTVCell")
-        
+
         if
             let cell = cell as? SongTVCell,
             indexPath.row < favorites.count
         {
             let song = favorites[indexPath.row]
-            cell.configureWithPsalm(song, isFavorite: false)
+            cell.viewModel = appConfig.songTVCellViewModelClass.init(song)
+
+            if
+                let appConfig = appConfig,
+                let settings = settings
+            {
+                cell.configureUI(appConfig: appConfig, settings: settings)
+            }
         }
-        
+
         return cell!
     }
 
@@ -104,8 +132,19 @@ class FavoritesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     }
 
     // MARK: - IBActions
-    
+
     @IBAction func doneTapped(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
+
+    // MARK: Helpers
+
+    class func favoriteSongs(songsManager: SongsManager) -> [Song] {
+        let favs = FavoritesSyncronizer.favoriteSongNumbers(songsManager: songsManager).compactMap { songsManager.songForNumber($0) }
+        return favs
+    }
 }
+
+extension FavoritesVC: HasAppConfig {}
+
+extension FavoritesVC: HasSettings {}
