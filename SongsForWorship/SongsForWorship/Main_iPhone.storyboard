@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LR8-G6-QN7">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LR8-G6-QN7">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -17,11 +18,12 @@
         <!--Navigation Controller-->
         <scene sceneID="XQg-a5-6hs">
             <objects>
-                <navigationController definesPresentationContext="YES" id="LR8-G6-QN7" customClass="SFWNavigationController" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController definesPresentationContext="YES" toolbarHidden="NO" id="LR8-G6-QN7" customClass="SFWNavigationController" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" alpha="0.10000000000000001" contentMode="scaleToFill" translucent="NO" id="Pub-Et-WVb">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -30,6 +32,10 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </textAttributes>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="YCZ-Fu-Ser">
+                        <rect key="frame" x="0.0" y="813" width="414" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="2Un-3n-Ifx" kind="relationship" relationship="rootViewController" id="jCU-gL-mSS"/>
                     </connections>
@@ -37,6 +43,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3jg-96-E5L" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="670.40000000000009" y="-189.80509745127438"/>
+        </scene>
+        <!--Reader ViewVC-->
+        <scene sceneID="hEz-Zt-Sf1">
+            <objects>
+                <viewController storyboardIdentifier="PDFReaderViewVC" id="jx1-c5-Zcx" customClass="PDFReaderViewVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ALA-Wq-TRp">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="WqV-7s-egM"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OB3-Lc-wlN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-236" y="-925"/>
         </scene>
         <!--TextViewVC-->
         <scene sceneID="zer-lQ-Us1">
@@ -81,7 +102,7 @@
                         <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FAQTVCell" rowHeight="56" id="Qsx-vt-iP1" customClass="FAQTVCell" customModule="SongsForWorship" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="49.5" width="414" height="56"/>
+                                <rect key="frame" x="0.0" y="55.5" width="414" height="56"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qsx-vt-iP1" id="cWO-gK-MMk">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
@@ -135,7 +156,7 @@
                         <color key="tintColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TopicTVCell" id="Xn1-Ee-whI" customClass="TopicTVCell" customModule="SongsForWorship" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="24.5" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="50" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xn1-Ee-whI" id="ezZ-9N-HW4">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -158,11 +179,11 @@
             <objects>
                 <viewController storyboardIdentifier="IndexVC" title="Index" id="2Un-3n-Ifx" customClass="IndexVC" customModule="SongsForWorship" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ttz-qK-V7f">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="5zh-wL-IyT">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
                                 <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="2Un-3n-Ifx" id="d4V-n9-6qO"/>
@@ -198,7 +219,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="xQb-u3-hxq">
-                                <rect key="frame" x="0.0" y="24.5" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="50" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xQb-u3-hxq" id="SIJ-XZ-pCr">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -225,7 +246,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Hsc-Kk-1Tx">
-                                <rect key="frame" x="0.0" y="44" width="414" height="236"/>
+                                <rect key="frame" x="0.0" y="48" width="414" height="236"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JyW-k8-ATg">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="132"/>
@@ -375,7 +396,7 @@
                                                                                 <subviews>
                                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KqV-au-RHK">
                                                                                         <rect key="frame" x="0.0" y="0.0" width="37.5" height="10"/>
-                                                                                        <color key="backgroundColor" name="NavBarBackground"/>
+                                                                                        <color key="backgroundColor" name="ThemeColor"/>
                                                                                         <constraints>
                                                                                             <constraint firstAttribute="height" constant="10" id="Tea-oN-9E1"/>
                                                                                         </constraints>
@@ -414,7 +435,7 @@
                                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Song" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LgU-aQ-mJE">
                                                                                                 <rect key="frame" x="12" y="3" width="13" height="6"/>
                                                                                                 <fontDescription key="fontDescription" type="italicSystem" pointSize="5"/>
-                                                                                                <color key="textColor" name="NavBarBackground"/>
+                                                                                                <color key="textColor" name="ThemeColor"/>
                                                                                                 <nil key="highlightedColor"/>
                                                                                             </label>
                                                                                         </subviews>
@@ -591,8 +612,8 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="7mZ-U7-gQD">
-                                <rect key="frame" x="0.0" y="44" width="414" height="769"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="0.0" y="48" width="414" height="765"/>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <color key="tintColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="sectionIndexColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -602,7 +623,7 @@
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="qCW-F8-NjE"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="7mZ-U7-gQD" firstAttribute="top" secondItem="qCW-F8-NjE" secondAttribute="top" id="Jbq-rn-30y"/>
                             <constraint firstItem="qCW-F8-NjE" firstAttribute="bottom" secondItem="7mZ-U7-gQD" secondAttribute="bottom" id="Nm4-ua-tyA"/>
@@ -674,7 +695,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HlR-RK-Ueq">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="48" width="414" height="814"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="hBH-de-9W3" id="iuL-Kg-9pa"/>
@@ -701,15 +722,18 @@
         </scene>
     </scenes>
     <resources>
-        <image name="book" catalog="system" width="128" height="102"/>
+        <image name="book" catalog="system" width="128" height="99"/>
         <image name="character" catalog="system" width="128" height="128"/>
         <image name="checkmark" catalog="system" width="128" height="114"/>
-        <image name="magnifyingglass" catalog="system" width="128" height="115"/>
-        <namedColor name="NavBarBackground">
-            <color red="0.030999999493360519" green="0.14499999582767487" blue="0.40400001406669617" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <image name="magnifyingglass" catalog="system" width="128" height="117"/>
+        <namedColor name="ThemeColor">
+            <color red="0.40000000000000002" green="0.0" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemGroupedBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

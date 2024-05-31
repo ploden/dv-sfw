@@ -1,9 +1,26 @@
 //
 //  PsalmCell.swift
-//  PsalmsForWorship
+//  SongsForWorship
 //
-//  Created by PHILIP LODEN on 4/23/10.
-//  Copyright 2010 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 4/23/10. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import UIKit
@@ -12,40 +29,25 @@ class SongTVCell: UITableViewCell {
     @IBOutlet private weak var numberLabel: UILabel?
     @IBOutlet private weak var referenceLabel: UILabel?
     @IBOutlet private weak var titleLabel: UILabel?
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        numberLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .title2)
-        
-        referenceLabel?.font = Helper.defaultFont(withSize: 10.0, forTextStyle: .footnote)
-        referenceLabel?.textColor = UIColor.gray
-        referenceLabel?.highlightedTextColor = UIColor.white
-        
-        titleLabel?.font = Helper.defaultFont(withSize: 16.0, forTextStyle: .title3)
-        titleLabel?.highlightedTextColor = UIColor.white
+
+    var viewModel: SongTVCellViewModelProtocol? {
+        didSet {
+            configure()
+        }
     }
-    
-    func configureWithPsalm(_ aSong: Song?, isFavorite: Bool) {
-        numberLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .title2)
-        referenceLabel?.font = Helper.defaultFont(withSize: 10.0, forTextStyle: .footnote)
+
+    func configure() {
+        numberLabel?.text = viewModel?.number
+        referenceLabel?.text = viewModel?.reference
+        titleLabel?.text = viewModel?.title
+    }
+
+    func configureUI(appConfig: AppConfig, settings: Settings) {
+        numberLabel?.font = Helper.defaultFont(withSize: 22.0, forTextStyle: .title2, appConfig: appConfig, settings: settings)
+        referenceLabel?.font = Helper.defaultFont(withSize: 10.0, forTextStyle: .footnote, appConfig: appConfig, settings: settings)
         referenceLabel?.textColor = UIColor.gray
         referenceLabel?.highlightedTextColor = UIColor.white
-        titleLabel?.font = Helper.defaultFont(withSize: 16.0, forTextStyle: .title3)
-        
-        numberLabel?.text = aSong?.number
-        
-        referenceLabel?.text = {
-            if let ref = aSong?.reference {
-                if ref.rangeOfCharacter(from: CharacterSet(charactersIn: "-\u{2013}")) != nil {
-                    return "Ps. \(ref)"
-                } else {
-                    return "Psalm \(ref)"
-                }
-            }
-            return ""
-        }()
-        
-        titleLabel?.text = aSong?.title
+        titleLabel?.font = Helper.defaultFont(withSize: 16.0, forTextStyle: .title3, appConfig: appConfig, settings: settings)
+        titleLabel?.highlightedTextColor = UIColor.white
     }
 }

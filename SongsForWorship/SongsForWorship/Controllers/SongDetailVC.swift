@@ -1,10 +1,26 @@
-//  Converted to Swift 5.1 by Swiftify v5.1.17924 - https://objectivec2swift.com/
 //
 //  MetreViewController.m
-//  PsalmsForWorship
+//  SongsForWorship
 //
-//  Created by PHILIP LODEN on 4/28/10.
-//  Copyright 2010 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 4/28/10. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import UIKit
@@ -35,32 +51,46 @@ extension SongDetailItem: Equatable {
     }
 }
 
-class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, HasSongsManager, PsalmObserver {
-    enum imageNames: String {
-        case play = "play.fill", pause = "pause.fill", isFavorite = "bookmark.fill", isNotFavorite = "bookmark", showSheetMusic = "music.note.list", showMetre = "text.alignleft"
+class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    enum ImageNames: String {
+        case play = "play.fill"
+        case pause = "pause.fill"
+        case isFavorite = "bookmark.fill"
+        case isNotFavorite = "bookmark"
+        case showSheetMusic = "music.note.list"
+        case showMetre = "text.alignleft"
     }
-    
+
     weak var delegate: SongDetailVCDelegate?
     @objc func songDidChange(_ notification: Notification) {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if
-                let _ = notification.userInfo?[NotificationUserInfoKeys.oldValue] as? Song,
+                notification.userInfo?[NotificationUserInfoKeys.oldValue] as? Song != nil,
                 let new = notification.userInfo?[NotificationUserInfoKeys.newValue] as? Song,
                 let songsManager = songsManager,
-                let settings = Settings(fromUserDefaults: .standard)
+                let appConfig = appConfig
             {
                 if playerController?.song != new {
                     playerController?.stopPlaying()
                     playerController = nil
-                    
-                    if let currentSong = songsManager.currentSong {
-                        self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
+
+                    if
+                        let currentSong = songsManager.currentSong,
+                        let currentSongCollection = songsManager.collection(forSong: currentSong)
+                    {
+                        self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
                     }
                 }
-                
+
                 // this feels dangerous
-                let newSongDetailItems = SongDetailVC.calculateItems(forSongs: songsManager.songsToDisplay ?? [Song](), appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
-                
+                let newSongDetailItems = SongDetailVC.calculateItems(
+                    forSongs: songsManager.songsToDisplay ?? [Song](),
+                    appConfig: appConfig,
+                    settings: settings,
+                    displayMode: displayMode(forSize: view.frame.size),
+                    isLandscape: isLandscape(forSize: view.frame.size)
+                )
+
                 if songDetailItems != newSongDetailItems {
                     songDetailItems = newSongDetailItems
                     collectionView?.reloadData()
@@ -70,34 +100,27 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             navigationItem.title = songsManager?.currentSong?.number
         }
     }
-    var appConfig: AppConfig {
-        get {
-            let app = UIApplication.shared.delegate as! SFWAppDelegate
-            return app.appConfig
-        }
-    }
     override class var storyboardName: String {
-        get {
-            return "SongDetail"
-        }
+        return "SongDetail"
     }
-    var songsManager: SongsManager? {
+    var appConfig: AppConfig!
+    var songsManager: SongsManager! {
         didSet {
             oldValue?.removeObserver(forcurrentSong: self)
             songsManager?.addObserver(forcurrentSong: self)
         }
     }
-    lazy var tunesVC: TunesVC = {
-        return TunesVC.pfw_instantiateFromStoryboard() as! TunesVC
-    }()
+    var settings: Settings!
+    var tunesVC: TunesVC?
     private var hasScrolled = false
     private var shouldScrollToStartingIndex = false
     lazy private var playerController: PlayerController? = {
         if
             let songsManager = songsManager,
-            let currentSong = songsManager.currentSong
+            let currentSong = songsManager.currentSong,
+            let currentSongCollection = songsManager.collection(forSong: currentSong)
         {
-            return PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
+            return PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
         }
         return nil
     }()
@@ -126,10 +149,12 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         return UIBarButtonItem(customView: activityIndicator)
     }()
     var songDetailItems: [SongDetailItem] = [SongDetailItem]()
-    
+
     // MARK: - UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        tunesVC = TunesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? TunesVC
 
         navigationItem.title = songsManager?.currentSong?.number
 
@@ -137,22 +162,30 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         Settings.addObserver(forTheme: self)
 
         shouldScrollToStartingIndex = true
-        
+
         configureFavoriteBarButtonItem()
         configurePlayerBarButtonItems()
         configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
-        
-        collectionView?.register(UINib(nibName: String(describing: MetreCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: MetreCVCell.self))
-        collectionView?.register(UINib(nibName: String(describing: SheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: SheetMusicCVCell.self))
-        collectionView?.register(UINib(nibName: String(describing: ScrollingSheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()), forCellWithReuseIdentifier: String(describing: ScrollingSheetMusicCVCell.self))
+
+        collectionView?.register(UINib(nibName: String(describing: MetreCVCell.self),
+                                       bundle: Helper.songsForWorshipBundle()),
+            forCellWithReuseIdentifier: String(describing: MetreCVCell.self)
+        )
+        collectionView?.register(
+            UINib(nibName: String(describing: SheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()),
+            forCellWithReuseIdentifier: String(describing: SheetMusicCVCell.self)
+        )
+        collectionView?.register(
+            UINib(nibName: String(describing: ScrollingSheetMusicCVCell.self), bundle: Helper.songsForWorshipBundle()),
+            forCellWithReuseIdentifier: String(describing: ScrollingSheetMusicCVCell.self)
+        )
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         navigationController?.setToolbarHidden(false, animated: true)
-        navigationController?.toolbar.isTranslucent = false
-        
+
         if
             let isHidden = navigationController?.isNavigationBarHidden,
             isHidden == true
@@ -164,31 +197,36 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
+
+        guard let appConfig = appConfig else { return }
+
         if shouldScrollToStartingIndex {
             if
                 let songsToDisplay = songsManager?.songsToDisplay,
-                let settings = Settings(fromUserDefaults: .standard),
                 songDetailItems.count == 0
             {
-                songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
+                songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay,
+                                                              appConfig: appConfig,
+                                                              settings: settings,
+                                                              displayMode: displayMode(forSize: view.frame.size),
+                                                              isLandscape: isLandscape(forSize: view.frame.size))
                 collectionView?.reloadData()
             }
             scrollToCurrentSong()
             shouldScrollToStartingIndex = false
         }
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
+
         let animated = true
-        
+
         if view.frame.size.height != size.height && view.frame.size.width == size.width {
             print("viewWillTransition: only heights changed")
         } else if view.frame.size.width != size.width {
             print("viewWillTransition: widths changed")
-            
+
             if size.width > size.height {
                 navigationController?.hidesBarsOnTap = true
                 navigationItem.setHidesBackButton(true, animated: animated)
@@ -198,34 +236,40 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 navigationController?.setToolbarHidden(false, animated: animated)
                 navigationItem.setHidesBackButton(false, animated: animated)
             }
-            
+
             if let collectionView = collectionView {
                 let numItems = collectionView.numberOfItems(inSection: 0)
-                
+
                 collectionView.alpha = 0.0
-                
+
                 if numItems > 0 {
-                    coordinator.animate(alongsideTransition: { context in
+                    coordinator.animate(alongsideTransition: { _ in
                     }) { context in
                         self.songDetailItems = [SongDetailItem]()
-                        
+
                         if
+                            let appConfig = self.appConfig,
                             let songsToDisplay = self.songsManager?.songsToDisplay,
-                            let settings = Settings(fromUserDefaults: .standard),
                             self.songDetailItems.count == 0
                         {
-                            self.songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: self.displayMode(forSize: self.view.frame.size), isLandscape: self.isLandscape(forSize: self.view.frame.size))
+                            self.songDetailItems = SongDetailVC.calculateItems(
+                                forSongs: songsToDisplay,
+                                appConfig: appConfig,
+                                settings: self.settings,
+                                displayMode: self.displayMode(forSize: self.view.frame.size),
+                                isLandscape: self.isLandscape(forSize: self.view.frame.size)
+                            )
                         }
-                        
+
                         collectionView.collectionViewLayout.invalidateLayout()
                         collectionView.reloadData()
-                        
+
                         self.scrollToCurrentSong()
                         self.configureShowSheetMusicBarButtonItem(forSize: size)
                         self.navigationItem.title = self.songsManager?.currentSong?.number
-                        
+
                         collectionView.alpha = 1.0
-                        
+
                         UIView.animate(withDuration: 0.15, animations: {
                             collectionView.alpha = 1.0
                         })
@@ -234,7 +278,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             }
         }
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
             switch theme {
@@ -246,12 +290,12 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         }
         return .lightContent
     }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         (UIApplication.shared.delegate as? SFWAppDelegate)?.changeThemeAsNeeded()
     }
-    
+
     func scrollToCurrentSong() {
         if
             let collectionView = collectionView,
@@ -262,128 +306,59 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             collectionView.scrollToItem(at: item.indexPath, at: .centeredHorizontally, animated: false)
         }
     }
-    
+
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return action == #selector(playTapped(_:))
     }
-    
+
     override var canBecomeFirstResponder: Bool {
         return true
     }
-    
+
     // MARK: - rotation
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .allButUpsideDown
     }
-    
+
     override var shouldAutorotate: Bool {
         return true
     }
-    
+
     // MARK: - collection view flow layout
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return self.collectionView?.bounds.size ?? .zero
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return .zero
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0.0
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0.0
     }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return songDetailItems.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let songDetailItem = songDetailItems[indexPath.item]
-        
-        let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: songDetailItem.cellID, for: indexPath)
 
-        if
-            let songsManager = songsManager,
-            let songsToDisplay = songsManager.songsToDisplay,
-            let song = songDetailItem.songs.first
-        {
-            if let cvc = cvc as? MetreCVCell {
-                cvc.song = song
-            } else if let cvc = cvc as? ScrollingSheetMusicCVCell {
-                cvc.configure(withPageNumber: songDetailItem.pdfPageNumbers?.firstPage, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: nil, queue: queue)
-            } else if let cvc = cvc as? SheetMusicCVCell {
-                let renderingConfigs = UIDevice.current.userInterfaceIdiom == .pad ? nil : song.collection.pdfRenderingConfigs_iPhone
-                cvc.configure(withPDFPageNumbers: songDetailItem.pdfPageNumbers, pdf: song.collection.pdf, allSongs: songsToDisplay, pdfRenderingConfigs: renderingConfigs, queue: queue)
-            }
-        }
-        
-        return cvc
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if hasScrolled {
-            navigationItem.title = nil
-        } else {
-            hasScrolled = true
-        }
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if let collectionView = collectionView {
-            let center = collectionView.convert(collectionView.center, from: collectionView.superview)
-            let ip = collectionView.indexPathForItem(at: center)
-            
-            if
-                let ip = ip,
-                let songsToDisplay = songsManager?.songsToDisplay,
-                ip.item < songDetailItems.count
-            {
-                if !(navigationItem.title != nil) || indexPathOfLastDisplayedCell?.compare(ip) != .orderedSame {
-                    let song = songDetailItems[ip.item].songs.first
-                    songsManager?.removeObserver(forcurrentSong: self)
-                    songsManager?.setcurrentSong(song, songsToDisplay: songsToDisplay)
-                    songsManager?.addObserver(forcurrentSong: self)
-                }
-            }
-            self.indexPathOfLastDisplayedCell = ip
-        }
-        if playerController?.song != songsManager?.currentSong {
-            playerController?.stopPlaying()
-            playerController = nil
-            if
-                let songsManager = songsManager,
-                let currentSong = songsManager.currentSong
-            {
-                self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
-            }
-        }
-        navigationItem.title = songsManager?.currentSong?.number
-        configurePlayerBarButtonItems()
-        configureFavoriteBarButtonItem()
-        configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
-    }
-    
     // MARK: - Helpers
-    
+
     func currentlyVisibleSongs() -> [Song] {
         if let collectionView = collectionView {
             let center = collectionView.convert(collectionView.center, from: collectionView.superview)
-            let ip = collectionView.indexPathForItem(at: center)
-            
+
             if
-                let ip = ip,
-                ip.item < songDetailItems.count
+                let indexPath = collectionView.indexPathForItem(at: center),
+                indexPath.item < songDetailItems.count
             {
-                return songDetailItems[ip.item].songs
+                return songDetailItems[indexPath.item].songs
             }
         }
         return [Song]()
     }
-    
+
     class func calculateItems(forSongs songs: [Song], appConfig: AppConfig, settings: Settings, displayMode: DisplayMode, isLandscape: Bool) -> [SongDetailItem] {
         // single page metre
         // single page pdf with possible metre
@@ -392,20 +367,20 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
         case .singlePageMetre:
             // single page metre
             var idx = 0
-            
+
             let items: [SongDetailItem] = songs.map {
                 let indexPath = IndexPath(item: idx, section: 0)
                 idx += 1
                 let cellID = String(describing: MetreCVCell.self)
                 return SongDetailItem(indexPath: indexPath, songs: [$0], pdfPageNumbers: nil, cellID: cellID, displayMode: .singlePageMetre)
             }
-                
+
             return items
         case .singlePagePDF:
             var items = [SongDetailItem]()
 
             var idx = 0
-            
+
             for song in songs {
                 if appConfig.shouldHideSheetMusicForCopyrightedTunes && song.isTuneCopyrighted {
                     let indexPath = IndexPath(item: idx, section: 0)
@@ -421,31 +396,39 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                             return String(describing: isLandscape ? ScrollingSheetMusicCVCell.self : SheetMusicCVCell.self)
                         }
                     }()
-                    
+
                     for pdfPageNumber in song.pdfPageNumbers {
                         if
                             let previousItem = items.last,
                             previousItem.pdfPageNumbers?.firstPage == pdfPageNumber
                         {
                             items.removeLast()
-                            let newPreviousItem = SongDetailItem(indexPath: previousItem.indexPath, songs: previousItem.songs + [song], pdfPageNumbers: previousItem.pdfPageNumbers, cellID: previousItem.cellID, displayMode: .singlePagePDF)
+                            let newPreviousItem = SongDetailItem(indexPath: previousItem.indexPath,
+                                                                 songs: previousItem.songs + [song],
+                                                                 pdfPageNumbers: previousItem.pdfPageNumbers,
+                                                                 cellID: previousItem.cellID,
+                                                                 displayMode: .singlePagePDF)
                             items.append(newPreviousItem)
                         } else {
                             let indexPath = IndexPath(item: idx, section: 0)
                             idx += 1
-                            let item = SongDetailItem(indexPath: indexPath, songs: [song], pdfPageNumbers: PageNumbers(firstPage: pdfPageNumber, secondPage: nil) , cellID: cellID, displayMode: .singlePagePDF)
+                            let item = SongDetailItem(indexPath: indexPath,
+                                                      songs: [song],
+                                                      pdfPageNumbers: PageNumbers(firstPage: pdfPageNumber, secondPage: nil),
+                                                      cellID: cellID,
+                                                      displayMode: .singlePagePDF)
                             items.append(item)
                         }
                     }
                 }
             }
-            
+
             return items
         case .doublePageAsNeededPDF:
             var items = [SongDetailItem]()
 
             var idx = 0
-            
+
             for song in songs {
                 if appConfig.shouldHideSheetMusicForCopyrightedTunes && song.isTuneCopyrighted {
                     let indexPath = IndexPath(item: idx, section: 0)
@@ -455,37 +438,45 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                     items.append(item)
                 } else {
                     let cellID = String(describing: SheetMusicCVCell.self)
-                    
+
                     if song.pdfPageNumbers.count > 1 {
                         // potential double page
                         var pdfPageNumberIdx = 0
-                        
+
                         while pdfPageNumberIdx < song.pdfPageNumbers.count {
                             let pdfPageNumber = song.pdfPageNumbers[pdfPageNumberIdx]
-                            
+
                             if
                                 let previousItem = items.last,
                                 previousItem.pdfPageNumbers?.firstPage == pdfPageNumber || previousItem.pdfPageNumbers?.secondPage == pdfPageNumber
                             {
                                 items.removeLast()
-                                let newPreviousItem = SongDetailItem(indexPath: previousItem.indexPath, songs: previousItem.songs + [song], pdfPageNumbers: previousItem.pdfPageNumbers, cellID: previousItem.cellID, displayMode: .singlePagePDF)
+                                let newPreviousItem = SongDetailItem(indexPath: previousItem.indexPath,
+                                                                     songs: previousItem.songs + [song],
+                                                                     pdfPageNumbers: previousItem.pdfPageNumbers,
+                                                                     cellID: previousItem.cellID,
+                                                                     displayMode: .singlePagePDF)
                                 items.append(newPreviousItem)
-                                
+
                                 pdfPageNumberIdx += 1
                             } else {
                                 let indexPath = IndexPath(item: idx, section: 0)
                                 idx += 1
-                                
-                                var secondPDFPageNumber: Int? = nil
-                                
+
+                                var secondPDFPageNumber: Int?
+
                                 if pdfPageNumberIdx + 1 < song.pdfPageNumbers.count {
                                     secondPDFPageNumber = song.pdfPageNumbers[pdfPageNumberIdx + 1]
                                     pdfPageNumberIdx += 2
                                 } else {
                                     pdfPageNumberIdx += 1
                                 }
-                                
-                                let item = SongDetailItem(indexPath: indexPath, songs: [song], pdfPageNumbers: PageNumbers(firstPage: pdfPageNumber, secondPage: secondPDFPageNumber) , cellID: cellID, displayMode: .doublePageAsNeededPDF)
+
+                                let item = SongDetailItem(indexPath: indexPath,
+                                                          songs: [song],
+                                                          pdfPageNumbers: PageNumbers(firstPage: pdfPageNumber, secondPage: secondPDFPageNumber),
+                                                          cellID: cellID,
+                                                          displayMode: .doublePageAsNeededPDF)
                                 items.append(item)
                             }
                         }
@@ -497,24 +488,32 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                                 previousItem.pdfPageNumbers?.firstPage == pdfPageNumber
                             {
                                 items.removeLast()
-                                let newPreviousItem = SongDetailItem(indexPath: previousItem.indexPath, songs: previousItem.songs + [song], pdfPageNumbers: previousItem.pdfPageNumbers, cellID: previousItem.cellID, displayMode: .singlePagePDF)
+                                let newPreviousItem = SongDetailItem(indexPath: previousItem.indexPath,
+                                                                     songs: previousItem.songs + [song],
+                                                                     pdfPageNumbers: previousItem.pdfPageNumbers,
+                                                                     cellID: previousItem.cellID,
+                                                                     displayMode: .singlePagePDF)
                                 items.append(newPreviousItem)
                             } else {
                                 let indexPath = IndexPath(item: idx, section: 0)
                                 idx += 1
-                                let item = SongDetailItem(indexPath: indexPath, songs: [song], pdfPageNumbers: PageNumbers(firstPage: pdfPageNumber, secondPage: nil) , cellID: cellID, displayMode: .singlePagePDF)
+                                let item = SongDetailItem(indexPath: indexPath,
+                                                          songs: [song],
+                                                          pdfPageNumbers: PageNumbers(firstPage: pdfPageNumber, secondPage: nil),
+                                                          cellID: cellID,
+                                                          displayMode: .singlePagePDF)
                                 items.append(item)
                             }
                         }
                     }
                 }
             }
-            
+
             return items
         }
-        
+
     }
-    
+
     func displayMode(forSize size: CGSize) -> DisplayMode {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if shouldShowPDF(forSize: size) {
@@ -534,30 +533,27 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             }
         }
     }
-    
+
     func shouldShowPDF(forSize size: CGSize) -> Bool {
-        if let settings = Settings(fromUserDefaults: .standard) {
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                return settings.shouldShowSheetMusic_iPad
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return settings.shouldShowSheetMusicForiPad
+        } else {
+            if isLandscape(forSize: view.frame.size) {
+                return settings.shouldShowSheetMusicInLandscapeForiPhone
             } else {
-                if isLandscape(forSize: view.frame.size) {
-                    return settings.shouldShowSheetMusicInLandscape_iPhone
-                } else {
-                    return settings.shouldShowSheetMusicInPortrait_iPhone
-                }
+                return settings.shouldShowSheetMusicInPortraitForiPhone
             }
         }
-        return false
     }
-    
+
     func toolbar() -> UIToolbar? {
         return navigationController?.toolbar
     }
-    
+
     func isLandscape(forSize size: CGSize) -> Bool {
         return size.width > size.height
     }
-    
+
     func configureFavoriteBarButtonItem() {
         let img: UIImage? = {
             if
@@ -565,33 +561,27 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 let currentSong = songsManager.currentSong,
                 FavoritesSyncronizer.isFavorite(currentSong, songsManager: songsManager)
             {
-                return UIImage(systemName: imageNames.isFavorite.rawValue)
+                return UIImage(systemName: ImageNames.isFavorite.rawValue)
             } else {
-                return UIImage(systemName: imageNames.isNotFavorite.rawValue)
+                return UIImage(systemName: ImageNames.isNotFavorite.rawValue)
             }
         }()
-        
-        favoriteBarButtonItem?.image = img        
+
+        favoriteBarButtonItem?.image = img
     }
-    
+
     func configureShowSheetMusicBarButtonItem(forSize size: CGSize) {
         let img: UIImage? = {
             if shouldShowPDF(forSize: size) {
-                return UIImage(systemName: imageNames.showMetre.rawValue)
+                return UIImage(systemName: ImageNames.showMetre.rawValue)
             } else {
-                return UIImage(systemName: imageNames.showSheetMusic.rawValue)
+                return UIImage(systemName: ImageNames.showSheetMusic.rawValue)
             }
         }()
-        
+
         showSheetMusicBarButtonItem?.image = img
-        
-        if let current = songsManager?.currentSong {
-            showSheetMusicBarButtonItem?.isEnabled = !(appConfig.shouldHideSheetMusicForCopyrightedTunes && current.isTuneCopyrighted)
-        } else {
-            showSheetMusicBarButtonItem?.isEnabled = true
-        }
     }
-    
+
     func showActivityIndicatorBarButtonItem(replacing item: UIBarButtonItem?) {
         if
             let item = item,
@@ -612,7 +602,7 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             toolbar()?.items?.remove(at: idx+1)
         }
     }
-    
+
     func showShowPlayerBarButtonItem() {
         if
             let showPlayerBarButtonItem = showPlayerBarButtonItem,
@@ -623,25 +613,24 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             toolbar()?.items?.remove(at: idx+1)
         }
     }
-    
+
     func configurePlayerBarButtonItems() {
         func defaulConfig() {
             showPlayBarButtonItem()
             playBarButtonItem?.isEnabled = true
-            playBarButtonItem?.image = UIImage(systemName: imageNames.play.rawValue)
+            playBarButtonItem?.image = UIImage(systemName: ImageNames.play.rawValue)
             showPlayerBarButtonItem?.isEnabled = true
         }
-        
+
         if
             let playerController = playerController,
-            let currentSong = songsManager?.currentSong,
-            !(appConfig.shouldHideSheetMusicForCopyrightedTunes && currentSong.isTuneCopyrighted)
+            let currentSong = songsManager?.currentSong
         {
             if playerController.song == currentSong {
                 if playerController.isPlaying() {
                     showPlayBarButtonItem()
                     showShowPlayerBarButtonItem()
-                    playBarButtonItem?.image = UIImage(systemName: imageNames.pause.rawValue)
+                    playBarButtonItem?.image = UIImage(systemName: ImageNames.pause.rawValue)
                     playBarButtonItem?.isEnabled = true
                     showPlayerBarButtonItem?.isEnabled = true
                 } else if playerController.state == .loadingTunes {
@@ -651,13 +640,13 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
                 } else if playerController.state == .loadingTunesDidFail {
                     showPlayBarButtonItem()
                     showShowPlayerBarButtonItem()
-                    playBarButtonItem?.image = UIImage(systemName: imageNames.play.rawValue)
+                    playBarButtonItem?.image = UIImage(systemName: ImageNames.play.rawValue)
                     playBarButtonItem?.isEnabled = false
                     showPlayerBarButtonItem?.isEnabled = false
                 } else if playerController.state == .loadingTunesDidSucceed || playerController.state == .tunesNotLoaded {
                     showPlayBarButtonItem()
                     showShowPlayerBarButtonItem()
-                    playBarButtonItem?.image = UIImage(systemName: imageNames.play.rawValue)
+                    playBarButtonItem?.image = UIImage(systemName: ImageNames.play.rawValue)
                     playBarButtonItem?.isEnabled = true
                     showPlayerBarButtonItem?.isEnabled = true
                 }
@@ -669,9 +658,9 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             showPlayerBarButtonItem?.isEnabled = false
         }
     }
-    
+
     // MARK: - IBActions
-    
+
     @IBAction func collectionViewTapped(_ sender: Any) {
         if
             let splitViewController = splitViewController,
@@ -691,74 +680,67 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             if let navigationController = navigationController {
                 navigationController.setNavigationBarHidden(!navigationController.isNavigationBarHidden, animated: true)
                 navigationController.setToolbarHidden(!navigationController.isToolbarHidden, animated: true)
-                
+
                 UIView.transition(with: self.view, duration: TimeInterval(UINavigationController.hideShowBarDuration), options: .curveEaseInOut) {
                     if let collectionView = self.collectionView {
                         collectionView.visibleCells.forEach { $0.setNeedsDisplay() }
                     }
-                } completion: { (finished) in }
+                } completion: { _ in }
             }
         }
     }
-    
+
     @IBAction func favoriteBarButtonItemTapped(_ sender: Any) {
-        guard presentedViewController == nil else {
-            dismiss(animated: true, completion: nil)
-            return
-        }
-        
         if
             let songsManager = songsManager,
             let currentSong = songsManager.currentSong
         {
-            
+
             if FavoritesSyncronizer.isFavorite(currentSong, songsManager: songsManager) {
                 FavoritesSyncronizer.removeFromFavorites(currentSong, songsManager: songsManager)
             } else {
                 FavoritesSyncronizer.addToFavorites(currentSong, songsManager: songsManager)
             }
-            
+
             configureFavoriteBarButtonItem()
         }
     }
-    
+
     func playCurrentSong() {
-        if
+        guard
             let songsManager = songsManager,
-            let currentSong = songsManager.currentSong
-        {
-            if playerController == nil || playerController?.song != currentSong {
-                self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
-            }
-            
-            if let playerController = playerController {
-                if playerController.isPlaying() {
-                    playerController.pause()
-                } else if playerController.isPaused {
-                    playerController.resume()
-                } else if playerController.state == .tunesNotLoaded {
-                    showActivityIndicatorBarButtonItem(replacing: playBarButtonItem)
-                    showPlayerBarButtonItem?.isEnabled = false
-                    playerController.loadTunes()
-                } else if playerController.state == .loadingTunesDidSucceed {
-                    if let currentTrack = playerController.currentTrack {
-                        playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: 1.0)
-                    }
-                }
-            }
-            
-            configurePlayerBarButtonItems()
-        }
-    }
-    
-    @IBAction func playTapped(_ sender: Any) {
-        guard presentedViewController == nil else {
-            dismiss(animated: true, completion: nil)
+            let currentSong = songsManager.currentSong,
+            let currentSongCollection = songsManager.collection(forSong: currentSong)
+        else {
             return
         }
-        
+
+        if playerController == nil || playerController?.song != currentSong {
+            self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+        }
+
+        if let playerController = playerController {
+            if playerController.isPlaying() {
+                playerController.pause()
+            } else if playerController.isPaused {
+                playerController.resume()
+            } else if playerController.state == .tunesNotLoaded {
+                showActivityIndicatorBarButtonItem(replacing: playBarButtonItem)
+                showPlayerBarButtonItem?.isEnabled = false
+                playerController.loadTunes()
+            } else if playerController.state == .loadingTunesDidSucceed {
+                if let currentTrack = playerController.currentTrack {
+                    playerController.playTrack(currentTrack, atTime: 0.0, withDelay: 0.0, rate: 1.0)
+                }
+            }
+        }
+
+        configurePlayerBarButtonItems()
+    }
+
+    @IBAction func playTapped(_ sender: Any) {
         let currentlyVisible = currentlyVisibleSongs()
-        
+
         if currentlyVisible.count > 1 {
             if let playerController = playerController {
                 if playerController.isPlaying() {
@@ -775,30 +757,35 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             playCurrentSong()
         }
     }
-    
+
     func showSelectSongVC(withSongs songs: [Song], fromBarButtonItem barButtonItem: UIBarButtonItem) {
-        if let vc = SelectSongMenuVC.pfw_instantiateFromStoryboard() as? SelectSongMenuVC {
-            vc.songs = songs
-            vc.delegate = self
-            vc.modalPresentationStyle = .popover
-            vc.popoverPresentationController?.barButtonItem = barButtonItem
-            if let pres = vc.presentationController {
+        if let viewController = SelectSongMenuVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SelectSongMenuVC {
+            viewController.delegate = self
+            viewController.modalPresentationStyle = .popover
+            viewController.popoverPresentationController?.barButtonItem = barButtonItem
+            if let pres = viewController.presentationController {
                 pres.delegate = self
             }
-            vc.popoverPresentationController?.backgroundColor = vc.view.backgroundColor
+            viewController.popoverPresentationController?.backgroundColor = viewController.view.backgroundColor
             let buttonHeight = 30.0
-            vc.preferredContentSize = CGSize(width: Double(songs.count) * buttonHeight * 2, height: buttonHeight)
-            present(vc, animated: true, completion: nil)
+            viewController.preferredContentSize = CGSize(width: Double(songs.count) * buttonHeight * 2, height: buttonHeight)
+            present(viewController, animated: true, completion: nil)
         }
     }
-    
+
     func showPlayerForCurrentSong() {
-        if playerController == nil || playerController?.song != songsManager?.currentSong {
-            if let currentSong = songsManager?.currentSong {
-                self.playerController = PlayerController(withSong: currentSong, delegate: self, queue: tunesVC.queue)
-            }
+        guard
+            let currentSong = songsManager?.currentSong,
+            let currentSongCollection = songsManager?.collection(forSong: currentSong)
+        else
+        {
+            return
         }
-        
+
+        if playerController == nil || playerController?.song != currentSong {
+            self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+        }
+
         if let playerController = playerController {
             if playerController.state == .loadingTunesDidSucceed {
                 showTunesVC()
@@ -809,10 +796,10 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             }
         }
     }
-    
+
     @IBAction func showPlayerTapped(_ sender: Any) {
         let currentlyVisible = currentlyVisibleSongs()
-        
+
         if currentlyVisible.count > 1 {
             if
                 let playerController = playerController,
@@ -828,86 +815,80 @@ class SongDetailVC: UIViewController, UIScrollViewDelegate, UICollectionViewData
             showPlayerForCurrentSong()
         }
     }
-    
+
     @IBAction func showSheetMusicTapped(_ sender: Any) {
-        guard presentedViewController == nil else {
-            dismiss(animated: true, completion: nil)
-            return
-        }
-        
-        if let settings = Settings(fromUserDefaults: .standard) {
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                _ = settings.new(withShouldShowSheetMusic_iPad: !settings.shouldShowSheetMusic_iPad).save(toUserDefaults: .standard)
+        guard let appConfig = appConfig else { return }
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            settings = settings.new(withShouldShowSheetMusicForiPad: !settings.shouldShowSheetMusicForiPad).save(toUserDefaults: .standard)
+        } else {
+            if isLandscape(forSize: view.frame.size) {
+                settings = settings.new(
+                    withShouldShowSheetMusicInLandscapeForiPhone: !settings.shouldShowSheetMusicInLandscapeForiPhone
+                ).save(toUserDefaults: .standard)
             } else {
-                if isLandscape(forSize: view.frame.size) {
-                    _ = settings.new(withShouldShowSheetMusicInLandscape_iPhone: !settings.shouldShowSheetMusicInLandscape_iPhone).save(toUserDefaults: .standard)
-                } else {
-                    _ = settings.new(withShouldShowSheetMusicInPortrait_iPhone: !settings.shouldShowSheetMusicInPortrait_iPhone).save(toUserDefaults: .standard)                    
-                }
+                settings = settings.new(
+                    withShouldShowSheetMusicInPortraitForiPhone: !settings.shouldShowSheetMusicInPortraitForiPhone
+                ).save(toUserDefaults: .standard)
             }
-            
-            if let songsToDisplay = songsManager?.songsToDisplay {
-                songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay, appConfig: self.appConfig, settings: settings, displayMode: displayMode(forSize: view.frame.size), isLandscape: isLandscape(forSize: view.frame.size))
-                collectionView?.reloadData()
-                scrollToCurrentSong()
-                navigationItem.title = songsManager?.currentSong?.number
-            }
-            
-            configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
         }
+
+        if let songsToDisplay = songsManager?.songsToDisplay {
+            songDetailItems = SongDetailVC.calculateItems(forSongs: songsToDisplay,
+                                                          appConfig: appConfig,
+                                                          settings: settings,
+                                                          displayMode: displayMode(forSize: view.frame.size),
+                                                          isLandscape: isLandscape(forSize: view.frame.size))
+            collectionView?.reloadData()
+            scrollToCurrentSong()
+            navigationItem.title = songsManager?.currentSong?.number
+        }
+
+        configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
     }
-    
+
     @IBAction func showSettingsTapped(_ sender: Any) {
-        guard presentedViewController == nil else {
-            dismiss(animated: true, completion: nil)
+        guard let viewController = SettingsVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SettingsVC else {
             return
         }
-        
-        if let vc = SettingsVC.pfw_instantiateFromStoryboard() as? SettingsVC {
-            vc.modalPresentationStyle = .popover
-            
-            if let sender = sender as? UIBarButtonItem {
-                vc.popoverPresentationController?.barButtonItem = sender
-            }
-            
-            if let pres = vc.presentationController {
-                pres.delegate = self
-            }
-            
-            vc.popoverPresentationController?.backgroundColor = vc.view.backgroundColor
-            
-            vc.preferredContentSize = CGSize(width: 325, height: 251
-            )
-            
-            present(vc, animated: true, completion: nil)
+
+        viewController.modalPresentationStyle = .popover
+
+        if let sender = sender as? UIBarButtonItem {
+            viewController.popoverPresentationController?.barButtonItem = sender
         }
+
+        if let pres = viewController.presentationController {
+            pres.delegate = self
+        }
+
+        viewController.popoverPresentationController?.backgroundColor = viewController.view.backgroundColor
+
+        viewController.preferredContentSize = CGSize(width: 325, height: 251)
+
+        present(viewController, animated: true, completion: nil)
     }
-    
+
     func showTunesVC() {
+        guard let tunesVC = tunesVC else { return }
+
         tunesVC.songsManager = songsManager
         tunesVC.playerController = playerController
         tunesVC.modalPresentationStyle = .popover
-        
+
         tunesVC.popoverPresentationController?.barButtonItem = showPlayerBarButtonItem
-        
+
         if let pres = tunesVC.presentationController {
             pres.delegate = self
         }
-        
+
         tunesVC.popoverPresentationController?.backgroundColor = tunesVC.view.backgroundColor
-        
-        if
-            let appConfig = (UIApplication.shared.delegate as? SFWAppDelegate)?.appConfig,
-            appConfig.shouldShowAdditionalTunes == true
-        {
-            tunesVC.preferredContentSize = CGSize(width: 375, height: 172 + 128)
-        } else {
-            tunesVC.preferredContentSize = CGSize(width: 375, height: 172)
-        }
-        
+
+        tunesVC.preferredContentSize = CGSize(width: 375, height: 172)
+
         present(tunesVC, animated: true, completion: nil)
     }
-    
+
     // MARK: - Custom getters
 }
 
@@ -915,7 +896,7 @@ extension SongDetailVC: UIPopoverPresentationControllerDelegate {
     public func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         return .none
     }
-    
+
     public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         if let presentedVC = presentationController.presentedViewController as? TunesVC {
             presentedVC.playerController?.delegate = self
@@ -926,7 +907,7 @@ extension SongDetailVC: UIPopoverPresentationControllerDelegate {
 
 extension SongDetailVC: PlayerControllerDelegate {
     func playerControllerTracksDidChange(_ playerController: PlayerController, tracks: [PlayerTrack]?) {
-        
+
         if playerController.song == songsManager?.currentSong {
             if playerController.state == .loadingTunesDidSucceed {
                 if
@@ -944,10 +925,10 @@ extension SongDetailVC: PlayerControllerDelegate {
                 }
             }
         }
-        
+
         configurePlayerBarButtonItems()
     }
-    
+
     func playbackStateDidChangeForPlayerController(_ playerController: PlayerController) {
         configurePlayerBarButtonItems()
     }
@@ -955,6 +936,12 @@ extension SongDetailVC: PlayerControllerDelegate {
 
 extension SongDetailVC: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
+        let newSettings = Settings(fromUserDefaults: .standard)
+        
+        if settings != newSettings {
+            settings = newSettings
+        }
+        
         if let collectionView = collectionView {
             collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
         }
@@ -974,7 +961,7 @@ extension SongDetailVC: SelectSongMenuVCDelegate {
         let presentingItem = selectSongMenuVC?.popoverPresentationController?.barButtonItem
         selectSongMenuVC?.dismiss(animated: true, completion: nil)
         selectSongMenuVC?.delegate = nil // disconnect ASAP
-        
+
         if
             let presentingItem = presentingItem,
             let songsManager = songsManager
@@ -993,3 +980,101 @@ extension SongDetailVC: SelectSongMenuVCDelegate {
         }
     }
 }
+
+extension SongDetailVC: HasSongsManager {}
+
+extension SongDetailVC: PsalmObserver {}
+
+extension SongDetailVC: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if hasScrolled {
+            navigationItem.title = nil
+        } else {
+            hasScrolled = true
+        }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if let collectionView = collectionView {
+            let center = collectionView.convert(collectionView.center, from: collectionView.superview)
+            let indexPath = collectionView.indexPathForItem(at: center)
+
+            if
+                let indexPath = indexPath,
+                let songsToDisplay = songsManager?.songsToDisplay,
+                indexPath.item < songDetailItems.count
+            {
+                if !(navigationItem.title != nil) || indexPathOfLastDisplayedCell?.compare(indexPath) != .orderedSame {
+                    let song = songDetailItems[indexPath.item].songs.first
+                    songsManager?.removeObserver(forcurrentSong: self)
+                    songsManager?.setcurrentSong(song, songsToDisplay: songsToDisplay)
+                    songsManager?.addObserver(forcurrentSong: self)
+                }
+            }
+            self.indexPathOfLastDisplayedCell = indexPath
+        }
+        if playerController?.song != songsManager?.currentSong {
+            playerController?.stopPlaying()
+            playerController = nil
+
+            if
+                let songsManager = songsManager,
+                let currentSong = songsManager.currentSong,
+                let currentSongCollection = songsManager.collection(forSong: currentSong)
+            {
+                self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+            }
+        }
+        navigationItem.title = songsManager?.currentSong?.number
+        configurePlayerBarButtonItems()
+        configureFavoriteBarButtonItem()
+    }
+}
+
+extension SongDetailVC: UICollectionViewDataSource {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return songDetailItems.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let songDetailItem = songDetailItems[indexPath.item]
+
+        let cvc = collectionView.dequeueReusableCell(withReuseIdentifier: songDetailItem.cellID, for: indexPath)
+
+        guard
+            let songsManager = songsManager,
+            let songsToDisplay = songsManager.songsToDisplay,
+            let song = songDetailItem.songs.first,
+            let songCollection = songsManager.collection(forSong: song)
+        else
+        {
+            return cvc
+        }
+        
+        if let cvc = cvc as? MetreCVCell {
+            let viewModel = appConfig.metreCVCellViewModelClass.init(song, copyrightText: appConfig.copyrightWithDate, settings: settings, appConfig: appConfig)
+            cvc.viewModel = viewModel
+        } else if let cvc = cvc as? ScrollingSheetMusicCVCell {
+            cvc.configure(withPageNumber: songDetailItem.pdfPageNumbers?.firstPage,
+                          pdf: songCollection.pdf,
+                          allSongs: songsToDisplay,
+                          pdfRenderingConfigs: nil,
+                          queue: queue)
+        } else if let cvc = cvc as? SheetMusicCVCell {
+            let renderingConfigs = UIDevice.current.userInterfaceIdiom == .pad ? nil : songCollection.pdfRenderingConfigsForiPhone
+            cvc.configure(withPDFPageNumbers: songDetailItem.pdfPageNumbers,
+                          pdf: songCollection.pdf,
+                          allSongs: songsToDisplay,
+                          pdfRenderingConfigs: renderingConfigs,
+                          queue: queue)
+        }
+
+        return cvc
+    }
+
+}
+
+extension SongDetailVC: HasAppConfig {}
+
+extension SongDetailVC: HasSettings {}

@@ -1,48 +1,35 @@
 //
 //  Topic.swift
-//  PsalmsForWorship
+//  SongsForWorship
 //
-//  Created by Philip Loden on 11/11/19.
-//  Copyright © 2019 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 11/11/19. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import Foundation
 
 struct Topic {
-  var topic: String
-  var songNumbers: [String]
-    
+    var topic: String
+    var songNumbers: [String]
     var redirects: [String]?
-
-  var subtopics: [Topic]?
-  
-    /*
-  init?(dict: [AnyHashable : Any]?) {
-    if dict == nil {
-      return nil
-    }
-    
-    topic = dict?["topic"] as? String ?? ""
-    songNumbers = dict?["psalm_numbers"] as? [String] ?? [String]()
-    redirects = dict?["redirects"] as? [String] ?? [String]()
-
-    var tmpArray: [Topic] = []
-    
-    if let aDict = dict?["subtopics"] as? [Any] {
-      for subtopicDict in aDict {
-        if let subtopicDict = subtopicDict as? [AnyHashable : Any] {
-          let sub = Topic(dict: subtopicDict)
-          
-          if let sub = sub {
-            tmpArray.append(sub)
-          }
-        }
-      }
-    }
-    
-    subtopics = tmpArray
-  }
- */
+    var subtopics: [Topic]?
 }
 
 extension Topic: Decodable {}

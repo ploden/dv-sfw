@@ -1,35 +1,54 @@
 //
 //  PsalmIndexVC.swift
-//  PsalmsForWorship
+//  SongsForWorship
 //
-//  Created by PHILIP LODEN on 4/17/10.
-//  Copyright 2010 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 4/17/10. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import UIKit
 import SwiftTheme
 
-class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver {
-    
+class SongIndexVC: UIViewController, UITableViewDelegate, UITableViewDataSource, PsalmObserver, SongCollectionObserver {
+
     private var firstTime: Bool = false
     private var isPerformingSearch = false
     private var isObservingcurrentSong = false
-    
-    var songsManager: SongsManager?
+
+    var appConfig: AppConfig!
+    var settings: Settings!
+    var songsManager: SongsManager!
     @IBOutlet weak var songIndexTableView: UITableView?
     @IBOutlet private var copyrightTVCell: UITableViewCell!
     private var previewingContext: UIViewControllerPreviewing?
     private var segmentedControl: UISegmentedControl?
     private var searchTableViewController: SearchTableViewController?
-    
+
     // MARK: - UIViewController
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         title = ""
         configureNavBar()
-        
+
         if UIDevice.current.userInterfaceIdiom != .pad {
             let interaction = UIContextMenuInteraction(delegate: self)
             songIndexTableView?.addInteraction(interaction)
@@ -39,81 +58,58 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         songIndexTableView?.estimatedRowHeight = 50.0
         songIndexTableView?.register(UINib(nibName: "GenericTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "GenericTVCell")
         songIndexTableView?.register(UINib(nibName: "SongTVCell", bundle: Helper.songsForWorshipBundle()), forCellReuseIdentifier: "SongTVCell")
-        
+
         if
             let songsManager = songsManager,
             songsManager.songCollections.count > 1
         {
-            segmentedControl = UISegmentedControl(items: songsManager.songCollections.map { $0.displayName } )
+            segmentedControl = UISegmentedControl(items: songsManager.songCollections.map { $0.displayName })
             segmentedControl?.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: .valueChanged)
             let idx = 2
-            
+
             if let segmentedControl = segmentedControl {
                 toolbarItems?.insert(UIBarButtonItem(customView: segmentedControl), at: idx)
             }
-            
+
             toolbarItems?.insert(UIBarButtonItem.flexibleSpace(), at: idx)
             segmentedControl?.selectedSegmentIndex = 0
         }
-        
+
         firstTime = true
         songsManager?.addObserver(forcurrentSong: self)
         songsManager?.addObserver(forSelectedCollection: self)
         isObservingcurrentSong = true
-        
+
         definesPresentationContext = true
-        
+
         Settings.addObserver(forSettings: self)
         Settings.addObserver(forTheme: self)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         navigationController?.setToolbarHidden(false, animated: animated)
-        navigationController?.toolbar.isTranslucent = false
-        
+
         if UIDevice.current.userInterfaceIdiom != .pad {
             NotificationCenter.default.post(name: NSNotification.Name("stop playing"), object: nil)
         }
-        
-        let currentSongIndexPath: IndexPath? = {
-            var ip: IndexPath?
-            
-            if
-                let songsManager = self.songsManager,
-                let currentSong = songsManager.currentSong
-            {
-                ip = self.indexPathForIndex(currentSong.index)
-            }
-            
-            return ip
-        }()
-        
-        let selectedRowIndexPath = songIndexTableView?.indexPathForSelectedRow
-        
-        if
-            let currentSongIndexPath = currentSongIndexPath,
-            selectedRowIndexPath != nil && currentSongIndexPath != selectedRowIndexPath
-        {
-            songIndexTableView?.selectRow(at: currentSongIndexPath, animated: false, scrollPosition: .middle)
-            songIndexTableView?.scrollToNearestSelectedRow(at: .middle, animated: false)
-        }                
+
+        updateSelectedRow(animated: animated)
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         if UIDevice.current.userInterfaceIdiom != .pad {
-            let selection = songIndexTableView?.indexPathForSelectedRow
-            if selection != nil {
-                if let selection = selection {
-                    songIndexTableView?.deselectRow(at: selection, animated: true)
-                }
+            if let selection = songIndexTableView?.indexPathForSelectedRow {
+                songIndexTableView?.deselectRow(at: selection, animated: true)
             }
+        } else {
+            updateSelectedRow(animated: animated)
         }
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
             switch theme {
@@ -125,12 +121,12 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         }
         return .lightContent
     }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         (UIApplication.shared.delegate as? SFWAppDelegate)?.changeThemeAsNeeded()
     }
-    
+
     // MARK: - Rotation Methods
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -139,7 +135,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             return .portrait
         }
     }
-    
+
     override var shouldAutorotate: Bool {
         if UIDevice.current.userInterfaceIdiom == .pad || !UIDevice.current.orientation.isLandscape {
             return true
@@ -147,7 +143,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             return false
         }
     }
-    
+
     // MARK: - UITableView Delegate
     func numberOfSections(in tableView: UITableView) -> Int {
         if let count = selectedSongCollection()?.sections.count {
@@ -155,11 +151,11 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
         }
         return 0
     }
-    
+
     func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         return index
     }
-    
+
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         if let sections = selectedSongCollection()?.sections {
             return sections.map { $0.title }
@@ -167,7 +163,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             return nil
         }
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if
             let sections = selectedSongCollection()?.sections,
@@ -179,50 +175,145 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             return 0
         }
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if isCopyrightTVCell(indexPath) {
             let tvc = songIndexTableView?.dequeueReusableCell(withIdentifier: "GenericTVCell") as? GenericTVCell
-            tvc?.textLabel?.text = Helper.copyrightString(nil)
             tvc?.textLabel?.textAlignment = .center
-            tvc?.textLabel?.font = Helper.defaultFont(withSize: 9.0, forTextStyle: .body)
             tvc?.textLabel?.numberOfLines = 2
             tvc?.textLabel?.textColor = UIColor(red: 80.0 / 256.0, green: 80.0 / 256.0, blue: 80.0 / 256.0, alpha: 1.0)
             tvc?.selectionStyle = .none
+
+            if
+                let appConfig = appConfig,
+                let settings = settings
+            {
+                tvc?.textLabel?.text = appConfig.copyrightWithDate
+                tvc?.textLabel?.font = Helper.defaultFont(withSize: 9.0, forTextStyle: .body, appConfig: appConfig, settings: settings)
+            }
+
             return tvc!
         } else {
             let song = self.songForIndexPath(indexPath)
-            
             let songCell = tableView.dequeueReusableCell(withIdentifier: "SongTVCell") as? SongTVCell
-            songCell?.configureWithPsalm(song, isFavorite: false)
+
+            if let song = song {
+                let songViewModel = appConfig.songTVCellViewModelClass.init(song)
+                songCell?.viewModel = songViewModel
+            }
+            
+            if
+                let appConfig = appConfig,
+                let settings = settings
+            {
+                songCell?.configureUI(appConfig: appConfig, settings: settings)
+            }
+
             return songCell!
         }
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if isCopyrightTVCell(indexPath) == false {
-            let song = self.songForIndexPath(indexPath)
-            
-            songsManager?.setcurrentSong(song, songsToDisplay: song?.collection.songs)
-            
-            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                vc.songsManager = songsManager
-                if UIDevice.current.userInterfaceIdiom != .pad {
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } else if
-                    let detail = splitViewController?.viewController(for: .secondary),
-                    !(detail is SongDetailVC) == true
+        guard
+            let song = self.songForIndexPath(indexPath),
+            isCopyrightTVCell(indexPath) == false
+        else
+        {
+            return
+        }
+
+        songsManager?.setcurrentSong(song, songsToDisplay: songsManager?.collection(forSong: song)?.songs)
+
+        if
+            let viewController = SongDetailVC.instantiateFromStoryboard(appConfig: appConfig,
+                                                                            settings: settings,
+                                                                            songsManager: songsManager) as? SongDetailVC
+        {
+            if UIDevice.current.userInterfaceIdiom != .pad {
+                self.navigationController?.pushViewController(viewController, animated: true)
+            } else if
+                let detailNav = splitViewController?.viewController(for: .secondary) as? UINavigationController,
+                (detailNav.topViewController is SongDetailVC) == false
+            {
+                detailNav.setViewControllers([viewController], animated: false)
+            }
+        }
+    }
+
+    // MARK: - helper methods
+
+    func updateSelectedRow(animated: Bool) {
+        guard let songIndexTableView = songIndexTableView else { return }
+
+        if
+            let segmentedControl = segmentedControl,
+            let currentSong = self.songsManager?.currentSong,
+            let currentCollection = songsManager?.collection(forSong: currentSong),
+            let idx = songsManager?.songCollections.firstIndex(of: currentCollection),
+            idx != segmentedControl.selectedSegmentIndex
+        {
+            segmentedControl.selectedSegmentIndex = idx
+            songIndexTableView.reloadData()
+        }
+
+        let currentSongIndexPath: IndexPath? = {
+            if let currentSong = self.songsManager?.currentSong {
+                return indexPathForIndex(currentSong.index)
+            }
+            return nil
+        }()
+
+        guard let currentSongIndexPath = currentSongIndexPath else {
+            if let selectedRowIndexPath = songIndexTableView.indexPathForSelectedRow {
+                songIndexTableView.deselectRow(at: selectedRowIndexPath, animated: animated)
+            }
+            return
+        }
+
+        /*
+         On iPad, a cell should always be selected. On phone,
+         the cell should be selected before appearance and then
+         deselected.
+         */
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            guard view.window != nil else {
+                return
+            }
+
+            if
+                songIndexTableView.indexPathForSelectedRow == nil ||
+                currentSongIndexPath != songIndexTableView.indexPathForSelectedRow
+            {
+                songIndexTableView.selectRow(at: currentSongIndexPath, animated: animated, scrollPosition: .none)
+
+                if
+                    let visibleRowsCount = songIndexTableView.indexPathsForVisibleRows?.count,
+                    visibleRowsCount > 2,
+                    let trimmedIndexPathsForVisibleRows = songIndexTableView.indexPathsForVisibleRows?[1..<visibleRowsCount-1],
+                    trimmedIndexPathsForVisibleRows.contains(currentSongIndexPath) == false
                 {
-                    if let detailNav = detail.navigationController {
-                        detailNav.setViewControllers([vc], animated: false)
-                    }
+                    songIndexTableView.scrollToNearestSelectedRow(at: .middle, animated: animated)
+                }
+            }
+        } else {
+            if
+                songIndexTableView.indexPathForSelectedRow == nil ||
+                currentSongIndexPath != songIndexTableView.indexPathForSelectedRow
+            {
+                songIndexTableView.selectRow(at: currentSongIndexPath, animated: animated, scrollPosition: .none)
+
+                if
+                    let visibleRowsCount = songIndexTableView.indexPathsForVisibleRows?.count,
+                    visibleRowsCount > 2,
+                    let trimmedIndexPathsForVisibleRows = songIndexTableView.indexPathsForVisibleRows?[1..<visibleRowsCount-1],
+                    trimmedIndexPathsForVisibleRows.contains(currentSongIndexPath) == false
+                {
+                    songIndexTableView.scrollToNearestSelectedRow(at: .middle, animated: animated)
                 }
             }
         }
     }
-    
-    // MARK: - helper methods
-    
+
     func configureNavBar() {
         if let settings = Settings(fromUserDefaults: .standard) {
             if settings.calculateTheme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .defaultLight {
@@ -233,7 +324,7 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
                 let navbarLogo = UIImageView(image: templateImage)
                 navbarLogo.tintColor = UIColor(named: "NavBarBackground")!
                 navigationItem.titleView = navbarLogo
-            }  else if settings.calculateTheme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .night {
+            } else if settings.calculateTheme(forUserInterfaceStyle: traitCollection.userInterfaceStyle) == .night {
                 let templateImage = UIImage(named: "nav_bar_icon", in: nil, with: .none)!.withRenderingMode(.alwaysTemplate)
                 let navbarLogo = UIImageView(image: templateImage)
                 navbarLogo.tintColor = .white
@@ -241,33 +332,33 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
             }
         }
     }
-    
-    func selectedSongCollection() -> SongCollection? {
+
+    func selectedSongCollection() -> SongCollection<Song>? {
         if let segmentedControl = segmentedControl {
             return songsManager?.songCollections[segmentedControl.selectedSegmentIndex]
         }
         return songsManager?.songCollections.first
     }
-    
+
     func isCopyrightTVCell(_ indexPath: IndexPath?) -> Bool {
         return false
     }
-    
+
     func indexForIndexPath(_ indexPath: IndexPath) -> Int {
         var count = 0
         if let songIndexTableView = songIndexTableView {
-            for i in 0..<indexPath.section {
-                count += songIndexTableView.numberOfRows(inSection: i)
+            for idx in 0..<indexPath.section {
+                count += songIndexTableView.numberOfRows(inSection: idx)
             }
         }
         return count + indexPath.row
     }
-    
+
     func indexPathForIndex(_ index: Int) -> IndexPath? {
         if let songIndexTableView = songIndexTableView {
             var count = 0
             var sectionIdx = 0
-            
+
             for idx in 0..<songIndexTableView.numberOfSections {
                 sectionIdx = idx
                 let numRows = songIndexTableView.numberOfRows(inSection: idx)
@@ -277,111 +368,88 @@ class SongIndexVC: UIViewController, HasSongsManager, SongDetailVCDelegate, UITa
                     count += numRows
                 }
             }
-            
+
             return IndexPath(row: index - count, section: sectionIdx)
         }
         return nil
     }
-    
-    func songForIndexPath(_ indexPath: IndexPath?) -> Song? {
-        var song: Song?
-        
+
+    func songForIndexPath(_ indexPath: IndexPath?) -> (Song)? {
+        var song: (Song)?
+
         if
             let songsArray = selectedSongCollection()?.songs,
             let indexPath = indexPath
         {
             song = songsArray[indexForIndexPath(indexPath)]
         }
-        
+
         return song
     }
-    
+
     @objc func songDidChange(_ notification: Notification) {
         if
             let object = notification.object as? SongsManager,
             object == songsManager
         {
-            let currentSongIndexPath: IndexPath? = {
-                var ip: IndexPath?
-                
-                if
-                    let songsManager = songsManager,
-                    let current = songsManager.currentSong
-                {
-                    ip = self.indexPathForIndex(current.index)
-                }
-                
-                return ip
-            }()
-            
-            let selectedRowIndexPath = songIndexTableView?.indexPathForSelectedRow
-            
-            if
-                UIDevice.current.userInterfaceIdiom == .pad,
-                let selectedRowIndexPath = selectedRowIndexPath,
-                currentSongIndexPath != selectedRowIndexPath
-            {
-                songIndexTableView?.selectRow(at: currentSongIndexPath, animated: true, scrollPosition: .none)
-                
-                let selectedRowIndexPath = songIndexTableView?.indexPathForSelectedRow
-                
-                if let selectedRowIndexPath = selectedRowIndexPath {
-                    if !(songIndexTableView?.indexPathsForVisibleRows?.contains(selectedRowIndexPath) ?? false) {
-                        songIndexTableView?.scrollToNearestSelectedRow(at: .middle, animated: true)
-                    }
-                }
-            }
+            updateSelectedRow(animated: true)
         }
     }
-    
+
     deinit {
         if isObservingcurrentSong {
             songsManager?.removeObserver(forcurrentSong: self)
         }
-        
+
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     // MARK: - DetailVCDelegate
-    
+
     func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
-        return songsManager?.currentSong?.collection.songs
+        guard
+            let songsManager = songsManager,
+            let currentSong = songsManager.currentSong
+        else {
+            return nil
+        }
+
+        return songsManager.collection(forSong: currentSong)?.songs
     }
-    
+
     func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
     }
-    
+
     // MARK: - IBActions
-    
+
     @IBAction func segmentedControlValueChanged(_ sender: Any) {
         songIndexTableView?.reloadData()
         songIndexTableView?.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
     }
-    
+
     func selectedCollectionDidChange(_ notification: Notification) {
         songIndexTableView?.reloadData()
     }
-    
+
     @IBAction func searchTapped(_ sender: Any) {
         if searchTableViewController == nil {
-            searchTableViewController = SearchTableViewController.pfw_instantiateFromStoryboard() as? SearchTableViewController
+            searchTableViewController = SearchTableViewController.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SearchTableViewController
         }
-        
+
         if let searchTableViewController = self.searchTableViewController {
             searchTableViewController.songsManager = songsManager
             searchTableViewController.delegate = self
-            let nc = UINavigationController(rootViewController: searchTableViewController)
-            present(nc, animated: true, completion: nil)
+            let navigationController = UINavigationController(rootViewController: searchTableViewController)
+            present(navigationController, animated: true, completion: nil)
         }
     }
-    
+
     @IBAction func favoritesTapped(_ sender: Any) {
-        if let vc = FavoritesVC.pfw_instantiateFromStoryboard() as? FavoritesVC {
-            vc.songsManager = songsManager
-            vc.delegate = self
-            let nc = UINavigationController(rootViewController: vc)            
-            present(nc, animated: true, completion: nil)
+        if let viewController = FavoritesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? FavoritesVC {
+            viewController.delegate = self
+            let navigationController = UINavigationController(rootViewController: viewController)
+            present(navigationController, animated: true, completion: nil)
         }
     }
 }
@@ -392,47 +460,53 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
             let detail = splitViewController?.viewController(for: .secondary),
             !(detail is SongDetailVC) == true
         {
-            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                vc.songsManager = songsManager
+            if let viewController = SongDetailVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SongDetailVC {
                 if let detailNav = detail.navigationController {
-                    detailNav.setViewControllers([vc], animated: false)
+                    detailNav.setViewControllers([viewController], animated: false)
                 }
             }
         }
-        
-        songsManager?.setcurrentSong(song, songsToDisplay: song.collection.songs)
-        
+
+        guard
+            let songsManager = songsManager,
+            let songCollection = songsManager.collection(forSong: song)
+        else {
+            return
+        }
+
+        songsManager.setcurrentSong(song, songsToDisplay: songCollection.songs)
+
         if UIDevice.current.userInterfaceIdiom != .pad {
-            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                vc.songsManager = songsManager
-                
+            if
+                let viewController = SongDetailVC.instantiateFromStoryboard(appConfig: appConfig,
+                                                                               settings: settings,
+                                                                               songsManager: songsManager) as? SongDetailVC
+            {
                 if
                     let segmentedControl = segmentedControl,
-                    let idx = songsManager?.songCollections.firstIndex(of: song.collection)
+                    let idx = songsManager.songCollections.firstIndex(of: songCollection)
                 {
                     segmentedControl.selectedSegmentIndex = idx
                     songIndexTableView?.reloadData()
-                    let ip = indexPathForIndex(song.index)
-                    
-                    if let ip = ip {
-                        songIndexTableView?.scrollToRow(at: ip, at: .middle, animated: false)
+
+                    if let indexPath = indexPathForIndex(song.index) {
+                        songIndexTableView?.scrollToRow(at: indexPath, at: .middle, animated: false)
                     }
                 }
-                
+
                 dismiss(animated: true)
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.navigationController?.pushViewController(viewController, animated: true)
             }
         } else {
             if
                 let segmentedControl = segmentedControl,
-                let idx = songsManager?.songCollections.firstIndex(of: song.collection)
+                let idx = songsManager.songCollections.firstIndex(of: songCollection)
             {
                 segmentedControl.selectedSegmentIndex = idx
                 songIndexTableView?.reloadData()
-                let ip = indexPathForIndex(song.index)
-                
-                if let ip = ip {
-                    songIndexTableView?.scrollToRow(at: ip, at: .middle, animated: false)
+
+                if let indexPath = indexPathForIndex(song.index) {
+                    songIndexTableView?.scrollToRow(at: indexPath, at: .middle, animated: false)
                 }
             }
             dismiss(animated: true, completion: nil)
@@ -442,8 +516,14 @@ extension SongIndexVC: FavoritesTableViewControllerDelegate {
 
 extension SongIndexVC: SettingsObserver {
     func settingsDidChange(_ notification: Notification) {
-        if let songIndexTableView = songIndexTableView {
-            songIndexTableView.reloadData()
+        let newSettings = Settings(fromUserDefaults: .standard)
+        
+        if settings != newSettings {
+            settings = newSettings
+            
+            if let songIndexTableView = songIndexTableView {
+                songIndexTableView.reloadData()
+            }
         }
     }
 }
@@ -464,7 +544,7 @@ extension SongIndexVC: UIContextMenuInteractionDelegate {
             previewProvider: {
                 let newPoint = self.view.convert(location, to: self.songIndexTableView)
                 let index = self.songIndexTableView?.indexPathForRow(at: newPoint)
- 
+
                 if
                     let index = index,
                     let song = self.songForIndexPath(index)
@@ -473,12 +553,12 @@ extension SongIndexVC: UIContextMenuInteractionDelegate {
                 }
                 return nil
             },
-            actionProvider: { suggestedActions in
+            actionProvider: { _ in
                 // Return a UIMenu or nil
                 return nil
             }
         )
-        
+
         return configuration
     }
 }
@@ -489,28 +569,44 @@ extension SongIndexVC: SearchTableViewControllerDelegate {
             let detail = splitViewController?.viewController(for: .secondary),
             !(detail is SongDetailVC) == true
         {
-            if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                vc.songsManager = songsManager
+            if
+                let viewController = SongDetailVC.instantiateFromStoryboard(appConfig: appConfig,
+                                                                                settings: settings,
+                                                                                songsManager: songsManager) as? SongDetailVC
+            {
                 if let detailNav = detail.navigationController {
-                    detailNav.setViewControllers([vc], animated: false)
+                    detailNav.setViewControllers([viewController], animated: false)
                 }
             }
         }
-        
-        songsManager?.setcurrentSong(song, songsToDisplay: song.collection.songs)
-        
+
+        guard let songCollection = songsManager?.collection(forSong: song) else {
+            return
+        }
+
+        songsManager?.setcurrentSong(song, songsToDisplay: songCollection.songs)
+
         if
             let segmentedControl = segmentedControl,
-            let idx = songsManager?.songCollections.firstIndex(of: song.collection)
+            let idx = songsManager?.songCollections.firstIndex(of: songCollection)
         {
             segmentedControl.selectedSegmentIndex = idx
             songIndexTableView?.reloadData()
-            let ip = indexPathForIndex(song.index)
-            
-            if let ip = ip {
-                songIndexTableView?.scrollToRow(at: ip, at: .middle, animated: false)
+
+            if let indexPath = indexPathForIndex(song.index) {
+                songIndexTableView?.scrollToRow(at: indexPath, at: .middle, animated: false)
             }
         }
         dismiss(animated: true, completion: nil)
     }
 }
+
+extension SongIndexVC: AnyIndexVC {}
+
+extension SongIndexVC: HasSongsManager {}
+
+extension SongIndexVC: SongDetailVCDelegate {}
+
+extension SongIndexVC: HasAppConfig {}
+
+extension SongIndexVC: HasSettings {}

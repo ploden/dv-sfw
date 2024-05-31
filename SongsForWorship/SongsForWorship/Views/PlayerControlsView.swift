@@ -1,9 +1,26 @@
 //
 //  PlayerControlsView.swift
-//  PsalmsForWorship
+//  SongsForWorship
 //
-//  Created by Philip Loden on 5/2/11.
-//  Copyright 2011 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 5/2/11. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import UIKit
@@ -39,12 +56,12 @@ class PlayerControlsView: UIView {
         let defaultRate: Float = 1.0
         var defaultIdx = 0
 
-        for i in 0..<PFWNumPlaybackRates {
-            let title = PlayerControlsView.displayStringForPlaybackRate(PFWPlaybackRates[i])
-            playbackRateSegmentedControl?.insertSegment(withTitle: title, at: Int(i), animated: false)
+        for idx in 0..<PFWNumPlaybackRates {
+            let title = PlayerControlsView.displayStringForPlaybackRate(PFWPlaybackRates[idx])
+            playbackRateSegmentedControl?.insertSegment(withTitle: title, at: Int(idx), animated: false)
 
-            if defaultRate == PFWPlaybackRates[i] {
-                defaultIdx = Int(i)
+            if defaultRate == PFWPlaybackRates[idx] {
+                defaultIdx = Int(idx)
             }
         }
 
@@ -83,31 +100,31 @@ class PlayerControlsView: UIView {
             number > 0
         {
             loopButton?.isSelected = true
-            
+
             let loopIcon = UIImage(named: "loop_icon", in: Helper.songsForWorshipBundle(), with: .none)
-            
+
             let cSize = CGSize(width: loopIcon?.size.width ?? 0.0, height: loopIcon?.size.height ?? 0.0)
             UIGraphicsBeginImageContextWithOptions(cSize, _: false, _: UIScreen.main.scale)
             let ctx = UIGraphicsGetCurrentContext()
             UIColor.clear.set()
             ctx?.fill(CGRect(x: 0, y: 0, width: cSize.width, height: cSize.height))
             loopIcon?.draw(at: CGPoint(x: 0, y: 0))
-            
+
             UIColor.white.set()
             let circleRect = CGRect(x: 3.0, y: 11.0, width: 14.0, height: 14.0)
             ctx?.addEllipse(in: circleRect)
             ctx?.strokePath()
             ctx?.fillEllipse(in: circleRect)
-            
+
             let numberFont = UIFont.boldSystemFont(ofSize: 12.0)
             let numberPoint = CGPoint(x: circleRect.origin.x + 2.0, y: circleRect.origin.y)
             "\(number)".draw(at: numberPoint, withAttributes: [
                 NSAttributedString.Key.font: numberFont
             ])
-            
+
             let compositeImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
-            
+
             loopButton?.setImage(compositeImage, for: .selected)
         } else {
             loopButton?.isSelected = false

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -18,8 +19,9 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" prefetchingEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="omP-EP-OkM">
-                                <rect key="frame" x="0.0" y="44" width="375" height="685"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <rect key="frame" x="0.0" y="94" width="375" height="635"/>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
+                                <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="cvC-mB-4SZ" customClass="FlowLayout" customModule="SongsForWorship" customModuleProvider="target">
                                     <size key="itemSize" width="375" height="598"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -42,7 +44,6 @@
                             <constraint firstItem="WMe-fI-pvW" firstAttribute="bottom" secondItem="omP-EP-OkM" secondAttribute="bottom" id="wFK-Ez-ggF"/>
                         </constraints>
                     </view>
-                    <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
                         <barButtonItem title="Item" image="bookmark" catalog="system" id="kqJ-Te-ksM">
                             <connections>
@@ -73,6 +74,7 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
+                    <navigationItem key="navigationItem" id="0p5-1Q-Qp3"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
                         <outlet property="collectionView" destination="omP-EP-OkM" id="7jQ-Eh-Wdp"/>
@@ -84,7 +86,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w7h-zM-0jd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3870.4000000000001" y="-889.65517241379325"/>
+            <point key="canvasLocation" x="4812" y="-890.39408866995075"/>
         </scene>
         <!--Select Song MenuVC-->
         <scene sceneID="AGP-Ma-xQX">
@@ -95,7 +97,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="4gD-t9-qFd">
-                                <rect key="frame" x="0.0" y="44" width="90" height="30"/>
+                                <rect key="frame" x="0.0" y="50" width="90" height="30"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RjO-EW-Ha3">
                                         <rect key="frame" x="0.0" y="0.0" width="44" height="30"/>
@@ -380,9 +382,6 @@
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <tabBarItem key="tabBarItem" title="Tunes" image="tunes_icon" id="eFR-2x-9oB"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="iAR-9T-fY8" id="NiS-Ep-TQY"/>
-                        <outlet property="backgroundGradientView" destination="fmF-CU-3CU" id="Mig-RH-kgl"/>
-                        <outlet property="overlayView" destination="RNL-Qd-sAT" id="BpH-kb-XWx"/>
                         <outlet property="playerControlsView" destination="deQ-cT-5xR" id="aBF-tP-d0e"/>
                         <outlet property="tuneProgressBar" destination="Gpt-Qr-Hzz" id="h7a-7s-srt"/>
                         <outlet property="tunesTableView" destination="fx0-wG-Frn" id="aNh-2v-boK"/>
@@ -393,23 +392,49 @@
             </objects>
             <point key="canvasLocation" x="3664.8000000000002" y="-180.29556650246306"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="582-bJ-vZR">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="aAF-0l-8cn" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="zm7-g7-LOq">
+                        <rect key="frame" x="0.0" y="50" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="QhB-47-Rr2">
+                        <rect key="frame" x="0.0" y="729" width="375" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
+                    <connections>
+                        <segue destination="uY5-iU-i06" kind="relationship" relationship="rootViewController" id="t2Z-lW-zOa"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="o1p-zt-mm4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3869.5999999999999" y="-890.39408866995075"/>
+        </scene>
     </scenes>
     <resources>
         <image name="arrow.up.square" catalog="system" width="128" height="114"/>
-        <image name="backward.fill" catalog="system" width="128" height="79"/>
-        <image name="bookmark" catalog="system" width="112" height="128"/>
+        <image name="backward.fill" catalog="system" width="128" height="77"/>
+        <image name="bookmark" catalog="system" width="110" height="128"/>
         <image name="loop_icon_grayed" width="30" height="30"/>
         <image name="music.note.list" catalog="system" width="128" height="115"/>
         <image name="pause_icon" width="20" height="27"/>
-        <image name="play" catalog="system" width="120" height="128"/>
-        <image name="play.fill" catalog="system" width="116" height="128"/>
-        <image name="repeat" catalog="system" width="128" height="99"/>
-        <image name="speaker.fill" catalog="system" width="128" height="128"/>
-        <image name="speaker.wave.3.fill" catalog="system" width="128" height="86"/>
-        <image name="textformat.size" catalog="system" width="128" height="80"/>
+        <image name="play" catalog="system" width="117" height="128"/>
+        <image name="play.fill" catalog="system" width="117" height="128"/>
+        <image name="repeat" catalog="system" width="128" height="98"/>
+        <image name="speaker.fill" catalog="system" width="128" height="125"/>
+        <image name="speaker.wave.3.fill" catalog="system" width="128" height="84"/>
+        <image name="textformat.size" catalog="system" width="128" height="79"/>
         <image name="tunes_icon" width="10" height="14"/>
         <systemColor name="opaqueSeparatorColor">
-            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemGroupedBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

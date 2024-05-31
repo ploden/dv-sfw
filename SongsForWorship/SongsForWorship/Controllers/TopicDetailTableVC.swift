@@ -1,25 +1,43 @@
-//  Converted to Swift 5.1 by Swiftify v5.1.30744 - https://objectivec2swift.com/
 //
 //  TopicDetailTableVC.swift
-//  PsalmsForWorship
+//  SongsForWorship
 //
-//  Created by Philip Loden on 5/31/17.
-//  Copyright © 2017 Deo Volente, LLC. All rights reserved.
+//  Created by Phil Loden on 5/31/17. Licensed under the MIT license, as follows:
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 //
 
 import UIKit
 import SwiftTheme
 
-class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelegate {
+class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelegate, AnyIndexVC {
     var fileInfo: FileInfo?
-    
+
     var topic: Topic!
     var redirects: [Topic] = [Topic]()
     var songsManager: SongsManager!
+    var appConfig: AppConfig!
+    var settings: Settings!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+
         if
             let fileInfo = fileInfo,
             let path = Bundle.main.path(forResource: fileInfo.0, ofType: fileInfo.1, inDirectory: fileInfo.2)
@@ -27,7 +45,7 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
             let url = URL(fileURLWithPath: path)
             topic = TopicDetailTableVC.readTopic(fromFileURL: url)
         }
-        
+
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 50.0
         tableView.register(TopicTVCell.self, forCellReuseIdentifier: "TopicTVCell")
@@ -35,25 +53,25 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
 
         navigationItem.title = topic.topic.capitalized(with: NSLocale.current)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         if let detail = self.detailVC() {
             detail.delegate = self
         }
-        
-        navigationController?.setToolbarHidden(true, animated: true)        
+
+        navigationController?.setToolbarHidden(true, animated: true)
     }
-    
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }
-    
+
     override var shouldAutorotate: Bool {
         return false
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if let theme = ThemeSetting(rawValue: ThemeManager.currentThemeIndex) {
             switch theme {
@@ -65,18 +83,18 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
         }
         return .lightContent
     }
-    
+
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         let hasRedirects = redirects.count > 0
-        
+
         if let subtopics = topic.subtopics, subtopics.count > 0 {
             return subtopics.count + (hasRedirects ? 1 : 0)
         } else {
             return 1 + (hasRedirects ? 1 : 0)
         }
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isRedirectsSection(for: section) {
             return redirects.count
@@ -87,7 +105,7 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
             return topic.songNumbers.count
         }
     }
-    
+
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if isRedirectsSection(for: section) {
             return "See also"
@@ -95,63 +113,76 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
             let subtopic = topic.subtopics?[section]
             return subtopic?.topic.capitalized(with: NSLocale.current)
         }
-        
+
         return nil
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if isRedirectsSection(for: indexPath.section) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TopicTVCell", for: indexPath) as? TopicTVCell
 
             cell?.textLabel?.text = redirects[indexPath.row].topic.capitalized(with: NSLocale.current)
-            
+
             return cell!
         } else {
             let songCell = tableView.dequeueReusableCell(withIdentifier: "SongTVCell") as? SongTVCell
-            
             let song = self.song(for: indexPath)
-            songCell?.configureWithPsalm(song, isFavorite: false)
-            
+
+            if let song = song {
+                songCell?.viewModel = appConfig.songTVCellViewModelClass.init(song)
+            }
+
+            if
+                let appConfig = appConfig,
+                let settings = settings
+            {
+                songCell?.configureUI(appConfig: appConfig, settings: settings)
+            }
+
             return songCell!
         }
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isRedirectsSection(for: indexPath.section) {
             let redirect = redirects[indexPath.row]
-            
-            let vc = Helper.mainStoryboard_iPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
-            vc?.topic = redirect
-            vc?.songsManager = songsManager
-            if let vc = vc {
-                navigationController?.pushViewController(vc, animated: true)
+
+            let viewController = Helper.mainStoryboardForiPhone().instantiateViewController(withIdentifier: "TopicDetailTableVC") as? TopicDetailTableVC
+            viewController?.topic = redirect
+            viewController?.songsManager = songsManager
+            if let viewController = viewController {
+                navigationController?.pushViewController(viewController, animated: true)
             }
         } else if let song = self.song(for: indexPath) {
             if
-                let detail = splitViewController?.viewController(for: .secondary),
-                !(detail is SongDetailVC) == true
+                let detailNav = splitViewController?.viewController(for: .secondary) as? UINavigationController,
+                (detailNav.topViewController is SongDetailVC) == false
             {
-                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                    vc.songsManager = songsManager
-                    if let detailNav = detail.navigationController {
-                        detailNav.setViewControllers([vc], animated: false)
-                    }
+                if
+                    let viewController = SongDetailVC.instantiateFromStoryboard(appConfig: appConfig,
+                                                                                    settings: settings,
+                                                                                    songsManager: songsManager) as? SongDetailVC
+                {
+                    detailNav.setViewControllers([viewController], animated: false)
                 }
             }
-            
+
             songsManager.setcurrentSong(song, songsToDisplay: songsToDisplay(for: indexPath))
-            
+
             if UIDevice.current.userInterfaceIdiom != .pad {
-                if let vc = SongDetailVC.pfw_instantiateFromStoryboard() as? SongDetailVC {
-                    vc.songsManager = songsManager
-                    navigationController?.pushViewController(vc, animated: true)
+                if
+                    let viewController = SongDetailVC.instantiateFromStoryboard(appConfig: appConfig,
+                                                                                    settings: settings,
+                                                                                    songsManager: songsManager) as? SongDetailVC
+                {
+                    navigationController?.pushViewController(viewController, animated: true)
                 }
             }
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     func isRedirectsSection(for section: Int) -> Bool {
         if
             let topicRedirects = topic.redirects, topicRedirects.count == 0
@@ -168,13 +199,13 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
         }
         return false
     }
-    
+
     func detailVC() -> SongDetailVC? {
         if let vcs = splitViewController?.viewControllers {
-            for vc in vcs {
+            for viewController in vcs {
                 if
-                    let nc = vc as? UINavigationController,
-                    let detail = nc.topViewController as? SongDetailVC
+                    let navigationController = viewController as? UINavigationController,
+                    let detail = navigationController.topViewController as? SongDetailVC
                 {
                     return detail
                 }
@@ -182,7 +213,7 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
         }
         return nil
     }
-    
+
     func songsToDisplay(for indexPath: IndexPath?) -> [Song] {
         let songNumbers: [String] = {
             if
@@ -197,13 +228,13 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
                     }
                 }
             }
-            return topic.songNumbers            
+            return topic.songNumbers
         }()
-        
+
         return songNumbers.compactMap { songsManager.songForNumber($0) }
     }
-    
-    func song(for indexPath: IndexPath?) -> Song? {
+
+    func song(for indexPath: IndexPath?) -> (Song)? {
         let songNumber: String = {
             if self.topic.subtopics == nil || self.topic.subtopics?.count == 0 {
                 if (indexPath?.row ?? 0) < self.topic.songNumbers.count {
@@ -216,38 +247,43 @@ class TopicDetailTableVC: UITableViewController, HasFileInfo, SongDetailVCDelega
             }
             return ""
         }()
-        
+
         let song = songsManager.songForNumber(songNumber)
         return song
     }
-    
+
     // MARK: - DetailVCDelegate
+    
     func songsToDisplayForDetailVC(_ detailVC: SongDetailVC?) -> [Song]? {
         let selected = tableView.indexPathForSelectedRow
-        
+
         if selected != nil {
             return songsToDisplay(for: selected)
         } else {
             return songsToDisplay(for: IndexPath(row: 0, section: 0))
         }
     }
-    
+
     func isSearchingForDetailVC(_ detailVC: SongDetailVC?) -> Bool {
         return false
     }
-    
+
     class func readTopic(fromFileURL url: URL) -> Topic {
-        var result: Topic?
-        
-        do {
-            let data = try Data.init(contentsOf: url, options: .mappedIfSafe)
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            result = try decoder.decode(Topic.self, from: data)
-        } catch {
-            print("There was an error reading app config! \(error)")
+        let decoder = JSONDecoder()
+
+        guard
+            let data = try? Data(contentsOf: url),
+            let topic = try? decoder.decode(Topic.self, from: data)
+        else
+        {
+            fatalError("There was an error reading a topic!")
         }
-        
-        return result!
+
+        return topic
     }
+
 }
+
+extension TopicDetailTableVC: HasAppConfig {}
+
+extension TopicDetailTableVC: HasSettings {}
