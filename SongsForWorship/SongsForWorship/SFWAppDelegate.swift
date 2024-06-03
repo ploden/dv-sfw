@@ -36,6 +36,7 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 // MARK: Application lifecycle
 
 open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
+    let imageCacheManager = ImageCacheManager()
     private var songsManager: SongsManager!
     private var favoritesSynchronizer = FavoritesSyncronizer()
     public var window: UIWindow?

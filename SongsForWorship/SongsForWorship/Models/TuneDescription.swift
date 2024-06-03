@@ -26,32 +26,40 @@
 import Foundation
 
 public enum TuneDescriptionMediaType {
+    case localMIDI, localMP3, musicLibrary, appleMusic
+}
+
+/*
+public enum TuneDescriptionMediaType {
     case midi, mp3, localMidi
 }
+*/
 
-public struct TuneDescription: TuneDescriptionProtocol {
-    public var lengthString: String?
-    public var length: TimeInterval?
-    public var url: URL?
-    public let title: String
-    public let composer: String?
-    public let copyright: String?
-    public let mediaType: TuneDescriptionMediaType
+/*
+ public struct TuneDescription: TuneDescriptionProtocol {
+ public var lengthString: String?
+ public var length: TimeInterval?
+ public var url: URL?
+ public let title: String
+ public let composer: String?
+ public let copyright: String?
+ public let mediaType: TuneDescriptionMediaType
 
-    public init(lengthString: String? = nil,
-                length: TimeInterval? = nil,
-                title: String,
-                composer: String? = nil,
-                copyright: String? = nil,
-                url: URL,
-                mediaType: TuneDescriptionMediaType)
-    {
-        self.lengthString = lengthString
-        self.length = length
-        self.title = title
-        self.composer = composer
-        self.copyright = copyright
-        self.url = url
-        self.mediaType = mediaType
-    }
-}
+ public init(lengthString: String? = nil,
+ length: TimeInterval? = nil,
+ title: String,
+ composer: String? = nil,
+ copyright: String? = nil,
+ url: URL,
+ mediaType: TuneDescriptionMediaType)
+ {
+ self.lengthString = lengthString
+ self.length = length
+ self.title = title
+ self.composer = composer
+ self.copyright = copyright
+ self.url = url
+ self.mediaType = mediaType
+ }
+ }
+ */

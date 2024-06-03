@@ -36,6 +36,13 @@
 		8D81D9332C0A4024004E4BC2 /* SerializationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D81D9312C0A4024004E4BC2 /* SerializationError.swift */; };
 		8D81D9342C0A4024004E4BC2 /* Artwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D81D9322C0A4024004E4BC2 /* Artwork.swift */; };
 		8D81D9362C0A4083004E4BC2 /* AppleMusicMediaItem1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D81D9352C0A4083004E4BC2 /* AppleMusicMediaItem1.swift */; };
+		8D850C742C0E077600D70913 /* EnableMusicLibraryTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D850C702C0E077600D70913 /* EnableMusicLibraryTVCell.swift */; };
+		8D850C752C0E077600D70913 /* EnableMusicLibraryTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D850C712C0E077600D70913 /* EnableMusicLibraryTVCell.xib */; };
+		8D850C762C0E077600D70913 /* EnableAppleMusicTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D850C722C0E077600D70913 /* EnableAppleMusicTVCell.swift */; };
+		8D850C772C0E077600D70913 /* EnableAppleMusicTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D850C732C0E077600D70913 /* EnableAppleMusicTVCell.xib */; };
+		8D850C792C0E08B900D70913 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D850C782C0E08B900D70913 /* ImageCacheManager.swift */; };
+		8D850C7C2C0E180F00D70913 /* AppleMusicItemTuneDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D850C7B2C0E180F00D70913 /* AppleMusicItemTuneDescription.swift */; };
+		8D850C812C0E1A2600D70913 /* MusicLibraryItemTuneDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D850C802C0E1A2600D70913 /* MusicLibraryItemTuneDescription.swift */; };
 		8D869F682C0A662100039787 /* TuneDescriptionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D869F672C0A662100039787 /* TuneDescriptionProtocol.swift */; };
 		8D8D9B3225A50B1800828D0E /* PDFRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */; };
 		8D8D9B3C25A50BDA00828D0E /* SongsForWorshipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8D9B3B25A50BDA00828D0E /* SongsForWorshipUITests.swift */; };
@@ -165,6 +172,13 @@
 		8D81D9312C0A4024004E4BC2 /* SerializationError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializationError.swift; sourceTree = "<group>"; };
 		8D81D9322C0A4024004E4BC2 /* Artwork.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Artwork.swift; sourceTree = "<group>"; };
 		8D81D9352C0A4083004E4BC2 /* AppleMusicMediaItem1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleMusicMediaItem1.swift; sourceTree = "<group>"; };
+		8D850C702C0E077600D70913 /* EnableMusicLibraryTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnableMusicLibraryTVCell.swift; sourceTree = "<group>"; };
+		8D850C712C0E077600D70913 /* EnableMusicLibraryTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EnableMusicLibraryTVCell.xib; sourceTree = "<group>"; };
+		8D850C722C0E077600D70913 /* EnableAppleMusicTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnableAppleMusicTVCell.swift; sourceTree = "<group>"; };
+		8D850C732C0E077600D70913 /* EnableAppleMusicTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EnableAppleMusicTVCell.xib; sourceTree = "<group>"; };
+		8D850C782C0E08B900D70913 /* ImageCacheManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		8D850C7B2C0E180F00D70913 /* AppleMusicItemTuneDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleMusicItemTuneDescription.swift; sourceTree = "<group>"; };
+		8D850C802C0E1A2600D70913 /* MusicLibraryItemTuneDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicLibraryItemTuneDescription.swift; sourceTree = "<group>"; };
 		8D869F672C0A662100039787 /* TuneDescriptionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuneDescriptionProtocol.swift; sourceTree = "<group>"; };
 		8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingTests.swift; sourceTree = "<group>"; };
 		8D8D9B3925A50BDA00828D0E /* SongsForWorshipUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SongsForWorshipUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -419,8 +433,10 @@
 				8D62382E2A5D9B7300D92A5A /* SongTVCellViewModelProtocol.swift */,
 				8D78C3402C0D4C85001488B5 /* LocalFileTuneDescription.swift */,
 				8D77B50E2A6711EE00AABAED /* LeftRightContainer.swift */,
+				8D850C7B2C0E180F00D70913 /* AppleMusicItemTuneDescription.swift */,
 				8D739D992A71533F007A29A6 /* SongCollection.swift */,
 				8D869F672C0A662100039787 /* TuneDescriptionProtocol.swift */,
+				8D850C802C0E1A2600D70913 /* MusicLibraryItemTuneDescription.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -428,6 +444,10 @@
 		8D99C1AF24CED40A005B34F2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8D850C722C0E077600D70913 /* EnableAppleMusicTVCell.swift */,
+				8D850C732C0E077600D70913 /* EnableAppleMusicTVCell.xib */,
+				8D850C702C0E077600D70913 /* EnableMusicLibraryTVCell.swift */,
+				8D850C712C0E077600D70913 /* EnableMusicLibraryTVCell.xib */,
 				8D99C1C524CED40A005B34F2 /* EnableRecordingsTVCell.swift */,
 				8D99C1BD24CED40A005B34F2 /* FAQTVCell.swift */,
 				8D99C1C624CED40A005B34F2 /* FavoritesHeaderView.swift */,
@@ -470,6 +490,7 @@
 		8D99C1D024CED40A005B34F2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				8D850C782C0E08B900D70913 /* ImageCacheManager.swift */,
 				8D9D5FA326161A3F00FF84FE /* SettingsVC.swift */,
 				8D99C1DA24CED40A005B34F2 /* FAQTableVC.swift */,
 				8D99C1DB24CED40A005B34F2 /* FlowLayout.swift */,
@@ -640,6 +661,7 @@
 				8D99C20624CED40A005B34F2 /* PlayTrackTVCell.xib in Resources */,
 				8D99C1E824CED40A005B34F2 /* songs.json in Resources */,
 				8D99C21324CED40A005B34F2 /* TunesHeaderView.xib in Resources */,
+				8D850C772C0E077600D70913 /* EnableAppleMusicTVCell.xib in Resources */,
 				8D99C20824CED40A005B34F2 /* SheetMusicCVCell.xib in Resources */,
 				8D99C20F24CED40A005B34F2 /* RecordingsDisabledTVCell.xib in Resources */,
 				8D99C21D24CED40A005B34F2 /* LogoCVCell.xib in Resources */,
@@ -650,6 +672,7 @@
 				8DBAF4EC261769F900FD3170 /* ScrollingSheetMusicCVCell.xib in Resources */,
 				8D99C1EC24CED40A005B34F2 /* Main_iPad.storyboard in Resources */,
 				8D99C21724CED40A005B34F2 /* MetreCVCell.xib in Resources */,
+				8D850C752C0E077600D70913 /* EnableMusicLibraryTVCell.xib in Resources */,
 				8D99C20224CED40A005B34F2 /* GenericTVCell.xib in Resources */,
 				8D99C1E724CED40A005B34F2 /* Main_iPhone.storyboard in Resources */,
 				8D2C74062A49F2D9004A4AF4 /* .swiftlint.yml in Resources */,
@@ -701,6 +724,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D850C7C2C0E180F00D70913 /* AppleMusicItemTuneDescription.swift in Sources */,
 				8D99C21524CED40A005B34F2 /* FavoritesHeaderView.swift in Sources */,
 				8D99C1F924CED40A005B34F2 /* AVMIDIPlayer.swift in Sources */,
 				8D99C22C24CED40A005B34F2 /* PlayerController.swift in Sources */,
@@ -712,6 +736,7 @@
 				8D2122FE2A4B29C7002F23F2 /* HasAppConfig.swift in Sources */,
 				8D99C22524CED40A005B34F2 /* TopicsTableVC.swift in Sources */,
 				8D99C22824CED40A005B34F2 /* FAQTableVC.swift in Sources */,
+				8D850C742C0E077600D70913 /* EnableMusicLibraryTVCell.swift in Sources */,
 				8D99C20D24CED40A005B34F2 /* TuneCell.swift in Sources */,
 				8D37C1E22608921F000708D7 /* SongCollectionConfig.swift in Sources */,
 				8D99C21024CED40A005B34F2 /* GenericTVCell.swift in Sources */,
@@ -722,6 +747,7 @@
 				8D99C1F024CED40A005B34F2 /* Song.swift in Sources */,
 				8DAFAFE7260F916800A5C330 /* SearchTableViewController.swift in Sources */,
 				8D99C1F424CED40A005B34F2 /* TuneDescription.swift in Sources */,
+				8D850C812C0E1A2600D70913 /* MusicLibraryItemTuneDescription.swift in Sources */,
 				8D99C1FE24CED40A005B34F2 /* SongDetailVCDelegate.swift in Sources */,
 				8D99C1F324CED40A005B34F2 /* SearchResult.swift in Sources */,
 				8D99C22A24CED40A005B34F2 /* SongPreviewViewController.swift in Sources */,
@@ -746,6 +772,7 @@
 				8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */,
 				8D62382F2A5D9B7300D92A5A /* SongTVCellViewModelProtocol.swift in Sources */,
 				8D99C1F124CED40A005B34F2 /* SongCollectionTuneInfo.swift in Sources */,
+				8D850C792C0E08B900D70913 /* ImageCacheManager.swift in Sources */,
 				8D2123082A4C80FE002F23F2 /* SearchResultView.swift in Sources */,
 				8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */,
 				8D99C21C24CED40A005B34F2 /* PlayRecordingTVCell.swift in Sources */,
@@ -783,6 +810,7 @@
 				8D35567724F122A200AC6C9A /* Tune.swift in Sources */,
 				8D3DB3F1251322950027EC66 /* Settings.swift in Sources */,
 				8D99C1FC24CED40A005B34F2 /* Topic.swift in Sources */,
+				8D850C762C0E077600D70913 /* EnableAppleMusicTVCell.swift in Sources */,
 				8D99C23224CED40A005B34F2 /* HasSongsManager.swift in Sources */,
 				8DBAF4EB261769F900FD3170 /* ScrollingSheetMusicCVCell.swift in Sources */,
 				8DE8B96326204D00006C5747 /* CustomClassConfig.swift in Sources */,

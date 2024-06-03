@@ -78,7 +78,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
                         let currentSong = songsManager.currentSong,
                         let currentSongCollection = songsManager.collection(forSong: currentSong)
                     {
-                        self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+                        self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self, queue: tunesVC.queue)
                     }
                 }
 
@@ -111,7 +111,9 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
         }
     }
     var settings: Settings!
-    var tunesVC: TunesVC?
+    lazy var tunesVC: TunesVC = {
+        return TunesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as! TunesVC
+    }()
     private var hasScrolled = false
     private var shouldScrollToStartingIndex = false
     lazy private var playerController: PlayerController? = {
@@ -120,7 +122,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
             let currentSong = songsManager.currentSong,
             let currentSongCollection = songsManager.collection(forSong: currentSong)
         {
-            return PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+            return PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self, queue: tunesVC.queue)
         }
         return nil
     }()
@@ -154,7 +156,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tunesVC = TunesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? TunesVC
+        tunesVC = TunesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as! TunesVC
 
         navigationItem.title = songsManager?.currentSong?.number
 
@@ -716,7 +718,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
         }
 
         if playerController == nil || playerController?.song != currentSong {
-            self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+            self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self, queue: tunesVC.queue)
         }
 
         if let playerController = playerController {
@@ -783,7 +785,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
         }
 
         if playerController == nil || playerController?.song != currentSong {
-            self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+            self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self, queue: tunesVC.queue)
         }
 
         if let playerController = playerController {
@@ -870,8 +872,6 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
     }
 
     func showTunesVC() {
-        guard let tunesVC = tunesVC else { return }
-
         tunesVC.songsManager = songsManager
         tunesVC.playerController = playerController
         tunesVC.modalPresentationStyle = .popover
@@ -884,7 +884,11 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
 
         tunesVC.popoverPresentationController?.backgroundColor = tunesVC.view.backgroundColor
 
-        tunesVC.preferredContentSize = CGSize(width: 375, height: 172)
+        if appConfig.shouldShowAdditionalTunes == true {
+            tunesVC.preferredContentSize = CGSize(width: 375, height: 172 + 128)
+        } else {
+            tunesVC.preferredContentSize = CGSize(width: 375, height: 172)
+        }
 
         present(tunesVC, animated: true, completion: nil)
     }
@@ -1022,7 +1026,7 @@ extension SongDetailVC: UIScrollViewDelegate {
                 let currentSong = songsManager.currentSong,
                 let currentSongCollection = songsManager.collection(forSong: currentSong)
             {
-                self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self)
+                self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self, queue: tunesVC.queue)
             }
         }
         navigationItem.title = songsManager?.currentSong?.number

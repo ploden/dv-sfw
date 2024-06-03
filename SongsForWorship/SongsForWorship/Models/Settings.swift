@@ -113,10 +113,12 @@ public struct Settings: Codable {
     public var fontSize: CGFloat {
         return CGFloat(fontSizeSetting.rawValue) / 10.0
     }
-    private(set) var theme: ThemeSetting = .defaultLight
-    private(set) var shouldShowSheetMusicInPortraitForiPhone: Bool = false
-    private(set) var shouldShowSheetMusicInLandscapeForiPhone: Bool = true
-    private(set) var shouldShowSheetMusicForiPad: Bool = true
+    public private(set) var theme: ThemeSetting = .defaultLight
+    public private(set) var shouldShowSheetMusicInPortraitForiPhone: Bool = false
+    public private(set) var shouldShowSheetMusicInLandscapeForiPhone: Bool = true
+    public private(set) var shouldShowSheetMusicForiPad: Bool = true
+    public private(set) var shouldShowAppleMusic = false
+    public private(set) var shouldShowMusicLibrary = false
     public private(set) var loggedTunePurges: [VersionTimestamp] = [VersionTimestamp]()
 
     func calculateTheme(forUserInterfaceStyle style: UIUserInterfaceStyle) -> ThemeSetting {
@@ -208,6 +210,18 @@ public struct Settings: Codable {
 
         var newSettings = self
         newSettings.loggedTunePurges = logged
+        return newSettings
+    }
+
+    func new(withShouldShowAppleMusic shouldShowAppleMusic: Bool) -> Settings {
+        var newSettings = self
+        newSettings.shouldShowAppleMusic = shouldShowAppleMusic
+        return newSettings
+    }
+
+    func new(withShouldShowMusicLibrary shouldShowMusicLibrary: Bool) -> Settings {
+        var newSettings = self
+        newSettings.shouldShowMusicLibrary = shouldShowMusicLibrary
         return newSettings
     }
 
