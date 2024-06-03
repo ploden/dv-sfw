@@ -41,8 +41,8 @@ public struct PlayerTrack: Hashable, Equatable {
     let albumArtwork: UIImage?
     let trackType: PlayerTrackType
 
-    init(tuneDescription: TuneDescription) {
-        length = tuneDescription.length
+    init(tuneDescription: TuneDescriptionProtocol) {
+        length = tuneDescription.lengthString
         title = tuneDescription.title
         copyright = tuneDescription.copyright
         trackType = .tune

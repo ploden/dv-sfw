@@ -28,6 +28,6 @@ import AVFoundation
 
 public protocol TunesLoader {
     static func filename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
-    static func loadTunes(forSong aSong: Song, appConfig: AppConfig, tuneInfos: [SongCollectionTuneInfo], completion: @escaping (Error?, [TuneDescription]) -> Void)
+    static func loadTunes(forSong aSong: Song, appConfig: AppConfig, tuneInfos: [SongCollectionTuneInfo], completion: @escaping (Error?, [any SongsForWorship.TuneDescriptionProtocol]) -> Void)
     static func defaultFilename(forTuneInfo tuneInfo: SongCollectionTuneInfo, song: Song) -> String?
 }

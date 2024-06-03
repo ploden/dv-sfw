@@ -38,7 +38,7 @@ public struct Artwork: Equatable {
     
     // MARK: Initialization
     
-    init(json: [String: Any]) throws {
+    public init(json: [String: Any]) throws {
         guard let height = json[JSONKeys.height] as? Int else {
             throw SerializationError.missing(JSONKeys.height)
         }

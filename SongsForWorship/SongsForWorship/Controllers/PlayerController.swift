@@ -294,7 +294,7 @@ class PlayerController: NSObject {
 
         currentTrack = track
 
-        if let desc = playerTracks[track] as? TuneDescription {
+        if let desc = playerTracks[track] as? LocalFileTuneDescription {
             if wasPlaying {
                 /*
                  For reasons that I do not understand, stopping one track and then immediately starting
@@ -311,7 +311,7 @@ class PlayerController: NSObject {
         }
     }
 
-    func playTuneDescription(_ tuneDescription: TuneDescription, atTime time: TimeInterval, withDelay delay: TimeInterval, rate playbackRate: PFWPlaybackRate) {
+    func playTuneDescription(_ tuneDescription: LocalFileTuneDescription, atTime time: TimeInterval, withDelay delay: TimeInterval, rate playbackRate: PFWPlaybackRate) {
         self.playbackRate = playbackRate
         isPaused = false
 
@@ -334,7 +334,7 @@ class PlayerController: NSObject {
 
                 player.play()
                 delegate?.playbackStateDidChangeForPlayerController(self)
-            case .midi:
+            case .midi, .localMidi:
                 if let presetURL = AVMIDIPlayer.songSoundBankUrl() {
                     let player = try AVMIDIPlayer(withTune: tuneDescription, soundBankURL: presetURL)
                     player.rate = playbackRate

@@ -29,9 +29,14 @@
 		8D739D9E2A72BBB1007A29A6 /* MetreCVCellViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D739D9D2A72BBB1007A29A6 /* MetreCVCellViewModelProtocol.swift */; };
 		8D7562D22A27AFBD00C7337F /* AnyIndexVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7562D12A27AFBD00C7337F /* AnyIndexVC.swift */; };
 		8D77B50F2A6711EE00AABAED /* LeftRightContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D77B50E2A6711EE00AABAED /* LeftRightContainer.swift */; };
+		8D78C3412C0D4C85001488B5 /* LocalFileTuneDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D78C3402C0D4C85001488B5 /* LocalFileTuneDescription.swift */; };
 		8D7DABE324EE391600FD7D91 /* SongTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D7DABE124EE391600FD7D91 /* SongTVCell.xib */; };
 		8D7DABE424EE391600FD7D91 /* SongTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7DABE224EE391600FD7D91 /* SongTVCell.swift */; };
 		8D7F0BA92A5D0964009EB610 /* PdfPagesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7F0BA82A5D0964009EB610 /* PdfPagesContainer.swift */; };
+		8D81D9332C0A4024004E4BC2 /* SerializationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D81D9312C0A4024004E4BC2 /* SerializationError.swift */; };
+		8D81D9342C0A4024004E4BC2 /* Artwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D81D9322C0A4024004E4BC2 /* Artwork.swift */; };
+		8D81D9362C0A4083004E4BC2 /* AppleMusicMediaItem1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D81D9352C0A4083004E4BC2 /* AppleMusicMediaItem1.swift */; };
+		8D869F682C0A662100039787 /* TuneDescriptionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D869F672C0A662100039787 /* TuneDescriptionProtocol.swift */; };
 		8D8D9B3225A50B1800828D0E /* PDFRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */; };
 		8D8D9B3C25A50BDA00828D0E /* SongsForWorshipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8D9B3B25A50BDA00828D0E /* SongsForWorshipUITests.swift */; };
 		8D99C18124CED392005B34F2 /* SongsForWorship.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D99C17724CED391005B34F2 /* SongsForWorship.framework */; };
@@ -153,9 +158,14 @@
 		8D739D9D2A72BBB1007A29A6 /* MetreCVCellViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetreCVCellViewModelProtocol.swift; sourceTree = "<group>"; };
 		8D7562D12A27AFBD00C7337F /* AnyIndexVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyIndexVC.swift; sourceTree = "<group>"; };
 		8D77B50E2A6711EE00AABAED /* LeftRightContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftRightContainer.swift; sourceTree = "<group>"; };
+		8D78C3402C0D4C85001488B5 /* LocalFileTuneDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalFileTuneDescription.swift; sourceTree = "<group>"; };
 		8D7DABE124EE391600FD7D91 /* SongTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SongTVCell.xib; sourceTree = "<group>"; };
 		8D7DABE224EE391600FD7D91 /* SongTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongTVCell.swift; sourceTree = "<group>"; };
 		8D7F0BA82A5D0964009EB610 /* PdfPagesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PdfPagesContainer.swift; sourceTree = "<group>"; };
+		8D81D9312C0A4024004E4BC2 /* SerializationError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializationError.swift; sourceTree = "<group>"; };
+		8D81D9322C0A4024004E4BC2 /* Artwork.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Artwork.swift; sourceTree = "<group>"; };
+		8D81D9352C0A4083004E4BC2 /* AppleMusicMediaItem1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleMusicMediaItem1.swift; sourceTree = "<group>"; };
+		8D869F672C0A662100039787 /* TuneDescriptionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuneDescriptionProtocol.swift; sourceTree = "<group>"; };
 		8D8D9B3125A50B1800828D0E /* PDFRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingTests.swift; sourceTree = "<group>"; };
 		8D8D9B3925A50BDA00828D0E /* SongsForWorshipUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SongsForWorshipUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D8D9B3B25A50BDA00828D0E /* SongsForWorshipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsForWorshipUITests.swift; sourceTree = "<group>"; };
@@ -377,6 +387,9 @@
 		8D99C19F24CED40A005B34F2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8D81D9352C0A4083004E4BC2 /* AppleMusicMediaItem1.swift */,
+				8D81D9322C0A4024004E4BC2 /* Artwork.swift */,
+				8D81D9312C0A4024004E4BC2 /* SerializationError.swift */,
 				8D99C1A924CED40A005B34F2 /* AVMIDIPlayer.swift */,
 				8D99C1AA24CED40A005B34F2 /* FAQ.swift */,
 				8D99C1A624CED40A005B34F2 /* FavoritesSyncronizer.swift */,
@@ -404,8 +417,10 @@
 				8DE8B96226204D00006C5747 /* CustomClassConfig.swift */,
 				8D7F0BA82A5D0964009EB610 /* PdfPagesContainer.swift */,
 				8D62382E2A5D9B7300D92A5A /* SongTVCellViewModelProtocol.swift */,
+				8D78C3402C0D4C85001488B5 /* LocalFileTuneDescription.swift */,
 				8D77B50E2A6711EE00AABAED /* LeftRightContainer.swift */,
 				8D739D992A71533F007A29A6 /* SongCollection.swift */,
+				8D869F672C0A662100039787 /* TuneDescriptionProtocol.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -726,6 +741,7 @@
 				8D99C22924CED40A005B34F2 /* FlowLayout.swift in Sources */,
 				8D99C22D24CED40A005B34F2 /* TunesVC.swift in Sources */,
 				8D99C20B24CED40A005B34F2 /* SheetMusicCVCell.swift in Sources */,
+				8D78C3412C0D4C85001488B5 /* LocalFileTuneDescription.swift in Sources */,
 				8D99C20324CED40A005B34F2 /* RecordingsDisabledTVCell.swift in Sources */,
 				8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */,
 				8D62382F2A5D9B7300D92A5A /* SongTVCellViewModelProtocol.swift in Sources */,
@@ -738,7 +754,9 @@
 				8D7562D22A27AFBD00C7337F /* AnyIndexVC.swift in Sources */,
 				8D739D9E2A72BBB1007A29A6 /* MetreCVCellViewModelProtocol.swift in Sources */,
 				8D99C20E24CED40A005B34F2 /* SearchResultTVCell.swift in Sources */,
+				8D869F682C0A662100039787 /* TuneDescriptionProtocol.swift in Sources */,
 				8D99C22E24CED40A005B34F2 /* SongDetailVC.swift in Sources */,
+				8D81D9332C0A4024004E4BC2 /* SerializationError.swift in Sources */,
 				8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */,
 				8DA2204D24DEC8020014B557 /* HasFileURL.swift in Sources */,
 				8DA2D687261EE765008D95C6 /* SelectSongMenuVC.swift in Sources */,
@@ -747,6 +765,7 @@
 				8D99C20124CED40A005B34F2 /* PlayTrackTVCell.swift in Sources */,
 				8D99C22024CED40A005B34F2 /* HasStoryboardName.swift in Sources */,
 				8D99C20524CED40A005B34F2 /* PDFPageView.swift in Sources */,
+				8D81D9362C0A4083004E4BC2 /* AppleMusicMediaItem1.swift in Sources */,
 				8D99C22224CED40A005B34F2 /* IndexVC.swift in Sources */,
 				8D99C20024CED40A005B34F2 /* LogoCVCell.swift in Sources */,
 				8D99C22424CED40A005B34F2 /* SongsManager.swift in Sources */,
@@ -767,6 +786,7 @@
 				8D99C23224CED40A005B34F2 /* HasSongsManager.swift in Sources */,
 				8DBAF4EB261769F900FD3170 /* ScrollingSheetMusicCVCell.swift in Sources */,
 				8DE8B96326204D00006C5747 /* CustomClassConfig.swift in Sources */,
+				8D81D9342C0A4024004E4BC2 /* Artwork.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
