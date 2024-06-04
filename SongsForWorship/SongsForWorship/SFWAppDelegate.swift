@@ -25,6 +25,7 @@
 
 import AVKit
 import SwiftTheme
+import UIKit
 
 let kFavoritesDictionaryName = "favorites"
 let kFavoriteSongNumbersDictionaryName = "favoriteSongNumbers"
@@ -61,10 +62,9 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
 
         if
             let defaultCollection = songsManager?.songCollections.first,
-            let defaultSong = defaultCollection.songs.first as? (Song),
-            let defaultSongs = defaultCollection.songs as? [Song]
+            let defaultSong = defaultCollection.songs.first
         {
-            songsManager?.setcurrentSong(defaultSong, songsToDisplay: defaultSongs)
+            songsManager?.setcurrentSong(defaultSong, songsToDisplay: defaultCollection.songs)
         }
 
         updateFavoritesShortcuts()
@@ -87,6 +87,8 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
                 {
                     index.sections = appConfig.index
                     index.songsManager = songsManager
+                    index.appConfig = appConfig
+                    index.settings = settings
                     index.title = ""
 
                     if let songIndexVC = SongIndexVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SongIndexVC {
@@ -98,6 +100,7 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
                     detail.navigationItem.leftItemsSupplementBackButton = true
                     detail.songsManager = songsManager
                     detail.appConfig = appConfig
+                    detail.settings = settings
                     detail.delegate = self
                 }
                 mainController = split
@@ -296,6 +299,18 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
             defaultLight: UIView().tintColor!,
             white: UIColor(named: "NavBarBackground")!.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
             night: .white
+        ).toHex()
+
+        UIToolbar.appearance().theme_barStyle = ThemeBarStyles(
+            defaultLight: .default,
+            white: .default,
+            night: .black
+        ).toHex()
+
+        UIToolbar.appearance().theme_backgroundColor = ThemeColors(
+            defaultLight: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
+            white: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
+            night: UIColor.systemBackground.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
         ).toHex()
     }
 

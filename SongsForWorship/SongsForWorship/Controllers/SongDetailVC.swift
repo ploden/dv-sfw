@@ -156,7 +156,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tunesVC = TunesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as! TunesVC
+        //tunesVC = TunesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as! TunesVC
 
         navigationItem.title = songsManager?.currentSong?.number
 
