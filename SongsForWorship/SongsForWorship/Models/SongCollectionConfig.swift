@@ -25,6 +25,9 @@
 
 import Foundation
 
+/// A type that represents metadata for a song collection.
+///
+/// This is used by AppConfig to configure a song collection.
 public struct SongCollectionConfig: Decodable {
     let displayName: String
     let sections: [SongCollectionSection]

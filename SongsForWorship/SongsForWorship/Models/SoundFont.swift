@@ -25,6 +25,7 @@
 
 import Foundation
 
+/// A type that represents a MIDI sound font.
 public struct SoundFont: Codable, Equatable {
     var filename: String
     var fileExtension: String

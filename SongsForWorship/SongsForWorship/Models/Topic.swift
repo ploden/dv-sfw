@@ -25,6 +25,7 @@
 
 import Foundation
 
+/// A type for representing a song topic.
 struct Topic {
     var topic: String
     var songNumbers: [String]

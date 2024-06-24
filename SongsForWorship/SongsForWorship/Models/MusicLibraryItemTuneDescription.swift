@@ -9,6 +9,7 @@
 import Foundation
 import MediaPlayer
 
+/// A type that represents a tune existing in the user's music library. 
 public struct MusicLibraryItemTuneDescription: TuneDescriptionProtocol {
     public var lengthString: String?
     public let mediaItem: MPMediaItem

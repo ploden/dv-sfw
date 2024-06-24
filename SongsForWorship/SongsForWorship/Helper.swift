@@ -159,8 +159,8 @@ public class Helper: NSObject {
 
         return haystack.range(of: needle, options: [.caseInsensitive]) != nil
 
-        let matcher = SmartSearchMatcher(searchString: haystack)
-        return matcher.matches(needle)
+        //let matcher = SmartSearchMatcher(searchString: haystack)
+        //return matcher.matches(needle)
     }
 
     class func songsForWorshipBundle() -> Bundle {

@@ -67,18 +67,6 @@ class PlayerController: NSObject {
 
         state = .loadingTunes
 
-        let mediaTypes: [TuneDescriptionMediaType] = {
-            var types = [TuneDescriptionMediaType]()
-            if TunesVC.musicLibraryIsEnabled(settings: Settings(fromUserDefaults: .standard)) {
-                types.append(.localMP3)
-            }
-            if TunesVC.appleMusicIsEnabled(settings: Settings(fromUserDefaults: .standard)) {
-                types.append(.appleMusic)
-            }
-            types.append(.localMIDI)
-            return types
-        }()
-
         appConfig.tunesLoaderClass.loadTunes(forSong: song, appConfig: appConfig, tuneInfos: tuneInfos, completion: { [weak self] someError, someTuneDescriptions in
             if let _ = someError, someTuneDescriptions.count == 0 {
                 OperationQueue.main.addOperation({
@@ -397,6 +385,5 @@ class PlayerController: NSObject {
 extension PlayerController: AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         tunePlayerDidFinishPlaying()
-        //delegate?.playbackStateDidChangeForPlayerController(self)
     }
 }

@@ -25,6 +25,9 @@
 
 import Foundation
 
+/// A  type that represents a section in a song collection.
+///
+/// This type is useful for setting sections in the table view index.
 public struct SongCollectionSection: Decodable {
     let title: String
     let count: Int

@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A type that assists in encoding/decoding the PdfPages type.
 public struct PdfPagesContainer {
     public let number: Int
     public let musicStart: Float

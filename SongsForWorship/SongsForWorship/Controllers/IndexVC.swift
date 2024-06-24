@@ -300,7 +300,7 @@ class IndexVC: UIViewController, HasSongsManager, AnyIndexVC, UITableViewDelegat
             hasSongs.songsManager = songsManager
         }
 
-        if var hasSettings = viewController as? HasSettings {
+        if let hasSettings = viewController as? HasSettings {
             hasSettings.settings = settings
         }
 

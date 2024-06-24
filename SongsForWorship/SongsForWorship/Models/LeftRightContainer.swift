@@ -8,6 +8,9 @@
 
 import Foundation
 
+/// A type that assists in encoding/decoding the LeftRight type.
+///
+/// TODO: delete or move to TPH.
 public struct LeftRightContainer {
     public let left: [String]?
     public let right: [String]?

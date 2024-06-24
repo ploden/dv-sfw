@@ -25,6 +25,7 @@
 
 import Foundation
 
+/// A type that represents a tune composer. 
 public struct Composer {
     private var _fullName: String?
     public var fullName: String? {

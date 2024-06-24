@@ -25,6 +25,7 @@
 
 import Foundation
 
+/// A type for representing a tune that accompanies a song.
 public struct Tune {
     public var id: Int?
     public var name: String
@@ -35,9 +36,8 @@ public struct Tune {
     public var composerDate: String?
     public var isCopyrighted: Bool = false
     public var meter: String?
-    public var songNumbers: [String] = [String]()
 
-    public init(id: Int, name: String, nameWithoutMeter: String? = nil, composer: Composer? = nil, composerID: Composer.ID? = nil, composerCopyright: String? = nil, composerDate: String? = nil, isCopyrighted: Bool = false, meter: String? = nil, songNumbers: [String]? = nil) {
+    public init(id: Int, name: String, nameWithoutMeter: String? = nil, composer: Composer? = nil, composerID: Composer.ID? = nil, composerCopyright: String? = nil, composerDate: String? = nil, isCopyrighted: Bool = false, meter: String? = nil) {
         self.id = id
         self.name = name
         self.nameWithoutMeter = nameWithoutMeter
@@ -47,7 +47,6 @@ public struct Tune {
         self.composerDate = composerDate
         self.isCopyrighted = isCopyrighted
         self.meter = meter
-        self.songNumbers = songNumbers ?? [String]()
     }
 
     public func new(with composer: Composer?) -> Tune {
@@ -62,7 +61,6 @@ public struct Tune {
         case composerID = "composer_id"
         case composerDate = "composer_date"
         case meter
-        case songNumbers = "psalms"
     }
 }
 

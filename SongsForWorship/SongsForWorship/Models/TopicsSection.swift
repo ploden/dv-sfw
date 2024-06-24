@@ -23,6 +23,7 @@
 //  SOFTWARE.
 //
 
+/// A type for representing a group of song topics.
 struct TopicsSection {
     var section: String
     var topics: [Topic]

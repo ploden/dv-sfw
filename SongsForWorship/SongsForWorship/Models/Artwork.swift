@@ -9,6 +9,7 @@
 import Foundation
 import CoreGraphics
 
+/// A  type that represents album artwork.
 public struct Artwork: Equatable {
     
     // MARK: Types

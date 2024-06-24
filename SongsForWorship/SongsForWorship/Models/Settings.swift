@@ -104,6 +104,7 @@ public struct VersionTimestamp: Codable {
     public let timestamp: TimeInterval
 }
 
+/// A type that represents user settings for the app. 
 public struct Settings: Codable {
     public var shouldUseSystemFonts = false
     public var autoNightTheme = true

@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A type that represents a tune from Apple Music. 
 public struct AppleMusicItemTuneDescription: TuneDescriptionProtocol {
     public var lengthString: String?
     public let appleMusicID: String

@@ -9,6 +9,10 @@
 import Foundation
 import QuartzCore
 
+/// A type that represents a collection of songs.
+///
+/// TODO: The use of generics here is legacy code,
+/// and might no longer make sense.
 public struct SongCollection<T: Song>: Equatable {
     public static func == (lhs: SongCollection<T>, rhs: SongCollection<T>) -> Bool {
         return false
@@ -61,7 +65,7 @@ public struct SongCollection<T: Song>: Equatable {
         self.pdfRenderingConfigsForiPad = pdfRenderingConfigsForiPad
     }
 
-    func songForNumber(_ number: String?) -> T? {
+    func song(for number: String?) -> T? {
         return songs.first(where: { $0.number == number })
     }
 }

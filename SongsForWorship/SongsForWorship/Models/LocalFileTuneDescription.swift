@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// A type that represents a tune that is saved locally
+/// on the device. 
 public struct LocalFileTuneDescription: TuneDescriptionProtocol {
     public var length: TimeInterval?
     public let lengthString: String?

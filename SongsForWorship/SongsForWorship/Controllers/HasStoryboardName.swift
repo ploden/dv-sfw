@@ -35,13 +35,13 @@ extension HasStoryboardName where Self: UIViewController {
     static func instantiateFromStoryboard(appConfig: AppConfig, settings: Settings, songsManager: SongsManager) -> UIViewController? {
         let storyboard = UIStoryboard(name: storyboardName, bundle: Helper.songsForWorshipBundle())
         let className = String(describing: self)
-        var viewController = storyboard.instantiateViewController(withIdentifier: className)
+        let viewController = storyboard.instantiateViewController(withIdentifier: className)
 
         if var viewController = viewController as? HasAppConfig {
             viewController.appConfig = appConfig
         }
 
-        if var viewController = viewController as? HasSettings {
+        if let viewController = viewController as? HasSettings {
             viewController.settings = settings
         }
 

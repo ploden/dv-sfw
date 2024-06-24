@@ -23,6 +23,7 @@
 //  SOFTWARE.
 //
 
+/// A  type that represents a search result.
 struct SearchResult {
     static let maxTitleLength = 90
     var title: String?
@@ -38,40 +39,36 @@ struct SearchResult {
         self.searchTerm = searchTerm
 
         self.title = {
-            if
+            guard
                 let searchTerm = searchTerm,
                 let first = sourceText.range(of: searchTerm, options: .caseInsensitive)
+            else { return nil }
+
+            var titleRange = first
+
+            while
+                sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < sourceText.count,
+                sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < SearchResult.maxTitleLength
             {
-                var titleRange = first
-                let index = first
-                let pre = index
-                let post = index
-
-                while
-                    sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < sourceText.count,
-                    sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < SearchResult.maxTitleLength
-                {
-                    guard sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < SearchResult.maxTitleLength else {
-                        break
-                    }
-
-                    if titleRange.lowerBound != sourceText.startIndex {
-                        let newLower = sourceText.index(before: titleRange.lowerBound)
-                        titleRange = Range(uncheckedBounds: (lower: newLower, upper: titleRange.upperBound))
-                    }
-
-                    guard sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < SearchResult.maxTitleLength else {
-                        break
-                    }
-
-                    if titleRange.upperBound != sourceText.endIndex {
-                        let newUpper = sourceText.index(after: titleRange.upperBound)
-                        titleRange = Range(uncheckedBounds: (lower: titleRange.lowerBound, upper: newUpper))
-                    }
+                guard sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < SearchResult.maxTitleLength else {
+                    break
                 }
-                return String(sourceText[titleRange])
+
+                if titleRange.lowerBound != sourceText.startIndex {
+                    let newLower = sourceText.index(before: titleRange.lowerBound)
+                    titleRange = Range(uncheckedBounds: (lower: newLower, upper: titleRange.upperBound))
+                }
+
+                guard sourceText.distance(from: titleRange.lowerBound, to: titleRange.upperBound) < SearchResult.maxTitleLength else {
+                    break
+                }
+
+                if titleRange.upperBound != sourceText.endIndex {
+                    let newUpper = sourceText.index(after: titleRange.upperBound)
+                    titleRange = Range(uncheckedBounds: (lower: titleRange.lowerBound, upper: newUpper))
+                }
             }
-            return nil
+            return String(sourceText[titleRange])
         }()
     }
 }

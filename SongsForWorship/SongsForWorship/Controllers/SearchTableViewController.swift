@@ -146,7 +146,8 @@ class SearchTableViewController: UITableViewController, HasSongsManager, HasSett
 
         let allSongs: [Song] = songsManager.songCollections.compactMap { $0.songs }.reduce([], { $0 + $1 })
 
-        let searchTask = Task.init {
+        /// Should we be able to cancel this? 
+        _ = Task.init {
             if let results = await Helper.searchResults(forTerm: term, songsArray: allSongs) {
                 self.searchResults = results
 

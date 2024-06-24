@@ -25,6 +25,9 @@
 
 import Foundation
 
+/// A type that represents a section in the main index.
+///
+/// This is used by AppConfig to configure the main index.
 public struct IndexSection: Decodable {
     let title: String?
     let rows: [IndexRow]?

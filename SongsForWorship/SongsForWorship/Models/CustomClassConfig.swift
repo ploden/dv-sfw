@@ -25,6 +25,8 @@
 
 import Foundation
 
+/// A type that represents a custom data type loaded
+/// from the app config. 
 public struct CustomClassConfig: Decodable {
     let baseName: String
     let customName: String

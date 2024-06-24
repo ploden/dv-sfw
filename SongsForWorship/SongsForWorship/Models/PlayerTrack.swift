@@ -14,6 +14,7 @@ enum PlayerTrackType: UInt8 {
     case recording = 2
 }
 
+/// A  type that represents a playable tune track.
 public struct PlayerTrack: Hashable, Equatable {
     public let title: String?
     public let copyright: String?

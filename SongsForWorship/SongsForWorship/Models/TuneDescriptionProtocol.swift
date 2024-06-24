@@ -8,12 +8,16 @@
 
 import Foundation
 
+public enum TuneDescriptionMediaType {
+    case localMIDI, localMP3, musicLibrary, appleMusic
+}
+
+/// A type that represents a playable tune.
 public protocol TuneDescriptionProtocol {
     var lengthString: String? { get }
     var length: TimeInterval? { get }
     var title: String { get }
     var composer: String? { get }
     var copyright: String? { get }
-    //var url: URL? { get }
     var mediaType: TuneDescriptionMediaType { get }
 }

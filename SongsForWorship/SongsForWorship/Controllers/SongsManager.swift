@@ -102,7 +102,7 @@ public class SongsManager: Equatable {
 
     func songForNumber(_ number: String?) -> (Song)? {
         for collection in songCollections {
-            if let match = collection.songForNumber(number) {
+            if let match = collection.song(for: number) {
                 return match
             }
         }

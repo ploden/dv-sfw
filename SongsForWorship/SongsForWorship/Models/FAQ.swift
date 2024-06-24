@@ -25,6 +25,7 @@
 
 import Foundation
 
+/// A  type that represents a FAQ.
 struct FAQ {
     var question: String
     var answer: String

@@ -25,6 +25,9 @@
 
 import Foundation
 
+/// A type that represents a row in the main index.
+///
+/// This is used by AppConfig to configure the main index. 
 struct IndexRow: Decodable {
     let filename: String?
     let filetype: String?

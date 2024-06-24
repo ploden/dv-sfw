@@ -25,6 +25,10 @@
 
 import Foundation
 
+/// This is a type that represents the configuration for a SongsForWorship app.
+///
+/// The goal is to define most of the app in the app config,
+/// and have as much code in common as possible. 
 public struct AppConfig: Decodable {
     let index: [IndexSection]
     let copyright: String

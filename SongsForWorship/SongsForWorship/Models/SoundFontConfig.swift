@@ -25,6 +25,9 @@
 
 import Foundation
 
+/// A type that represents metadata for a sound font.
+///
+/// This is used by AppConfig to configure a sound font.
 public struct SoundFontConfig: Decodable {
     let filetype: String
     let title: String
