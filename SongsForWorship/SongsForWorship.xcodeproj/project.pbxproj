@@ -50,8 +50,6 @@
 		8D99C18624CED392005B34F2 /* SongsForWorshipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C18524CED392005B34F2 /* SongsForWorshipTests.swift */; };
 		8D99C18824CED392005B34F2 /* SongsForWorship.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D99C17A24CED391005B34F2 /* SongsForWorship.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8D99C1E724CED40A005B34F2 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19124CED40A005B34F2 /* Main_iPhone.storyboard */; };
-		8D99C1E824CED40A005B34F2 /* songs.json in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19524CED40A005B34F2 /* songs.json */; };
-		8D99C1E924CED40A005B34F2 /* AppConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19624CED40A005B34F2 /* AppConfig.plist */; };
 		8D99C1EC24CED40A005B34F2 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19924CED40A005B34F2 /* Main_iPad.storyboard */; };
 		8D99C1ED24CED40A005B34F2 /* SongDetail.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D99C19A24CED40A005B34F2 /* SongDetail.storyboard */; };
 		8D99C1EF24CED40A005B34F2 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99C19E24CED40A005B34F2 /* UIViewController.swift */; };
@@ -191,8 +189,6 @@
 		8D99C18524CED392005B34F2 /* SongsForWorshipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsForWorshipTests.swift; sourceTree = "<group>"; };
 		8D99C18724CED392005B34F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D99C19124CED40A005B34F2 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = "<group>"; };
-		8D99C19524CED40A005B34F2 /* songs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = songs.json; sourceTree = "<group>"; };
-		8D99C19624CED40A005B34F2 /* AppConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppConfig.plist; sourceTree = "<group>"; };
 		8D99C19924CED40A005B34F2 /* Main_iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPad.storyboard; sourceTree = "<group>"; };
 		8D99C19A24CED40A005B34F2 /* SongDetail.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SongDetail.storyboard; sourceTree = "<group>"; };
 		8D99C19E24CED40A005B34F2 /* UIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
@@ -352,7 +348,6 @@
 				8D99C19F24CED40A005B34F2 /* Models */,
 				8D99C1E624CED40A005B34F2 /* PlayerControlsViewDelegate.swift */,
 				8D99C19A24CED40A005B34F2 /* SongDetail.storyboard */,
-				8D99C19224CED40A005B34F2 /* Resources */,
 				8D99C19E24CED40A005B34F2 /* UIViewController.swift */,
 				8D99C1AF24CED40A005B34F2 /* Views */,
 				8D99C17A24CED391005B34F2 /* SongsForWorship.h */,
@@ -371,31 +366,6 @@
 				8DF0E4A72A462B540005B627 /* SongTests.swift */,
 			);
 			path = SongsForWorshipTests;
-			sourceTree = "<group>";
-		};
-		8D99C19224CED40A005B34F2 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				8D99C19324CED40A005B34F2 /* sfw-songsforworship */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		8D99C19324CED40A005B34F2 /* sfw-songsforworship */ = {
-			isa = PBXGroup;
-			children = (
-				8D99C19424CED40A005B34F2 /* songsforworship-resources */,
-			);
-			path = "sfw-songsforworship";
-			sourceTree = "<group>";
-		};
-		8D99C19424CED40A005B34F2 /* songsforworship-resources */ = {
-			isa = PBXGroup;
-			children = (
-				8D99C19524CED40A005B34F2 /* songs.json */,
-				8D99C19624CED40A005B34F2 /* AppConfig.plist */,
-			);
-			path = "songsforworship-resources";
 			sourceTree = "<group>";
 		};
 		8D99C19F24CED40A005B34F2 /* Models */ = {
@@ -655,11 +625,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D99C20924CED40A005B34F2 /* PlayRecordingTVCell.xib in Resources */,
-				8D99C1E924CED40A005B34F2 /* AppConfig.plist in Resources */,
 				8DD2E1B724E4756000F0DE30 /* Assets.xcassets in Resources */,
 				8D99C22F24CED40A005B34F2 /* SongPreviewViewController.xib in Resources */,
 				8D99C20624CED40A005B34F2 /* PlayTrackTVCell.xib in Resources */,
-				8D99C1E824CED40A005B34F2 /* songs.json in Resources */,
 				8D99C21324CED40A005B34F2 /* TunesHeaderView.xib in Resources */,
 				8D850C772C0E077600D70913 /* EnableAppleMusicTVCell.xib in Resources */,
 				8D99C20824CED40A005B34F2 /* SheetMusicCVCell.xib in Resources */,
