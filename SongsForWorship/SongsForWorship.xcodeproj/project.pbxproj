@@ -130,6 +130,7 @@
 		8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF7D260261B55880096E5F5 /* PDFCVCell.swift */; };
 		8DF7D263261B55880096E5F5 /* PDFCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8DF7D261261B55880096E5F5 /* PDFCVCell.xib */; };
 		8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */; };
+		8DFCDF0D2C52F3C5002C2647 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFCDF0C2C52F3C5002C2647 /* Error.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -268,6 +269,7 @@
 		8DF7D260261B55880096E5F5 /* PDFCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFCVCell.swift; sourceTree = "<group>"; };
 		8DF7D261261B55880096E5F5 /* PDFCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PDFCVCell.xib; sourceTree = "<group>"; };
 		8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingConfig.swift; sourceTree = "<group>"; };
+		8DFCDF0C2C52F3C5002C2647 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -410,6 +412,7 @@
 				8D850C802C0E1A2600D70913 /* MusicLibraryItemTuneDescription.swift */,
 				8DF4D7762C29AC9900CD2215 /* SongProtocol.swift */,
 				8D43AA902C33640000865A00 /* SearchableAttribute.swift */,
+				8DFCDF0C2C52F3C5002C2647 /* Error.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -738,6 +741,7 @@
 				8D99C22924CED40A005B34F2 /* FlowLayout.swift in Sources */,
 				8D99C22D24CED40A005B34F2 /* TunesVC.swift in Sources */,
 				8D99C20B24CED40A005B34F2 /* SheetMusicCVCell.swift in Sources */,
+				8DFCDF0D2C52F3C5002C2647 /* Error.swift in Sources */,
 				8D78C3412C0D4C85001488B5 /* LocalFileTuneDescription.swift in Sources */,
 				8D99C20324CED40A005B34F2 /* RecordingsDisabledTVCell.swift in Sources */,
 				8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */,

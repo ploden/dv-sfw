@@ -37,7 +37,7 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 // MARK: Application lifecycle
 
 open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
-    /// I don't like all these properties iin the app delegate.
+    /// All these properties iin the app delegate stinks. 
     /// Can we spin this out elsewhere?
     let imageCacheManager = ImageCacheManager()
     private var songsManager: SongsManager!
@@ -75,60 +75,10 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
             startAnalytics()
         }
 
-        var mainController: UIViewController?
-
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            if let split = Helper.mainStoryboard_iPad().instantiateInitialViewController() as? UISplitViewController {
-                split.delegate = self
-
-                if
-                    let indexNC = split.viewController(for: .primary) as? UINavigationController,
-                    let index = indexNC.topViewController as? IndexVC,
-                    let detailNC = split.viewController(for: .secondary) as? UINavigationController,
-                    let detail = detailNC.topViewController as? SongDetailVC
-                {
-                    index.sections = appConfig.index
-                    index.songsManager = songsManager
-                    index.appConfig = appConfig
-                    index.settings = settings
-                    index.title = ""
-
-                    if let songIndexVC = SongIndexVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SongIndexVC {
-                        songIndexVC.title = ""
-                        index.navigationController?.setToolbarHidden(false, animated: false)
-                        index.navigationController?.pushViewController(songIndexVC, animated: false)
-                    }
-
-                    detail.navigationItem.leftItemsSupplementBackButton = true
-                    detail.songsManager = songsManager
-                    detail.appConfig = appConfig
-                    detail.settings = settings
-                    detail.delegate = self
-                }
-                mainController = split
-            }
-        } else if
-            let nav = Helper.mainStoryboardForiPhone().instantiateInitialViewController() as? UINavigationController,
-            let index = nav.topViewController as? IndexVC
-        {
-            navigationController = nav
-            index.title = ""
-            index.songsManager = songsManager
-            index.appConfig = appConfig
-            index.settings = settings
-            index.sections = appConfig.index
-            mainController = navigationController
-
-            if let songIndexVC = SongIndexVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SongIndexVC {
-                navigationController?.setToolbarHidden(false, animated: false)
-                navigationController?.pushViewController(songIndexVC, animated: false)
-            }
-        }
-
         Settings.addObserver(forSettings: self)
 
         window = UIWindow()
-        window?.rootViewController = mainController
+        window?.rootViewController = try! buildNavStack(appConfig: appConfig, settings: settings)
         changeThemeAsNeeded()
         applyStyling()
         window?.makeKeyAndVisible()
@@ -342,6 +292,59 @@ open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDeleg
                 NotificationCenter.default.post(name: Notification.Name.themeDidChange, object: nil)
             }
         }
+    }
+
+    func buildNavStack(appConfig: AppConfig, settings: Settings) throws -> UIViewController {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let split = Helper.mainStoryboard_iPad().instantiateInitialViewController() as? UISplitViewController {
+                split.delegate = self
+
+                if
+                    let indexNC = split.viewController(for: .primary) as? UINavigationController,
+                    let index = indexNC.topViewController as? IndexVC,
+                    let detailNC = split.viewController(for: .secondary) as? UINavigationController,
+                    let detail = detailNC.topViewController as? SongDetailVC
+                {
+                    index.sections = appConfig.index
+                    index.songsManager = songsManager
+                    index.appConfig = appConfig
+                    index.settings = settings
+                    index.title = ""
+
+                    if let songIndexVC = SongIndexVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SongIndexVC {
+                        songIndexVC.title = ""
+                        index.navigationController?.setToolbarHidden(false, animated: false)
+                        index.navigationController?.pushViewController(songIndexVC, animated: false)
+                    }
+
+                    detail.navigationItem.leftItemsSupplementBackButton = true
+                    detail.songsManager = songsManager
+                    detail.appConfig = appConfig
+                    detail.settings = settings
+                    detail.delegate = self
+                }
+                return split
+            }
+        } else if
+            let nav = Helper.mainStoryboardForiPhone().instantiateInitialViewController() as? UINavigationController,
+            let index = nav.topViewController as? IndexVC
+        {
+            navigationController = nav
+            index.title = ""
+            index.songsManager = songsManager
+            index.appConfig = appConfig
+            index.settings = settings
+            index.sections = appConfig.index
+
+            if let songIndexVC = SongIndexVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as? SongIndexVC {
+                navigationController?.setToolbarHidden(false, animated: false)
+                navigationController?.pushViewController(songIndexVC, animated: false)
+            }
+
+            return navigationController!
+        }
+
+        throw AppError.buildNavStackFailed("buildNavStack failed")
     }
 
     open func startAnalytics() {}
