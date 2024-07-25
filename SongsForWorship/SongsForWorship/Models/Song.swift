@@ -40,6 +40,9 @@ open class Song: SongProtocol {
     public var pdfPageNumbers: [Int]
     public var isTuneCopyrighted: Bool
     public var tune: Tune?
+    lazy public var searchableAttributes: [SearchableAttribute] = {
+        return defaultSearchableAttributes()
+    }()
 
     public init(index: Int, number: String, title: String, reference: String? = nil, stanzas: [String], pdfPageNumbers: [Int], isTuneCopyrighted: Bool, tune: Tune? = nil) {
         self.index = index
@@ -74,6 +77,40 @@ open class Song: SongProtocol {
         attrString.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: formattedStanzas.count))
 
         return attrString
+    }
+
+    /// Calculate the default searchable attributes for a song.
+    open func defaultSearchableAttributes() -> [SearchableAttribute] {
+        let title = SearchableAttribute(type: .title, priority: .highest, attribute: title)
+        let number = SearchableAttribute(type: .songNumber, priority: .highest, attribute: number)
+
+        var attributes = [title, number]
+
+        if let tuneNameAttribute = tune?.name {
+            let tuneName = SearchableAttribute(type: .tuneName, priority: .high, attribute: tuneNameAttribute)
+            attributes.append(tuneName)
+        }
+
+        if let tuneMeterAttribute = tune?.meter {
+            let tuneMeter = SearchableAttribute(type: .tuneMeter, priority: .high, attribute: tuneMeterAttribute)
+            attributes.append(tuneMeter)
+        }
+
+        if let composerAttribute = tune?.composer?.displayName?.replacingOccurrences(of: "\n", with: " ") {
+            let composer = SearchableAttribute(type: .undefined, priority: .high, attribute: composerAttribute)
+            attributes.append(composer)
+        }
+
+        for stanza in stanzas {
+            let lines = stanza.components(separatedBy: .newlines)
+
+            for line in lines {
+                let lineAttribute = SearchableAttribute(type: .stanzas, priority: .low, attribute: line)
+                attributes.append(lineAttribute)
+            }
+        }
+
+        return attributes
     }
 }
 
