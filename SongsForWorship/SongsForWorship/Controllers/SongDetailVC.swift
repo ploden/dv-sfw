@@ -156,8 +156,6 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //tunesVC = TunesVC.instantiateFromStoryboard(appConfig: appConfig, settings: settings, songsManager: songsManager) as! TunesVC
-
         navigationItem.title = songsManager?.currentSong?.number
 
         Settings.addObserver(forSettings: self)
@@ -239,43 +237,43 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
                 navigationItem.setHidesBackButton(false, animated: animated)
             }
 
-            if let collectionView = collectionView {
-                let numItems = collectionView.numberOfItems(inSection: 0)
+            guard let collectionView = collectionView else { return }
 
-                collectionView.alpha = 0.0
+            let numItems = collectionView.numberOfItems(inSection: 0)
 
-                if numItems > 0 {
-                    coordinator.animate(alongsideTransition: { _ in
-                    }) { context in
-                        self.songDetailItems = [SongDetailItem]()
+            collectionView.alpha = 0.0
 
-                        if
-                            let appConfig = self.appConfig,
-                            let songsToDisplay = self.songsManager?.songsToDisplay,
-                            self.songDetailItems.count == 0
-                        {
-                            self.songDetailItems = SongDetailVC.calculateItems(
-                                forSongs: songsToDisplay,
-                                appConfig: appConfig,
-                                settings: self.settings,
-                                displayMode: self.displayMode(forSize: self.view.frame.size),
-                                isLandscape: self.isLandscape(forSize: self.view.frame.size)
-                            )
-                        }
+            if numItems > 0 {
+                coordinator.animate(alongsideTransition: { _ in
+                }) { context in
+                    self.songDetailItems = [SongDetailItem]()
 
-                        collectionView.collectionViewLayout.invalidateLayout()
-                        collectionView.reloadData()
-
-                        self.scrollToCurrentSong()
-                        self.configureShowSheetMusicBarButtonItem(forSize: size)
-                        self.navigationItem.title = self.songsManager?.currentSong?.number
-
-                        collectionView.alpha = 1.0
-
-                        UIView.animate(withDuration: 0.15, animations: {
-                            collectionView.alpha = 1.0
-                        })
+                    if
+                        let appConfig = self.appConfig,
+                        let songsToDisplay = self.songsManager?.songsToDisplay,
+                        self.songDetailItems.count == 0
+                    {
+                        self.songDetailItems = SongDetailVC.calculateItems(
+                            forSongs: songsToDisplay,
+                            appConfig: appConfig,
+                            settings: self.settings,
+                            displayMode: self.displayMode(forSize: self.view.frame.size),
+                            isLandscape: self.isLandscape(forSize: self.view.frame.size)
+                        )
                     }
+
+                    collectionView.collectionViewLayout.invalidateLayout()
+                    collectionView.reloadData()
+
+                    self.scrollToCurrentSong()
+                    self.configureShowSheetMusicBarButtonItem(forSize: size)
+                    self.navigationItem.title = self.songsManager?.currentSong?.number
+
+                    collectionView.alpha = 1.0
+
+                    UIView.animate(withDuration: 0.15, animations: {
+                        collectionView.alpha = 1.0
+                    })
                 }
             }
         }
@@ -682,12 +680,12 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
             if let navigationController = navigationController {
                 navigationController.setNavigationBarHidden(!navigationController.isNavigationBarHidden, animated: true)
                 navigationController.setToolbarHidden(!navigationController.isToolbarHidden, animated: true)
-
-                UIView.transition(with: self.view, duration: TimeInterval(UINavigationController.hideShowBarDuration), options: .curveEaseInOut) {
-                    if let collectionView = self.collectionView {
-                        collectionView.visibleCells.forEach { $0.setNeedsDisplay() }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(UINavigationController.hideShowBarDuration)) { [weak self] in
+                    if let collectionView = self?.collectionView {
+                        collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
                     }
-                } completion: { _ in }
+                }
             }
         }
     }
@@ -892,8 +890,6 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
 
         present(tunesVC, animated: true, completion: nil)
     }
-
-    // MARK: - Custom getters
 }
 
 extension SongDetailVC: UIPopoverPresentationControllerDelegate {
@@ -966,21 +962,24 @@ extension SongDetailVC: SelectSongMenuVCDelegate {
         selectSongMenuVC?.dismiss(animated: true, completion: nil)
         selectSongMenuVC?.delegate = nil // disconnect ASAP
 
-        if
+        guard
             let presentingItem = presentingItem,
             let songsManager = songsManager
+        else
         {
-            if presentingItem == self.playBarButtonItem {
-                songsManager.removeObserver(forcurrentSong: self)
-                songsManager.setcurrentSong(selectedSong, songsToDisplay: songsManager.songsToDisplay)
-                songsManager.addObserver(forcurrentSong: self)
-                playCurrentSong()
-            } else if presentingItem == self.showPlayerBarButtonItem {
-                songsManager.removeObserver(forcurrentSong: self)
-                songsManager.setcurrentSong(selectedSong, songsToDisplay: songsManager.songsToDisplay)
-                songsManager.addObserver(forcurrentSong: self)
-                showPlayerForCurrentSong()
-            }
+            return
+        }
+
+        if presentingItem == self.playBarButtonItem {
+            songsManager.removeObserver(forcurrentSong: self)
+            songsManager.setcurrentSong(selectedSong, songsToDisplay: songsManager.songsToDisplay)
+            songsManager.addObserver(forcurrentSong: self)
+            playCurrentSong()
+        } else if presentingItem == self.showPlayerBarButtonItem {
+            songsManager.removeObserver(forcurrentSong: self)
+            songsManager.setcurrentSong(selectedSong, songsToDisplay: songsManager.songsToDisplay)
+            songsManager.addObserver(forcurrentSong: self)
+            showPlayerForCurrentSong()
         }
     }
 }
@@ -1069,7 +1068,6 @@ extension SongDetailVC: UICollectionViewDataSource {
             let renderingConfigs = UIDevice.current.userInterfaceIdiom == .pad ? nil : songCollection.pdfRenderingConfigsForiPhone
             cvc.configure(withPDFPageNumbers: songDetailItem.pdfPageNumbers,
                           pdf: songCollection.pdf,
-                          allSongs: songsToDisplay,
                           pdfRenderingConfigs: renderingConfigs,
                           queue: queue)
         }

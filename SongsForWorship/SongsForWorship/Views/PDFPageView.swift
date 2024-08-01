@@ -39,7 +39,7 @@ class PDFPageView: UIView {
     var translateX: CGFloat = 0.0
     var translateY: CGFloat = 0.0
     var pdfPageNumber: Int = 0
-    var pdf: CGPDFDocument!
+    var pdfPage: CGPDFPage?
     var pdfRenderingConfigs: [PDFRenderingConfig]?
     private var imageRef: CGImage?
     private var imageRefRect: NSValue?
@@ -94,11 +94,18 @@ class PDFPageView: UIView {
             let drawnRect = rect
             let darkMode = self.traitCollection.userInterfaceStyle == .dark
 
+            guard let pdfPage = pdfPage else {
+                self.imageRef = nil
+                self.imageRefRect = nil
+                self.setNeedsDisplay()
+                return
+            }
+
             queue?.addOperation {
                 let drawnImage = PDFPageView.drawPage(
                     withRect: drawnRect,
                     currentScaleXY: currentScaleXY,
-                    pdf: self.pdf,
+                    pdfPage: pdfPage,
                     pdfPageNumber: self.pdfPageNumber,
                     darkMode: darkMode
                 )
@@ -116,91 +123,91 @@ class PDFPageView: UIView {
 
     class func drawPage(withRect rect: CGRect,
                         currentScaleXY: ScaleXY?,
-                        pdf: CGPDFDocument,
+                        pdfPage: CGPDFPage,
                         pdfPageNumber: Int,
                         darkMode: Bool) -> CGImage?
     {
         var image: CGImage?
 
         autoreleasepool {
-            if let pageRef = pdf.page(at: pdfPageNumber) {
-                let colorSpace = CGColorSpaceCreateDeviceGray()
+            let pageRef = pdfPage
 
-                let screenScale = UIScreen.main.scale
+            let colorSpace = CGColorSpaceCreateDeviceGray()
 
-                let screenScaledWidth: CGFloat = rect.size.width * screenScale
-                let screenScaledHeight: CGFloat = rect.size.height * screenScale
+            let screenScale = UIScreen.main.scale
 
-                let context = CGContext(data: nil,
-                                        width: Int(screenScaledWidth),
-                                        height: Int(screenScaledHeight),
-                                        bitsPerComponent: 8,
-                                        bytesPerRow: 0,
-                                        space: colorSpace,
-                                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+            let screenScaledWidth: CGFloat = rect.size.width * screenScale
+            let screenScaledHeight: CGFloat = rect.size.height * screenScale
 
-                if let context = context {
-                    if let currentScaleXY = currentScaleXY {
-                        context.translateBy(x: 0.0, y: screenScaledHeight)
+            let context = CGContext(data: nil,
+                                    width: Int(screenScaledWidth),
+                                    height: Int(screenScaledHeight),
+                                    bitsPerComponent: 8,
+                                    bytesPerRow: 0,
+                                    space: colorSpace,
+                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
 
-                        context.scaleBy(x: 1.0, y: -1.0)
+            guard let context = context else { return }
 
-                        context.saveGState()
+            if let currentScaleXY = currentScaleXY {
+                context.translateBy(x: 0.0, y: screenScaledHeight)
 
-                        context.scaleBy(x: currentScaleXY.scale * screenScale, y: currentScaleXY.scale * screenScale)
+                context.scaleBy(x: 1.0, y: -1.0)
 
-                        let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
+                context.saveGState()
 
-                        let translateTransform = drawingTransform.translatedBy(x: currentScaleXY.xCoordinate, y: currentScaleXY.yCoordinate)
+                context.scaleBy(x: currentScaleXY.scale * screenScale, y: currentScaleXY.scale * screenScale)
 
-                        context.concatenate(translateTransform)
+                let drawingTransform = pageRef.getDrawingTransform(CGPDFBox.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true)
 
-                        context.drawPDFPage(pageRef)
-                    } else {
-                        let drawSize = rect.size
+                let translateTransform = drawingTransform.translatedBy(x: currentScaleXY.xCoordinate, y: currentScaleXY.yCoordinate)
 
-                        let scale = UIScreen.main.scale
-                        context.scaleBy(x: scale, y: -scale)
+                context.concatenate(translateTransform)
 
-                        // get the rectangle of the cropped inside
-                        let mediaRect = pageRef.getBoxRect(CGPDFBox.trimBox)
+                context.drawPDFPage(pageRef)
+            } else {
+                let drawSize = rect.size
 
-                        context.translateBy(x: 0, y: -drawSize.height)
+                let scale = UIScreen.main.scale
+                context.scaleBy(x: scale, y: -scale)
 
-                        let xScale = drawSize.width / mediaRect.size.width
+                // get the rectangle of the cropped inside
+                let mediaRect = pageRef.getBoxRect(CGPDFBox.trimBox)
 
-                        let scaleToApply: CGFloat = {
-                            let yScale = drawSize.height / mediaRect.size.height
-                            return xScale < yScale ? xScale : yScale
-                        }()
+                context.translateBy(x: 0, y: -drawSize.height)
 
-                        context.scaleBy(x: scaleToApply, y: scaleToApply)
+                let xScale = drawSize.width / mediaRect.size.width
 
-                        let translateX = (drawSize.width - (scaleToApply * mediaRect.size.width))
-                        let translateY = (drawSize.height - (scaleToApply * mediaRect.size.height))
+                let scaleToApply: CGFloat = {
+                    let yScale = drawSize.height / mediaRect.size.height
+                    return xScale < yScale ? xScale : yScale
+                }()
 
-                        context.translateBy(x: (translateX / 2.0) / scaleToApply, y: (translateY / 2.0) / scaleToApply)
+                context.scaleBy(x: scaleToApply, y: scaleToApply)
 
-                        context.drawPDFPage(pageRef)
-                    }
+                let translateX = (drawSize.width - (scaleToApply * mediaRect.size.width))
+                let translateY = (drawSize.height - (scaleToApply * mediaRect.size.height))
 
-                    image = context.makeImage()
+                context.translateBy(x: (translateX / 2.0) / scaleToApply, y: (translateY / 2.0) / scaleToApply)
 
-                    if darkMode {
-                        // Create a `CIImage` from the input image.
-                        let inputImage = CIImage(cgImage: image!)
+                context.drawPDFPage(pageRef)
+            }
 
-                        // Create an inverting filter and set its input image.
-                        guard let filter = CIFilter(name: "CIColorInvert") else { return }
-                        filter.setValue(inputImage, forKey: kCIInputImageKey)
+            image = context.makeImage()
 
-                        // Get the output `CIImage` from the filter.
-                        guard let outputCIImage = filter.outputImage else { return }
+            if darkMode {
+                // Create a `CIImage` from the input image.
+                let inputImage = CIImage(cgImage: image!)
 
-                        let context = CIContext(options: nil)
-                        image = context.createCGImage(outputCIImage, from: outputCIImage.extent)
-                    }
-                }
+                // Create an inverting filter and set its input image.
+                guard let filter = CIFilter(name: "CIColorInvert") else { return }
+                filter.setValue(inputImage, forKey: kCIInputImageKey)
+
+                // Get the output `CIImage` from the filter.
+                guard let outputCIImage = filter.outputImage else { return }
+
+                let context = CIContext(options: nil)
+                image = context.createCGImage(outputCIImage, from: outputCIImage.extent)
             }
         }
 
@@ -234,7 +241,7 @@ class PDFPageView: UIView {
         }
 
         let first: PDFRenderingConfig? = {
-            if let matchingBoth = matchingDeviceOrientationAndPageOrientation.first(where: { $0.screenWidth == rect.width && $0.screenHeight == rect.height }) {
+            if let matchingBoth = matchingDeviceOrientationAndPageOrientation.first(where: { $0.screenWidth == rect.width.rounded(.down) && $0.screenHeight == rect.height.rounded(.down) }) {
                 return matchingBoth
             } else {
                 return matchingDeviceOrientationAndPageOrientation.first { $0.screenWidth == rect.width || $0.screenHeight == rect.height }

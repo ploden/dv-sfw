@@ -37,7 +37,7 @@ let PFWFavoritesShortcutPsalmIdentifierKey = "songNumber"
 // MARK: Application lifecycle
 
 open class SFWAppDelegate: UIResponder, SongDetailVCDelegate, UIApplicationDelegate {
-    /// All these properties iin the app delegate stinks. 
+    /// All these properties iin the app delegate stinks.
     /// Can we spin this out elsewhere?
     let imageCacheManager = ImageCacheManager()
     private var songsManager: SongsManager!
