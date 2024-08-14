@@ -97,7 +97,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
                 }
             }
             scrollToCurrentSong()
-            navigationItem.title = songsManager?.currentSong?.number
+            navigationItem.title = songsManager?.currentSong?.number.uppercased()
         }
     }
     override class var storyboardName: String {
@@ -156,7 +156,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.title = songsManager?.currentSong?.number
+        navigationItem.title = songsManager?.currentSong?.number.uppercased()
 
         Settings.addObserver(forSettings: self)
         Settings.addObserver(forTheme: self)
@@ -267,7 +267,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
 
                     self.scrollToCurrentSong()
                     self.configureShowSheetMusicBarButtonItem(forSize: size)
-                    self.navigationItem.title = self.songsManager?.currentSong?.number
+                    self.navigationItem.title = self.songsManager?.currentSong?.number.uppercased()
 
                     collectionView.alpha = 1.0
 
@@ -841,7 +841,7 @@ class SongDetailVC: UIViewController, UICollectionViewDelegate, UICollectionView
                                                           isLandscape: isLandscape(forSize: view.frame.size))
             collectionView?.reloadData()
             scrollToCurrentSong()
-            navigationItem.title = songsManager?.currentSong?.number
+            navigationItem.title = songsManager?.currentSong?.number.uppercased()
         }
 
         configureShowSheetMusicBarButtonItem(forSize: view.frame.size)
@@ -1028,7 +1028,7 @@ extension SongDetailVC: UIScrollViewDelegate {
                 self.playerController = PlayerController(with: currentSong, tuneInfos: currentSongCollection.tuneInfos, delegate: self, queue: tunesVC.queue)
             }
         }
-        navigationItem.title = songsManager?.currentSong?.number
+        navigationItem.title = songsManager?.currentSong?.number.uppercased()
         configurePlayerBarButtonItems()
         configureFavoriteBarButtonItem()
     }
