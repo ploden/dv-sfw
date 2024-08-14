@@ -34,40 +34,42 @@ class SheetMusicCVCell: UICollectionViewCell {
     @IBOutlet weak var firstPDFPageView: PDFPageView?
     @IBOutlet weak var secondPDFPageView: PDFPageView?
 
-    func configure(withPDFPageNumbers pageNumbers: PageNumbers?, pdf: CGPDFDocument, allSongs: [Song], pdfRenderingConfigs: [PDFRenderingConfig]?, queue: OperationQueue) {
-        if
+    func configure(withPDFPageNumbers pageNumbers: PageNumbers?, pdf: CGPDFDocument, pdfRenderingConfigs: [PDFRenderingConfig]?, queue: OperationQueue) {
+        guard
             let singlePDFPageView = singlePDFPageView,
             let firstPDFPageView = firstPDFPageView,
             let secondPDFPageView = secondPDFPageView,
             let pageNumbers = pageNumbers
+        else
         {
-            if let secondPDFPageNum = pageNumbers.secondPage {
-                singlePDFPageView.isHidden = true
-                firstPDFPageView.isHidden = false
-                secondPDFPageView.isHidden = false
-
-                let firstPDFPageNum = pageNumbers.firstPage
-                firstPDFPageView.pdf = pdf
-                firstPDFPageView.pdfRenderingConfigs = pdfRenderingConfigs
-                firstPDFPageView.configure(firstPDFPageNum, queue: queue)
-
-                secondPDFPageView.pdf = pdf
-                secondPDFPageView.pdfRenderingConfigs = pdfRenderingConfigs
-                secondPDFPageView.configure(secondPDFPageNum, queue: queue)
-            } else {
-                singlePDFPageView.isHidden = false
-                firstPDFPageView.isHidden = true
-                secondPDFPageView.isHidden = true
-
-                let pdfPageNum = pageNumbers.firstPage
-                singlePDFPageView.pdf = pdf
-                singlePDFPageView.pdfRenderingConfigs = pdfRenderingConfigs
-                singlePDFPageView.configure(pdfPageNum, queue: queue)
-            }
-        } else {
             firstPDFPageView?.isHidden = true
             secondPDFPageView?.isHidden = true
             singlePDFPageView?.isHidden = true
+            return
+        }
+
+        if let secondPDFPageNum = pageNumbers.secondPage {
+            singlePDFPageView.isHidden = true
+            firstPDFPageView.isHidden = false
+            secondPDFPageView.isHidden = false
+
+            let firstPDFPageNum = pageNumbers.firstPage
+            firstPDFPageView.pdfPage = pdf.page(at: firstPDFPageNum)
+            firstPDFPageView.pdfRenderingConfigs = pdfRenderingConfigs
+            firstPDFPageView.configure(firstPDFPageNum, queue: queue)
+
+            secondPDFPageView.pdfPage = pdf.page(at: secondPDFPageNum)
+            secondPDFPageView.pdfRenderingConfigs = pdfRenderingConfigs
+            secondPDFPageView.configure(secondPDFPageNum, queue: queue)
+        } else {
+            singlePDFPageView.isHidden = false
+            firstPDFPageView.isHidden = true
+            secondPDFPageView.isHidden = true
+
+            let pdfPageNum = pageNumbers.firstPage
+            singlePDFPageView.pdfPage = pdf.page(at: pdfPageNum)
+            singlePDFPageView.pdfRenderingConfigs = pdfRenderingConfigs
+            singlePDFPageView.configure(pdfPageNum, queue: queue)
         }
     }
 }

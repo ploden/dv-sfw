@@ -20,6 +20,7 @@
 		8D42245E26064F7800F7EB99 /* IndexRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42245D26064F7800F7EB99 /* IndexRow.swift */; };
 		8D422463260659F600F7EB99 /* IndexSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D422462260659F600F7EB99 /* IndexSection.swift */; };
 		8D42246826065AD300F7EB99 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D42246726065AD300F7EB99 /* AppConfig.swift */; };
+		8D43AA912C33640000865A00 /* SearchableAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D43AA902C33640000865A00 /* SearchableAttribute.swift */; };
 		8D4AD13C26278CCD0011F228 /* SFWAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4AD13B26278CCD0011F228 /* SFWAppDelegate.swift */; };
 		8D50B97424F4C7F600AFDC29 /* Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D50B97324F4C7F600AFDC29 /* Composer.swift */; };
 		8D54FFA326105E9D00377042 /* FavoritesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54FFA226105E9D00377042 /* FavoritesVC.swift */; };
@@ -129,6 +130,7 @@
 		8DF7D262261B55880096E5F5 /* PDFCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF7D260261B55880096E5F5 /* PDFCVCell.swift */; };
 		8DF7D263261B55880096E5F5 /* PDFCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8DF7D261261B55880096E5F5 /* PDFCVCell.xib */; };
 		8DFBB2962619FB3B0020059C /* PDFRenderingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */; };
+		8DFCDF0D2C52F3C5002C2647 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFCDF0C2C52F3C5002C2647 /* Error.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +157,7 @@
 		8D42245D26064F7800F7EB99 /* IndexRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRow.swift; sourceTree = "<group>"; };
 		8D422462260659F600F7EB99 /* IndexSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexSection.swift; sourceTree = "<group>"; };
 		8D42246726065AD300F7EB99 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		8D43AA902C33640000865A00 /* SearchableAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableAttribute.swift; sourceTree = "<group>"; };
 		8D4AD13B26278CCD0011F228 /* SFWAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFWAppDelegate.swift; sourceTree = "<group>"; };
 		8D50B97324F4C7F600AFDC29 /* Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composer.swift; sourceTree = "<group>"; };
 		8D54FFA226105E9D00377042 /* FavoritesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesVC.swift; sourceTree = "<group>"; };
@@ -266,6 +269,7 @@
 		8DF7D260261B55880096E5F5 /* PDFCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFCVCell.swift; sourceTree = "<group>"; };
 		8DF7D261261B55880096E5F5 /* PDFCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PDFCVCell.xib; sourceTree = "<group>"; };
 		8DFBB2952619FB3B0020059C /* PDFRenderingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingConfig.swift; sourceTree = "<group>"; };
+		8DFCDF0C2C52F3C5002C2647 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -407,6 +411,8 @@
 				8D869F672C0A662100039787 /* TuneDescriptionProtocol.swift */,
 				8D850C802C0E1A2600D70913 /* MusicLibraryItemTuneDescription.swift */,
 				8DF4D7762C29AC9900CD2215 /* SongProtocol.swift */,
+				8D43AA902C33640000865A00 /* SearchableAttribute.swift */,
+				8DFCDF0C2C52F3C5002C2647 /* Error.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -730,10 +736,12 @@
 				8D99C22324CED40A005B34F2 /* SongIndexVC.swift in Sources */,
 				8DD2E1B524E470BF00F0DE30 /* TextViewVC.swift in Sources */,
 				8D99C1FA24CED40A005B34F2 /* FAQ.swift in Sources */,
+				8D43AA912C33640000865A00 /* SearchableAttribute.swift in Sources */,
 				8D9D5FA92616399400FF84FE /* HasSettings.swift in Sources */,
 				8D99C22924CED40A005B34F2 /* FlowLayout.swift in Sources */,
 				8D99C22D24CED40A005B34F2 /* TunesVC.swift in Sources */,
 				8D99C20B24CED40A005B34F2 /* SheetMusicCVCell.swift in Sources */,
+				8DFCDF0D2C52F3C5002C2647 /* Error.swift in Sources */,
 				8D78C3412C0D4C85001488B5 /* LocalFileTuneDescription.swift in Sources */,
 				8D99C20324CED40A005B34F2 /* RecordingsDisabledTVCell.swift in Sources */,
 				8D09B673259AFBBD002558A1 /* ScaleXY.swift in Sources */,
@@ -982,7 +990,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = SongsForWorship/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1012,7 +1020,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = SongsForWorship/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A type representing a media item from Apple Music. 
 public struct AppleMusicMediaItem {
     public let id: String
     public let artistName: String

@@ -31,13 +31,16 @@ class ScrollingSheetMusicCVCell: UICollectionViewCell {
     @IBOutlet weak var scrollView: UIScrollView?
 
     func configure(withPageNumber pageNumber: Int?, pdf: CGPDFDocument, allSongs: [Song], pdfRenderingConfigs: [PDFRenderingConfig]?, queue: OperationQueue) {
-        pdfPageView?.pdf = pdf
+        //pdfPageView?.pdfPage = page
         pdfPageView?.pdfRenderingConfigs = pdfRenderingConfigs
 
         if let pageNumber = pageNumber {
+            let page = pdf.page(at: pageNumber)
+            pdfPageView?.pdfPage = page
             pdfPageView?.isHidden = false
             pdfPageView?.configure(pageNumber, queue: queue)
         } else {
+            pdfPageView?.pdfPage = nil
             pdfPageView?.isHidden = true
         }
     }
